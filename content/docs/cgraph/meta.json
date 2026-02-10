@@ -1,0 +1,9 @@
+{
+  "title": "CGraph",
+  "description": "Procedural Graph System",
+  "icon": "GitBranch",
+  "root": true,
+  "pages": [
+    "index"
+  ]
+}

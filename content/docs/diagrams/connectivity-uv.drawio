@@ -1,0 +1,140 @@
+<mxfile host="app.diagrams.net" modified="2026-01-28T00:00:00.000Z" agent="Cunning3D" version="1.0">
+  <diagram name="UV Connectivity" id="conn-uv">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ============ 3D GEOMETRY ============ -->
+        <mxCell id="geo-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=5" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="280" height="400" as="geometry"/>
+        </mxCell>
+        <mxCell id="geo-title" value="3D Geometry" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="280" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="geo-subtitle" value="Geometrically connected" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="280" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Cube with Seam -->
+        <mxCell id="cube-f1" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="cube-f2" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="130" y="120" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="cube-f3" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="180" y="120" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="cube-f4" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="230" y="120" width="60" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Seam Edge (Red) -->
+        <mxCell id="seam-edge" value="Seam" style="edgeStyle=none;html=1;strokeColor=#b85450;strokeWidth=4;endArrow=none;startArrow=none;rounded=0;fontColor=#b85450;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="130" y="150" as="sourcePoint"/>
+            <mxPoint x="130" y="180" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="geo-note" value="Without UV: Single connected component&#10;With UV + Seam: 2 separate UV islands" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="50" y="200" width="260" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- ============ UV SPACE ============ -->
+        <mxCell id="uv-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=5" vertex="1" parent="1">
+          <mxGeometry x="360" y="40" width="320" height="400" as="geometry"/>
+        </mxCell>
+        <mxCell id="uv-title" value="UV Space" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="360" y="50" width="320" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="uv-subtitle" value="UV coordinates determine connectivity" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="360" y="80" width="320" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- UV Grid -->
+        <mxCell id="uv-grid" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;" vertex="1" parent="1">
+          <mxGeometry x="400" y="120" width="240" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- UV Island 1 -->
+        <mxCell id="uv1-f1" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="420" y="140" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="uv1-f2" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="465" y="140" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="uv1-label" value="Island 1&#10;(Class 0)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="420" y="200" width="95" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- UV Island 2 (separate) -->
+        <mxCell id="uv2-f1" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="540" y="180" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="uv2-f2" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="585" y="180" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="uv2-label" value="Island 2&#10;(Class 1)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="540" y="240" width="95" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- UV Tolerance Indicator -->
+        <mxCell id="tol-circle" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#ff0000;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="495" y="155" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="tol-label" value="UV Tolerance" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="510" y="170" width="80" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uv-note" value="UV coordinates within tolerance = connected&#10;UV coordinates outside tolerance = separate" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="380" width="280" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ============ OUTPUT ============ -->
+        <mxCell id="out-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;arcSize=5" vertex="1" parent="1">
+          <mxGeometry x="720" y="40" width="240" height="400" as="geometry"/>
+        </mxCell>
+        <mxCell id="out-title" value="Output Classes" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="720" y="50" width="240" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Class List -->
+        <mxCell id="out-class0" value="Class 0:&#10;• Face 0&#10;• Face 1&#10;UV: [0.0-0.5, 0.0-0.5]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="740" y="100" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="out-class1" value="Class 1:&#10;• Face 2&#10;• Face 3&#10;UV: [0.6-1.0, 0.3-0.8]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="740" y="200" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="out-arrow1" value="" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="680" y="160" as="sourcePoint"/>
+            <mxPoint x="720" y="140" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="out-arrow2" value="" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="680" y="220" as="sourcePoint"/>
+            <mxPoint x="720" y="240" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Use Case -->
+        <mxCell id="usecase-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;arcSize=3" vertex="1" parent="1">
+          <mxGeometry x="740" y="320" width="200" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="usecase-title" value="Use Cases" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="740" y="330" width="200" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="usecase-list" value="• UV Island detection&#10;• Texture atlas packing&#10;• UV seam validation&#10;• Lightmap generation" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="750" y="355" width="180" height="60" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

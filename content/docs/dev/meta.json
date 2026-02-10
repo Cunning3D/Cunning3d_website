@@ -1,0 +1,10 @@
+{
+  "title": "Developer Guide",
+  "description": "Engine Internals",
+  "icon": "Wrench",
+  "root": true,
+  "pages": [
+    "geometry",
+    "kernel"
+  ]
+}

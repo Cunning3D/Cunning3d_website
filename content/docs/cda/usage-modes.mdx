@@ -1,0 +1,137 @@
+---
+title: Usage Modes
+description: Three ways to use procedural geometry
+icon: Workflow
+---
+
+## Overview
+
+Cunning supports three usage patterns, each suited to different workflows:
+
+<Drawio file="content/docs/diagrams/CDA_Usage_Modes.drawio" height={650} title="Three Usage Modes (Interactive)" />
+
+## 1. Programmer - Direct API
+
+Call geometry operators directly from code:
+
+```csharp
+// Unity C#
+ulong cube = NativeMethods.cunning_geo_create_cube(1.0f, 2, 2, 2);
+ulong sphere = NativeMethods.cunning_geo_create_sphere(0.5f, 16, 32);
+ulong result = NativeMethods.cunning_op_boolean(cube, sphere, 2);
+```
+
+**Best for:**
+- Runtime procedural generation
+- Game-logic-driven geometry
+- Maximum performance
+- Programmers who prefer code
+
+**Advantages:**
+- No file I/O
+- Direct function calls (~µs latency)
+- Full control over execution
+- Easy debugging
+
+## 2. Artist - CDA Visual
+
+Author assets visually in Cunning3D:
+
+<Steps>
+
+### Create
+
+Build node graph in Cunning3D editor.
+
+### Expose
+
+Drag parameters to CDA interface.
+
+### Export
+
+Save as `.cda` file.
+
+### Use
+
+Drag into Unity, adjust in Inspector.
+
+</Steps>
+
+**Best for:**
+- Technical artists
+- Artists with some technical knowledge
+- Reusable procedural assets
+- Non-programmers
+
+**Advantages:**
+- No code required
+- Visual, intuitive workflow
+- Inspector-based parameter editing
+- Presets support
+
+## 3. Hybrid - CGraph
+
+Combine code and visual graphs:
+
+```csharp
+// Load visual graph
+NativeMethods.cunning_load_graph_asset("Building.cgraph");
+
+// Inject runtime data
+NativeMethods.cunning_set_param("floors", floorCount);
+NativeMethods.cunning_set_input_geo(0, lotBoundary);
+
+// Cook
+NativeMethods.cunning_cook_async();
+ulong building = NativeMethods.cunning_get_output_geo();
+```
+
+**Best for:**
+- Complex procedural systems
+- Game-state-dependent geometry
+- Partial graph evaluation
+- Teams with mixed skills
+
+**Advantages:**
+- Visual authoring for complex logic
+- Code handles game integration
+- Partial cooking for performance
+- Hot-reload during development
+
+## Comparison
+
+| Aspect | Direct API | CDA | CGraph |
+|--------|------------|-----|--------|
+| Authoring | Code | Visual | Both |
+| File needed | No | .cda | .cgraph |
+| Parameter UI | Custom | Inspector | Custom |
+| Runtime data | Direct | Limited | Full |
+| Learning curve | Medium | Low | Medium |
+| Flexibility | High | Medium | High |
+
+## Choosing a Mode
+
+<Cards>
+
+<Card title="Use Direct API when">
+- Performance is critical
+- Geometry depends on game logic
+- You're comfortable with code
+- No artist collaboration needed
+</Card>
+
+<Card title="Use CDA when">
+- Artists need to author assets
+- Parameters should be tweakable
+- Assets are reusable
+- Inspector workflow preferred
+</Card>
+
+<Card title="Use CGraph when">
+- Complex procedural logic
+- Runtime data injection needed
+- Partial evaluation required
+- Team has mixed skills
+</Card>
+
+</Cards>

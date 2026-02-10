@@ -1,0 +1,9 @@
+packages:
+  - fumadocs-dev/packages/*
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - esbuild
+  - msw
+  - sharp
+  - unrs-resolver
+  - vue-demi

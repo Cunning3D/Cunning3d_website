@@ -1,0 +1,83 @@
+---
+title: Nano To Voxel
+description: Generate GPU-preview voxels via Gemini depth atlas → point cloud → sparse voxel chunks.
+icon: Boxes
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+
+# Nano To Voxel
+
+`Nano To Voxel` generates a **3x2 orthographic depth atlas** with Gemini, unprojects it to a point cloud, then rasterizes it into **sparse voxel chunks** registered in the GPU voxel preview cache.
+
+<Drawio file="content/docs/diagrams/nano-to-voxel-pipeline.drawio" height={280} title="Nano To Voxel pipeline" />
+
+## IO
+
+| Port | Type | Notes |
+|------|------|------|
+| Input (optional) | `Geometry` | Can carry `__ai_reference_image_path` (detail attr) to drive the reference image. |
+| Output | `Voxel` | Pure voxel marker geometry for viewport preview. |
+
+## Parameters
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `prompt` | `String` | `"A stylized banana figurine, clean silhouette."` | Object description. |
+| `reference_image` | `FilePath` | `""` | Optional image conditioning. |
+| `tile_res` | `Int` | `256` | Per-view tile resolution. |
+| `world_size` | `Float` | `1.0` | World-space cube size used for depth unprojection. |
+| `sample_step` | `Int` | `4` | Pixel stride when extracting points. |
+| `depth_min` | `Float` | `0.05` | Treat depth below this as background. |
+| `voxel_size` | `Float` | `0.05` | World size per voxel. |
+| `palette_index` | `Int` | `1` | Palette index assigned to all generated voxels. |
+| `generate` | `Button` | `0` | Runs the pipeline and updates the voxel preview cache. |
+
+## Notes
+
+- The depth atlas is saved under `assets/textures/ai_nano_to_3d/` and referenced by the internal parameter `depth_atlas`.
+- Knowledge source: `Cunning3D_1.0/assets/knowledge/internal_nodes/NanoToVoxel_agent.toml`.
+
+</Lang>
+
+<Lang lang="zh">
+
+# Nano To Voxel
+
+`Nano To Voxel` 会先让 Gemini 生成 **3x2 正交深度图集**，再反投影为点云，然后光栅化为 **稀疏体素 Chunk**，并注册到 GPU 体素预览缓存里（视口直接显示）。
+
+<Drawio file="content/docs/diagrams/nano-to-voxel-pipeline.drawio" height={280} title="Nano To Voxel 流程" />
+
+## 输入输出 (IO)
+
+| 端口 | 类型 | 说明 |
+|------|------|------|
+| 输入（可选） | `Geometry` | 可在 detail attribute 中携带 `__ai_reference_image_path` 作为参考图。 |
+| 输出 | `Voxel` | 用于视口预览的纯体素标记几何。 |
+
+## 参数
+
+| 名称 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `prompt` | `String` | `"A stylized banana figurine, clean silhouette."` | 物体描述。 |
+| `reference_image` | `FilePath` | `""` | 可选参考图。 |
+| `tile_res` | `Int` | `256` | 单视角 tile 分辨率。 |
+| `world_size` | `Float` | `1.0` | 深度反投影使用的世界空间包围盒尺寸。 |
+| `sample_step` | `Int` | `4` | 采样步长。 |
+| `depth_min` | `Float` | `0.05` | 小于阈值视为背景。 |
+| `voxel_size` | `Float` | `0.05` | 体素尺寸。 |
+| `palette_index` | `Int` | `1` | 体素调色板索引。 |
+| `generate` | `Button` | `0` | 运行流程并更新体素预览缓存。 |
+
+## 备注
+
+- 深度图集会保存到 `assets/textures/ai_nano_to_3d/`，内部参数名为 `depth_atlas`。
+- Knowledge 来源：`Cunning3D_1.0/assets/knowledge/internal_nodes/NanoToVoxel_agent.toml`。
+
+</Lang>
+

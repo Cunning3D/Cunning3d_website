@@ -1,0 +1,101 @@
+<mxfile host="65bd71144e">
+    <diagram id="polyextrude-modes" name="Extrusion Modes">
+        <mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                
+                <!-- Title -->
+                <mxCell id="title" value="Extrusion Modes Comparison" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="200" y="20" width="400" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Left: Connected Components -->
+                <mxCell id="lbl_connected" value="Mode 0: Connected Components" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="50" y="70" width="300" height="30" as="geometry"/>
+                </mxCell>
+                
+                <!-- Input Mesh (Flat) -->
+                <mxCell id="c_in1" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="150" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="c_in2" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="200" y="150" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="c_txt_shared" value="Shared Vertex" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#FF0000;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="160" width="60" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- Extruded Mesh (Block) -->
+                <mxCell id="c_out1" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="250" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="c_out2" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="200" y="250" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <!-- Side Walls -->
+                <mxCell id="c_wall1" value="" style="whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="270" width="20" height="40" as="geometry"/>
+                </mxCell>
+                 <!-- Arrow -->
+                <mxCell id="arr1" value="Distance" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#f5f5f5;strokeColor=#666666;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="150" y="180" as="sourcePoint"/>
+                        <mxPoint x="150" y="240" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                
+                <mxCell id="note_connected" value="- Vertices are shared (Average Normal)&#10;- Moves as a single block&#10;- Side Divisions Supported&#10;- NO Inset" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;fillColor=#f5f5f5;strokeColor=#666666;spacing=5;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="340" width="240" height="80" as="geometry"/>
+                </mxCell>
+
+
+                <!-- Right: Individual Elements -->
+                <mxCell id="lbl_individual" value="Mode 1: Individual Elements" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="450" y="70" width="300" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Input Mesh (Flat) -->
+                <mxCell id="i_in1" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="150" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="i_in2" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="580" y="150" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="i_txt_split" value="Vertices Split" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#FF0000;" vertex="1" parent="1">
+                    <mxGeometry x="550" y="160" width="60" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- Extruded Mesh (Separate Towers) -->
+                <!-- Tower 1 -->
+                <mxCell id="i_out1" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="260" width="80" height="48" as="geometry"/>
+                </mxCell>
+                <!-- Tower 2 -->
+                <mxCell id="i_out2" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="610" y="260" width="80" height="48" as="geometry"/>
+                </mxCell>
+                
+                 <!-- Arrow -->
+                <mxCell id="arr2" value="Dist + Inset" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#f5f5f5;strokeColor=#666666;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="530" y="180" as="sourcePoint"/>
+                        <mxPoint x="530" y="250" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                
+                 <mxCell id="arr3" value="" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#f5f5f5;strokeColor=#666666;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="630" y="180" as="sourcePoint"/>
+                        <mxPoint x="630" y="250" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+
+                <mxCell id="note_individual" value="- Vertices duplicated (Face Normal)&#10;- Extrudes as separate towers&#10;- Inset Supported&#10;- NO Side Divisions" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;fillColor=#f5f5f5;strokeColor=#666666;spacing=5;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="340" width="240" height="80" as="geometry"/>
+                </mxCell>
+
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

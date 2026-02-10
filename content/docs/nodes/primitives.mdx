@@ -1,0 +1,51 @@
+---
+title: Primitives
+description: Create basic geometric shapes (Cube, Sphere).
+icon: Shapes
+---
+
+<Lang lang="en">
+Cunning3D provides standard nodes for generating fundamental 3D primitives. These are often the starting points for procedural graphs.
+</Lang>
+
+<Lang lang="zh">
+Cunning3D 提供了用于生成基础 3D 图元的标准节点。这些通常是程序化图的起点。
+</Lang>
+
+## Create Cube (创建立方体)
+
+<Lang lang="en">
+Generates a box or cube mesh. Supports subdivision.
+</Lang>
+
+<Lang lang="zh">
+生成盒子或立方体网格。支持细分。
+</Lang>
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Size** | `Float` | `1.0` | The overall size of the cube (uniform scaling). |
+| **Center** | `Vec3` | `(0, 0, 0)` | The position of the cube's center. |
+| **Divisions** | `Vec3` | `(10, 10, 10)` | Number of subdivisions along X, Y, and Z axes. Higher values create a denser mesh suitable for deformation. |
+
+---
+
+## Create Sphere (创建球体)
+
+<Lang lang="en">
+Generates a UV-sphere mesh (latitudes and longitudes).
+</Lang>
+
+<Lang lang="zh">
+生成 UV 球体网格（经纬线结构）。
+</Lang>
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Radius** | `Float` | `0.5` | The radius of the sphere. |
+| **Center** | `Vec3` | `(0, 0, 0)` | The position of the sphere's center. |
+| **Divisions** | `IVec2` | `(20, 10)` | Resolution of the sphere.<br/>- **X**: Longitude segments (around the equator).<br/>- **Y**: Latitude segments (pole to pole). |

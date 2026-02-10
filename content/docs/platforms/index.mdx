@@ -1,0 +1,85 @@
+---
+title: Platform Integration
+description: Game engine and web support
+icon: Layers
+---
+
+## Supported Platforms
+
+<Cards>
+
+<Card title="Unity" href="/docs/platforms/unity">
+Full editor and runtime support. Windows, planned mobile.
+</Card>
+
+<Card title="Bevy" href="/docs/platforms/bevy">
+Native Rust integration via cunning_kernel crate.
+</Card>
+
+<Card title="WebAssembly" href="/docs/platforms/wasm">
+Browser-based CDA playback with WASM runtime.
+</Card>
+
+</Cards>
+
+## Architecture
+
+All platforms share the same core:
+
+```
+┌────────────────────────────────────────────────────────────────────────�?�?                        cunning_kernel (Rust)                          �?�? Geometry / Attributes / Nodes / Algorithms                            �?└────────────────────────────────────────────────────────────────────────�?                �?                   �?                   �?    ┌───────────┴───────�?  ┌───────┴───────�?  ┌───────┴───────�?    �?cunning_core_ffi  �?  �?cunning_cda   �?  �?cunning_player�?    �?  (C ABI DLL)     �?  �?  _runtime    �?  �?  (WASM)      �?    └─────────┬─────────�?  └───────┬───────�?  └───────┬───────�?              �?                    �?                  �?    ┌─────────┴─────────�?  ┌───────┴───────�?  ┌───────┴───────�?    �?Unity / Unreal /  �?  �? Cunning3D    �?  �?  Browser     �?    �?Godot / Custom    �?  �?  Editor      �?  �?  Runtime     �?    └───────────────────�?  └───────────────�?  └───────────────�?```
+
+## Platform Matrix
+
+| Feature | Unity | Bevy | WASM |
+|---------|-------|------|------|
+| CDA loading | Yes | Yes | Yes |
+| Async cook | Yes | Yes | Yes |
+| Direct API | Yes | Yes | Partial |
+| Inspector UI | Yes | N/A | N/A |
+| Runtime deploy | Yes | Yes | Yes |
+| Hot reload | Planned | Planned | N/A |
+
+## Integration Patterns
+
+### Direct FFI
+
+For Unity and other C-compatible engines:
+
+```csharp
+[DllImport("cunning_core_ffi")]
+public static extern ulong cunning_geo_create_cube(float size, int dx, int dy, int dz);
+```
+
+### Native Crate
+
+For Rust engines like Bevy:
+
+```rust
+use cunning_kernel::{Geometry, ops::*};
+
+let cube = Geometry::cube(1.0, 1, 1, 1);
+let extruded = poly_extrude(&cube, 0.5, 0.1);
+```
+
+### WASM Module
+
+For browsers:
+
+```javascript
+const cunning = await import('./cunning_player.js');
+await cunning.default();
+
+const cdaBytes = await fetch('asset.cda').then(r => r.arrayBuffer());
+cunning.load_cda(new Uint8Array(cdaBytes));
+cunning.cook();
+```
+
+## Planned Platforms
+
+| Platform | Status |
+|----------|--------|
+| Unreal Engine | Planned |
+| Godot | Community interest |
+| iOS | Planned |
+| Android | Planned |

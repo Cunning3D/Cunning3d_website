@@ -1,0 +1,101 @@
+---
+title: Nano To Mesh
+description: Generate a closed mesh via Gemini depth atlas → point splat VDB(SDF) → Surface Nets.
+icon: Boxes
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+
+# Nano To Mesh
+
+`Nano To Mesh` creates a **closed surface mesh** from a prompt (and optional reference image) by generating a **3x2 orthographic depth atlas** with Gemini, converting it to a point cloud, building a **VDB(SDF)**, then extracting the surface using **Surface Nets** (same kernel as `VDB To Polygons`).
+
+<Drawio file="content/docs/diagrams/nano-to-mesh-pipeline.drawio" height={280} title="Nano To Mesh pipeline" />
+
+## IO
+
+| Port | Type | Notes |
+|------|------|------|
+| Input (optional) | `Geometry` | Can carry `__ai_reference_image_path` (detail attr) to drive the reference image. |
+| Output | `Geometry` | The reconstructed surface mesh. |
+
+## Parameters
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `prompt` | `String` | `"A stylized banana figurine, clean silhouette."` | Object description. |
+| `reference_image` | `FilePath` | `""` | Optional image conditioning. |
+| `tile_res` | `Int` | `256` | Per-view tile resolution (atlas size = `tile_res*3` × `tile_res*2`). |
+| `world_size` | `Float` | `1.0` | World-space cube size used for depth unprojection. |
+| `sample_step` | `Int` | `4` | Pixel stride when extracting points (higher = faster). |
+| `depth_min` | `Float` | `0.05` | Treat depth below this as background. |
+| `voxel_size` | `Float` | `0.03` | VDB voxel size (lower = more detail, slower). |
+| `splat_radius_vox` | `Int` | `2` | Point splat radius in voxels (higher closes holes). |
+| `iso_value` | `Float` | `0.0` | Surface extraction threshold. |
+| `hard_surface` | `Bool` | `false` | Hard-surface mode for Surface Nets. |
+| `generate` | `Button` | `0` | Triggers atlas generation (local meshing happens on cook). |
+
+## Typical workflow
+
+1. Add `Nano To Mesh`.
+2. Write a consistent prompt (avoid “random pose changes”).
+3. Click **Generate**.
+4. Optionally connect `AutoUV` → `Nano HexPlanar Baker V2` for texturing.
+
+## Notes
+
+- The depth atlas is saved under `assets/textures/ai_nano_to_3d/` and referenced by the internal parameter `depth_atlas`.
+- Knowledge source: `Cunning3D_1.0/assets/knowledge/internal_nodes/NanoToMesh_agent.toml`.
+
+</Lang>
+
+<Lang lang="zh">
+
+# Nano To Mesh
+
+`Nano To Mesh` 会先让 Gemini 生成一个 **3x2 的正交深度图集**，再把深度反投影为点云，做 **点云 Splat → VDB(SDF)**，最后用 **Surface Nets**（同 `VDB To Polygons` 内核）提取出**闭合网格**。
+
+<Drawio file="content/docs/diagrams/nano-to-mesh-pipeline.drawio" height={280} title="Nano To Mesh 流程" />
+
+## 输入输出 (IO)
+
+| 端口 | 类型 | 说明 |
+|------|------|------|
+| 输入（可选） | `Geometry` | 可在 detail attribute 中携带 `__ai_reference_image_path` 作为参考图。 |
+| 输出 | `Geometry` | 重建后的表面网格。 |
+
+## 参数
+
+| 名称 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `prompt` | `String` | `"A stylized banana figurine, clean silhouette."` | 物体描述。 |
+| `reference_image` | `FilePath` | `""` | 可选参考图。 |
+| `tile_res` | `Int` | `256` | 单视角 tile 分辨率（图集大小 = `tile_res*3` × `tile_res*2`）。 |
+| `world_size` | `Float` | `1.0` | 深度反投影使用的世界空间包围盒尺寸。 |
+| `sample_step` | `Int` | `4` | 采样步长（越大越快，但点更少）。 |
+| `depth_min` | `Float` | `0.05` | 小于阈值视为背景。 |
+| `voxel_size` | `Float` | `0.03` | VDB 体素尺寸（越小越细，但更慢）。 |
+| `splat_radius_vox` | `Int` | `2` | 点云 Splat 半径（越大越容易闭合）。 |
+| `iso_value` | `Float` | `0.0` | 提面阈值。 |
+| `hard_surface` | `Bool` | `false` | 硬表面提面模式。 |
+| `generate` | `Button` | `0` | 触发深度图集生成（网格在 cook 时生成）。 |
+
+## 典型流程
+
+1. 放入 `Nano To Mesh`。
+2. 写稳定一致的提示词（避免“每个视角都变形”）。
+3. 点击 **Generate**。
+4. 需要贴图时，可接 `AutoUV` → `Nano HexPlanar Baker V2`。
+
+## 备注
+
+- 深度图集会保存到 `assets/textures/ai_nano_to_3d/`，内部参数名为 `depth_atlas`。
+- Knowledge 来源：`Cunning3D_1.0/assets/knowledge/internal_nodes/NanoToMesh_agent.toml`。
+
+</Lang>
+

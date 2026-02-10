@@ -1,0 +1,181 @@
+---
+title: Merge
+description: Combine multiple geometries into one
+icon: Package
+---
+
+<Lang lang="en">
+
+# Merge
+
+**Merge** combines multiple geometry inputs into a single geometry output. It sequentially merges points, primitives, attributes, and groups while preserving all data from all inputs.
+
+## Basic Concept
+
+<Drawio file="content/docs/diagrams/merge-concept.drawio" height={550} title="Basic Concept (Interactive)" />
+
+The Merge node takes multiple geometry inputs (via the **Multi** input port) and combines them into a single unified geometry.
+
+- **Input:** Multiple separate geometries (e.g., Model A, Model B, Model C)
+- **Output:** Single merged geometry containing all elements
+- **No Geometry Processing:** Merge only combines data; it does not modify or optimize geometry topology (unless points are coincident, they remain separate).
+
+---
+
+## Attribute Merging
+
+<Drawio file="content/docs/diagrams/merge-attributes.drawio" height={620} title="Attribute Merging (Interactive)" />
+
+The node merges attributes from all inputs **sequentially** by appending data to the target storage.
+
+### Behavior
+- **Sequential Append:** Attributes are processed in input order.
+- **Auto-Creation:** If an attribute exists in Input B but not Input A, it is created when processing Input B.
+- **Warning:** Because attributes are strictly appended, if the first input lacks an attribute that subsequent inputs have, the resulting attribute array may start empty or be misaligned with the point count. It is recommended to ensure consistent attributes across inputs.
+
+### Supported Types
+- **Scalars:** `f32`, `f64`, `i32`, `bool`
+- **Vectors:** `Vec2`, `Vec3`, `Vec4`, `DVec2`, `DVec3`, `DVec4`
+- **String:** Supported
+
+---
+
+## Group Merging
+
+<Drawio file="content/docs/diagrams/merge-groups.drawio" height={550} title="Group Merging (Interactive)" />
+
+Groups are bitmasks (lists of boolean flags). Merging them involves:
+1. **Pre-calculation:** The total number of points/primitives is calculated first.
+2. **Initialization:** Masks are created with the full size (Sum of all inputs).
+3. **Offset Setting:** For each input, its group membership is written into the mask at the correct offset.
+
+This ensures that points belonging to "Group A" in Input 1 remain in "Group A" in the merged output, while points from Input 2 (which might not be in "Group A") are correctly marked as false for that group.
+
+---
+
+## Vertex & Primitive Reconstruction
+
+<Drawio file="content/docs/diagrams/merge-vertex-mapping.drawio" height={550} title="Vertex ID Remapping (Interactive)" />
+
+Simply appending point arrays is not enough. Primitives (Polygons) reference points via **Vertex IDs** or **Point IDs**. These references must be updated.
+
+### The Remapping Process
+1. **Point Offset:** When merging Input B, we know Input A contributed $N$ points.
+2. **New Point ID:** A point at index $i$ in Input B becomes index $N + i$ in the output.
+3. **Vertex Remap:** Vertices in Input B that pointed to $P_i$ must now point to $P_{N+i}$.
+4. **Reconstruction:** Primitives are re-created using these new Vertex IDs.
+
+### Code Insight
+```rust
+// 1. Calculate new dense index: offset + old_dense
+let new_p_dense = point_offset + old_p_dense;
+
+// 2. Get new point ID from dense index
+if let Some(new_pid) = merged.points().get_id_from_dense(new_p_dense) {
+    // 3. Create new vertex mapping
+    let new_vid = merged.add_vertex(PointId::from(new_pid));
+    local_vid_map.insert(old_vid_idx.into(), new_vid);
+}
+```
+
+---
+
+## Parameters
+
+The Merge node has **no parameters**. It automatically processes all connected inputs.
+
+| Property | Value |
+|---------|-------|
+| **Port Type** | **Multi** (Variable count) |
+| **Port Name** | `Input` |
+| **Limit** | Unlimited inputs |
+
+</Lang>
+
+<Lang lang="zh">
+
+# Merge (合并)
+
+**Merge** 节点将多个几何体输入合并为一个单一的几何体输出。它按顺序合并点、图元、属性和组，同时保留所有输入的所有数据。
+
+## 基本概念
+
+<Drawio file="content/docs/diagrams/merge-concept.drawio" height={550} title="基本概念 (可交互)" />
+
+Merge 节点接受多个几何体输入（通过 **Multi** 输入端口），并将它们组合成一个统一的几何体。
+
+- **输入：** 多个独立的几何体（例如：模型 A、模型 B、模型 C）
+- **输出：** 包含所有元素的单一合并几何体
+- **无几何处理：** Merge 仅组合数据；它不会修改或优化几何拓扑（除非点重合，否则它们保持分离）。
+
+---
+
+## 属性合并
+
+<Drawio file="content/docs/diagrams/merge-attributes.drawio" height={620} title="属性合并 (可交互)" />
+
+节点按 **顺序** 将所有输入的属性追加到目标存储中。
+
+### 行为逻辑
+- **顺序追加：** 属性按输入顺序处理。
+- **自动创建：** 如果属性存在于输入 B 但不存在于输入 A，则在处理输入 B 时创建该属性。
+- **警告：** 由于属性是严格追加的，如果第一个输入缺少后续输入拥有的属性，结果属性数组可能会从空开始或与点数不对应（错位）。建议确保所有输入的属性一致。
+
+### 支持类型
+- **标量：** `f32`, `f64`, `i32`, `bool`
+- **向量：** `Vec2`, `Vec3`, `Vec4`, `DVec2`, `DVec3`, `DVec4`
+- **字符串：** 支持 String
+
+---
+
+## 组 (Group) 合并
+
+<Drawio file="content/docs/diagrams/merge-groups.drawio" height={550} title="组合并 (可交互)" />
+
+组本质上是位掩码（布尔标志列表）。合并它们涉及：
+1. **预计算：** 首先计算点/图元的总数。
+2. **初始化：** 创建全尺寸（所有输入之和）的掩码。
+3. **偏移设置：** 对于每个输入，将其组成员资格写入掩码的正确偏移位置。
+
+这确保了输入 1 中属于 "Group A" 的点在合并输出中仍属于 "Group A"，而输入 2（可能不在 "Group A" 中）的点在该组中被正确标记为 false。
+
+---
+
+## 顶点与图元重构
+
+<Drawio file="content/docs/diagrams/merge-vertex-mapping.drawio" height={550} title="顶点 ID 重映射 (可交互)" />
+
+仅仅追加点数组是不够的。图元（多边形）通过 **顶点 ID** 或 **点 ID** 引用点。这些引用必须更新。
+
+### 重映射流程
+1. **点偏移 (Offset)：** 合并输入 B 时，我们要知道输入 A 已经贡献了 $N$ 个点。
+2. **新点 ID：** 输入 B 中索引为 $i$ 的点，在输出中变为索引 $N + i$。
+3. **顶点重映射：** 输入 B 中指向 $P_i$ 的顶点，现在必须指向 $P_{N+i}$。
+4. **重构：** 使用这些新的顶点 ID 重新创建图元。
+
+### 代码实现细节
+```rust
+// 1. 计算新的稠密索引：偏移量 + 旧稠密索引
+let new_p_dense = point_offset + old_p_dense;
+
+// 2. 从稠密索引获取新点 ID
+if let Some(new_pid) = merged.points().get_id_from_dense(new_p_dense) {
+    // 3. 创建新的顶点映射
+    let new_vid = merged.add_vertex(PointId::from(new_pid));
+    local_vid_map.insert(old_vid_idx.into(), new_vid);
+}
+```
+
+---
+
+## 参数
+
+Merge 节点 **没有任何参数**。它自动处理所有连接的输入。
+
+| 属性 | 值 |
+|---------|-------|
+| **端口类型** | **Multi** (可变数量) |
+| **端口名称** | `Input` |
+| **限制** | 无限制输入数量 |
+
+</Lang>

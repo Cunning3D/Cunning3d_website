@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "id": "New-CDA09",
+      "title": "New-CDA09",
+      "author": "Cunning3D",
+      "image": "/banner.png",
+      "description": "New CDA09.cda",
+      "tags": [
+        "Example"
+      ],
+      "featured": false,
+      "cdaUrl": "/examples/New%20CDA09.cda"
+    }
+  ]
+}

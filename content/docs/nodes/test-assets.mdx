@@ -1,0 +1,83 @@
+---
+title: Test Assets
+description: Built-in hard-coded assets for smoke-testing (voxel teapot, dragon, cat).
+icon: Boxes
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+
+# Test Assets
+
+These nodes output **built-in, hard-coded voxel assets** embedded in the binary. They are intended for **smoke tests**, **render pipeline validation**, and quick viewport sanity checks without relying on external files.
+
+<Drawio file="content/docs/diagrams/test-assets-pipeline.drawio" height={300} title="Test Assets Pipeline" />
+
+## Nodes
+
+| Node | Output | Notes |
+|------|--------|------|
+| `Create Teapot (VOX)` | `Geometry (Voxel-backed)` | Deterministic teapot voxel asset. |
+| `Create Dragon (VOX)` | `Geometry (Voxel-backed)` | Larger silhouette to stress-test voxel display. |
+| `Create Cat (VOX)` | `Geometry (Voxel-backed)` | Small character asset for fast iteration. |
+| `Create Stanford Bunny (OBJ)` | `Geometry (Mesh)` | Local OBJ asset; auto-generates `@uv` if missing. |
+| `Create Teapot (OBJ)` | `Geometry (Mesh)` | Local OBJ asset; auto-generates `@uv` if missing. |
+| `Create Suzanne (OBJ)` | `Geometry (Mesh)` | Local OBJ asset; auto-generates `@uv` if missing. |
+| `... more (OBJ)` | `Geometry (Mesh)` | All `assets/models/common-3d-test-models/*.obj` are exposed as nodes. |
+
+## IO
+
+| Port | Type | Notes |
+|------|------|------|
+| Input | `None` | Generator nodes. |
+| Output | `Voxel` | Implemented as `Geometry` that carries voxel detail attributes. |
+| Output | `Geometry` | OBJ nodes output mesh geometry; `@uv` is ensured on vertex domain. |
+
+## Notes
+
+- These nodes embed `.vox` bytes via compile-time include and register the voxel grid into the renderer cache.
+- OBJ test nodes embed model bytes at compile time and ensure `@uv` (spherical projection) if the file does not provide texcoords. Mesh scale is normalized so different models appear at a consistent size in the viewport.
+- Use `Transform` after the node to reposition/scale in the scene.
+
+</Lang>
+
+<Lang lang="zh">
+
+# Test Assets
+
+这些节点会输出**内置、硬编码**（编译期嵌入到二进制）的体素测试资产，用于**冒烟测试**、**渲染管线验证**以及快速视口自检，不依赖外部文件路径。
+
+<Drawio file="content/docs/diagrams/test-assets-pipeline.drawio" height={300} title="Test Assets 工作流" />
+
+## 节点列表
+
+| 节点 | 输出 | 说明 |
+|------|------|------|
+| `Create Teapot (VOX)` | `几何（体素承载）` | 确定性的 teapot 体素资产。 |
+| `Create Dragon (VOX)` | `几何（体素承载）` | 更大的轮廓，用于压力测试体素显示。 |
+| `Create Cat (VOX)` | `几何（体素承载）` | 小型角色资产，适合快速迭代。 |
+| `Create Stanford Bunny (OBJ)` | `几何（网格）` | 本地 OBJ 资产；若缺失则自动生成 `@uv`。 |
+| `Create Teapot (OBJ)` | `几何（网格）` | 本地 OBJ 资产；若缺失则自动生成 `@uv`。 |
+| `Create Suzanne (OBJ)` | `几何（网格）` | 本地 OBJ 资产；若缺失则自动生成 `@uv`。 |
+| `... 更多 (OBJ)` | `几何（网格）` | `assets/models/common-3d-test-models/*.obj` 都会以节点形式提供。 |
+
+## 输入输出 (IO)
+
+| 端口 | 类型 | 说明 |
+|------|------|------|
+| 输入 | `None` | 生成器节点。 |
+| 输出 | `Voxel` | 以带体素 detail attributes 的 `Geometry` 形式实现。 |
+| 输出 | `Geometry` | OBJ 节点输出网格几何；会保证顶点域存在 `@uv`。 |
+
+## 备注
+
+- 节点在编译期嵌入 `.vox` 字节，并在运行时注册到体素渲染缓存。
+- OBJ 测试节点在编译期嵌入模型字节，若无 texcoord 则以球面投影方式补齐 `@uv`；并对网格做统一尺度归一化，避免不同模型比例差异导致的视口体验问题。
+- 需要移动/缩放时，直接在后面接 `Transform`。
+
+</Lang>
+

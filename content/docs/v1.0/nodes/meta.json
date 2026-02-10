@@ -1,0 +1,5 @@
+{
+  "title": "Nodes (v1.0)",
+  "icon": "Boxes",
+  "pages": ["boolean", "file", "foreach"]
+}

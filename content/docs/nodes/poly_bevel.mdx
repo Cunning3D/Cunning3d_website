@@ -1,0 +1,188 @@
+---
+title: PolyBevel
+description: Bevels polygon edges and corners.
+icon: Boxes
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+# PolyBevel
+
+The **PolyBevel Node** is a high-performance operator for rounding edges and corners of polygonal meshes. It is designed to handle complex topology, including n-gons and non-manifold geometry, by employing a multi-stage **Virtual Mesh (VMesh)** reconstruction pipeline.
+
+Unlike simple chamfer tools, PolyBevel creates curvature-continuous surfaces using **Superellipse** profiles and robustly patches 3-way (and N-way) corners using cubic subdivision surfaces.
+
+## Pipeline Overview
+
+The bevel operation transforms sharp edges into rounded surfaces through a distinct geometric pipeline.
+
+<Drawio file="content/docs/diagrams/polybevel-pipeline.drawio" height={250} title="Processing Pipeline" />
+
+1.  **Inset Faces**: First, the algorithm shrinks the original faces connected to selected edges. New "corner vertices" are calculated by intersecting offset lines on the face plane.
+2.  **Profile Generation**: Along each beveled edge, a curved profile is generated connecting the new corner vertices. The shape is controlled by the **Superellipse** formula.
+3.  **VMesh Patching**: Where edges meet (corners), a **Virtual Mesh (VMesh)** is constructed. This grid is filled using bicubic interpolation to ensure smooth continuity between incoming profiles.
+
+## Parameters
+
+### Selection
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Group** | String | "" | Selection group of edges to bevel. If empty, all manifold edges are selected. |
+
+### Main Control
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Affect** | Menu | Edges | **Edges**: Bevel selected edges.<br/>**Vertices**: Bevel selected vertices only (creating chamfered corners). |
+| **Offset Type** | Menu | Offset | **Offset**: Distance from original edge (Euclidean).<br/>**Width**: Width of the new face.<br/>**Depth**: Perpendicular depth.<br/>**Percent**: Percentage of edge length. |
+| **Amount** | Float | 0.1 | The magnitude of the bevel operation. |
+| **Segments** | Int | 1 | Number of subdivisions for the rounded curve. |
+
+### Profile & Shape
+<Drawio file="content/docs/diagrams/polybevel-profiles.drawio" height={200} title="Superellipse Profile Shape" />
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Shape** | Float | 0.5 | Controls the curvature.<br/>**0.0**: Concave (Square In).<br/>**0.5**: Circular Arc (Default).<br/>**1.0**: Linear/Convex (Square Out). |
+| **Type** | Menu | Superellipse | **Superellipse**: Procedural curve.<br/>**Custom**: User-defined curve ramp (Coming Soon). |
+
+### Geometry & Mitering
+<Drawio file="content/docs/diagrams/polybevel-miter.drawio" height={200} title="Outer Miter Types" />
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Clamp Overlap**| Toggle | On | Prevents bevels from overshooting and inverting geometry. |
+| **Loop Slide** | Toggle | On | Slides vertices along adjacent unselected edges to maintain even width. |
+| **Outer Miter** | Menu | Sharp | How to handle sharp outer corners.<br/>**Sharp**: Extends edges to a point.<br/>**Patch**: Fills with a polygon.<br/>**Arc**: Rounds the corner. |
+
+## Technical Details
+
+### VMesh Corner Patching
+
+For a corner with $N$ incoming beveled edges, the solver constructs a $N \times 2$ grid (for simple cases) or a dynamically subdivided surface (for high segment counts).
+
+The internal logic uses **bicubic interpolation** to blend the curvature of incoming profiles:
+
+$$
+P(u, v) = \sum_{i=0}^3 \sum_{j=0}^3 a_{ij} u^i v^j
+$$
+
+Where coefficients $a_{ij}$ are derived from the tangent vectors of the edge profiles. This ensures $G^1$ (tangent) continuity at the boundaries where the corner patch meets the edge strips.
+
+### Offset Calculation (Inset Step)
+
+For a vertex $V$ on a face with normal $N$, connected to edges with directions $D_{in}$ and $D_{out}$, the offset vertex position is solved by finding the intersection of two lines in the 2D plane defined by the face.
+
+The projection basis vectors $U, V$ are:
+$$
+U = \text{normalize}(D_{out})
+$$
+$$
+V = \text{normalize}(N \times U)
+$$
+
+This guarantees that the bevel width is consistent regardless of the angle between edges.
+
+### Architecture & Optimization Notes
+
+This implementation adopts a **Hybrid Architecture** approach. While Cunning3D's core data structure is ECS-based (Structure of Arrays), complex topological operations like beveling require rich adjacency queries (e.g., finding all faces sharing a vertex).
+
+1.  **Graph Construction**: The node temporarily builds a lightweight Half-Edge Graph (`BevelGraph`) from the input geometry. This allows for $O(1)$ topological navigation during the complex inset and patching phases.
+2.  **Algorithm Correctness**: The core logic (VMesh, Miter Patterns, Sliding) mirrors industry-standard implementations (similar to Blender's BMesh operator), ensuring high-quality, artifact-free results even on N-gons.
+3.  **Performance & Future Optimization**:
+    -   Currently, the graph build and traversal are largely single-threaded due to the interconnected nature of topology.
+    -   **Future Parallelism**: Calculating offsets for disjoint edge islands can be parallelized. VMesh generation for independent corners is also a candidate for massive parallelism (Rayon).
+    -   **Memory**: The temporary graph incurs an overhead. Future versions may implement a "Zero-Copy Adjacency Index" to operate directly on the SoA data without full graph allocation.
+
+</Lang>
+
+<Lang lang="zh">
+# 多边形倒角 (PolyBevel)
+
+**PolyBevel 节点** 是一个用于圆滑多边形网格边缘和角点的高性能算子。它专为处理复杂的拓扑结构（包括 N-gons 和非流形几何体）而设计，采用多阶段的 **虚拟网格 (VMesh)** 重建管线。
+
+与简单的倒角工具不同，PolyBevel 使用 **超椭圆 (Superellipse)** 轮廓创建曲率连续的表面，并使用三次细分曲面 (Cubic Subdivision) 鲁棒地填充三叉（及 N 叉）角点。
+
+## 处理管线 (Pipeline Overview)
+
+倒角操作通过一个独特的几何管线将锐利边缘转换为圆滑表面。
+
+<Drawio file="content/docs/diagrams/polybevel-pipeline.drawio" height={250} title="处理流程示意" />
+
+1.  **面内缩 (Inset Faces)**：首先，算法收缩与选中边相连的原始面片。通过在面所在的平面上计算偏移线的交点，确定新的“角点顶点”。
+2.  **轮廓生成 (Profile Generation)**：沿每条倒角边，生成连接新角点顶点的曲线轮廓。形状由 **超椭圆** 公式控制。
+3.  **VMesh 填充 (VMesh Patching)**：在边缘交汇处（角点），构建一个 **虚拟网格 (Virtual Mesh, VMesh)**。该网格使用双三次插值填充，以确保与传入轮廓之间的平滑连续性。
+
+## 参数 (Parameters)
+
+### 选择 (Selection)
+| 参数名 | 类型 | 默认值 | 描述 |
+| :--- | :--- | :--- | :--- |
+| **Group** | String | "" | 要倒角的边选择组。如果为空，则选择所有流形边。 |
+
+### 主控制 (Main Control)
+| 参数名 | 类型 | 默认值 | 描述 |
+| :--- | :--- | :--- | :--- |
+| **Affect** | Menu | Edges | **Edges**：倒角选中的边。<br/>**Vertices**：仅倒角选中的顶点（创建切角）。 |
+| **Offset Type** | Menu | Offset | **Offset**：距原始边缘的欧几里得距离。<br/>**Width**：新面的宽度。<br/>**Depth**：垂直深度。<br/>**Percent**：边长的百分比。 |
+| **Amount** | Float | 0.1 | 倒角操作的大小幅度。 |
+| **Segments** | Int | 1 | 圆角曲线的细分段数。 |
+
+### 轮廓与形状 (Profile & Shape)
+<Drawio file="content/docs/diagrams/polybevel-profiles.drawio" height={200} title="超椭圆轮廓形状" />
+
+| 参数名 | 类型 | 默认值 | 描述 |
+| :--- | :--- | :--- | :--- |
+| **Shape** | Float | 0.5 | 控制曲率。<br/>**0.0**：内凹 (Square In)。<br/>**0.5**：圆弧 (默认)。<br/>**1.0**：线性/外凸 (Square Out)。 |
+| **Type** | Menu | Superellipse | **Superellipse**：程序化曲线。<br/>**Custom**：用户自定义曲线（即将推出）。 |
+
+### 几何与斜接 (Geometry & Mitering)
+<Drawio file="content/docs/diagrams/polybevel-miter.drawio" height={200} title="外角处理类型" />
+
+| 参数名 | 类型 | 默认值 | 描述 |
+| :--- | :--- | :--- | :--- |
+| **Clamp Overlap**| Toggle | On | 防止倒角过大导致几何体反转/重叠。 |
+| **Loop Slide** | Toggle | On | 使顶点沿相邻的未选中边滑动，以保持均匀宽度。 |
+| **Outer Miter** | Menu | Sharp | 如何处理锐利的外角。<br/>**Sharp**：延长边缘到一个尖点。<br/>**Patch**：用多边形填充。<br/>**Arc**：圆滑角点。 |
+
+## 技术细节 (Technical Details)
+
+### VMesh 角点填充
+
+对于有 $N$ 条传入倒角边的角点，求解器会构建一个 $N \times 2$ 的网格（简单情况）或动态细分的曲面（高段数情况）。
+
+内部逻辑使用 **双三次插值 (Bicubic Interpolation)** 来混合传入轮廓的曲率：
+
+$$
+P(u, v) = \sum_{i=0}^3 \sum_{j=0}^3 a_{ij} u^i v^j
+$$
+
+其中系数 $a_{ij}$ 导自边缘轮廓的切向量。这确保了在角点补片与边缘带相接的边界处具有 $G^1$（切线）连续性。
+
+### 偏移计算 (内缩步骤)
+
+对于面法线为 $N$ 的面上的一点 $V$，连接方向为 $D_{in}$ 和 $D_{out}$ 的两条边，其偏移顶点位置是通过求解该面定义的 2D 平面上的两条直线的交点得到的。
+
+投影基向量 $U, V$ 为：
+$$
+U = \text{normalize}(D_{out})
+$$
+$$
+V = \text{normalize}(N \times U)
+$$
+
+这保证了无论边缘之间的夹角如何，倒角宽度都能保持一致。
+
+### 架构与优化说明 (Architecture & Optimization)
+
+本实现采用了 **混合架构 (Hybrid Architecture)** 方法。虽然 Cunning3D 的核心数据结构是基于 ECS（数组结构，SoA）的，但像倒角这样复杂的拓扑操作需要丰富的邻接查询（例如，查找共享一个顶点的所有面）。
+
+1.  **图构建 (Graph Construction)**：该节点从输入几何体临时构建一个轻量级的半边图 (`BevelGraph`)。这允许在复杂的内缩和填充阶段进行 $O(1)$ 的拓扑导航。
+2.  **算法正确性**：核心逻辑（VMesh、斜接模式、滑动）反映了业界标准的实现（类似于 Blender 的 BMesh 算子），确保即使在 N-gons 上也能获得高质量、无伪影的结果。
+3.  **性能与未来优化**：
+    -   目前，由于拓扑的相互连接性质，图的构建和遍历主要是单线程的。
+    -   **未来并行化**：计算不相交边缘岛的偏移可以并行化。独立角点的 VMesh 生成也是大规模并行 (Rayon) 的候选者。
+    -   **内存**：临时图会带来开销。未来版本可能会实现“零拷贝邻接索引”，以便在不进行全图分配的情况下直接在 SoA 数据上操作。
+
+</Lang>

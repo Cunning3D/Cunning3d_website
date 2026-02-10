@@ -1,0 +1,89 @@
+---
+title: Cunning Engine
+description: The High-Performance Integration Layer for Unity & Beyond
+icon: Cpu
+---
+
+## Overview
+
+<Lang lang="zh">
+
+**Cunning Engine** 是让 Cunning3D 资产（CDA）在其他宿主中运行的核心集成层。
+
+不同于传统的 "DCC 桥接"（通常需要后台运行一个庞大的 DCC 进程并通过 Socket 通信），Cunning Engine 是一个**轻量级、同进程的动态链接库**。它将完整的 Cunning 几何内核直接嵌入到 Unity 游戏引擎中，提供**零延迟**的交互体验。
+
+</Lang>
+
+<Lang lang="en">
+
+**Cunning Engine** is the core integration layer that empowers Cunning3D Assets (CDA) to run inside other host applications.
+
+Unlike traditional "DCC Bridges" (which often require a heavy background process communicating via sockets), Cunning Engine is a **lightweight, in-process dynamic library**. It embeds the complete Cunning geometry kernel directly into the Unity game engine, delivering **zero-latency** interactivity.
+
+</Lang>
+
+## Architecture Highlights
+
+<Lang lang="zh">
+
+### 🛡️ 崩溃隔离 (Crash-Proof FFI)
+**Rust 的安全性延伸到了 C#。**
+我们在 FFI 边界实现了严密的 `catch_unwind` 保护机制。即使某个实验性节点的 Rust 代码发生 Panic，**绝对不会导致 Unity 编辑器崩溃**。引擎会优雅地捕获错误，报告异常，而你的项目安然无恙。
+
+### 🚀 In-Process Direct API
+由于 Cunning Engine 直接作为 DLL 加载进 Unity 进程空间：
+- **无 IPC 开销**：没有 TCP/IP 或管道通信的瓶颈。
+- **无序列化开销**：避开了昂贵的 JSON/Protobuf 序列化，几何数据通过高速 `memcpy` 直接传输。
+- **瞬时反馈**：拖动滑块，Unity 视口立即更新，就像原生组件一样流畅。
+
+### 🧵 异步作业系统 (Async Job System)
+为了不阻塞 Unity 的主线程（UI/渲染），Cunning Engine 内置了基于 Rust 线程池的**异步 Cook 系统**。
+- **非阻塞**：你可以一次提交 100 个复杂的布尔运算任务，Unity 界面依然保持丝滑。
+- **智能调度**：支持任务取消与优先级管理。如果用户快速拖动滑块，过期的计算任务会被自动丢弃，只计算最后一帧。
+
+</Lang>
+
+<Lang lang="en">
+
+### 🛡️ Crash-Proof FFI
+**Rust's safety extends to C#.**
+We implement rigorous `catch_unwind` protection at the FFI boundary. Even if a node's Rust code panics, **it will absolutely not crash the Unity Editor**. The engine gracefully catches the error and reports it, keeping your project safe.
+
+### 🚀 In-Process Direct API
+Because Cunning Engine loads directly into the Unity process space as a DLL:
+- **No IPC Overhead**: No bottlenecks from TCP/IP or pipe communication.
+- **Zero Serialization**: Bypasses expensive JSON/Protobuf steps; geometry is transferred via high-speed `memcpy`.
+- **Instant Feedback**: Drag a slider, and the Unity viewport updates instantly, just like a native component.
+
+### 🧵 Async Job System
+To prevent blocking Unity's main thread (UI/Rendering), Cunning Engine features a built-in **Async Cook System** powered by Rust threads.
+- **Non-Blocking**: Submit 100 complex boolean operations at once, and the Unity UI remains silky smooth.
+- **Smart Scheduling**: Supports cancellation and prioritization. If a user drags a slider quickly, stale tasks are automatically dropped, computing only the final frame.
+
+</Lang>
+
+## Integration Scope
+
+<Lang lang="zh">
+
+| Platform | Integration Type | Status |
+|----------|------------------|--------|
+| **Unity** | Native Plugin (`.dll` / `.so`) | ✅ Production Ready |
+| **Unreal** | Native Plugin (Planned) | 🚧 In Roadmap |
+| **Custom C++** | C ABI Header | ✅ Supported |
+
+Cunning Engine 的核心目标是：**一次编写资产，随处高效运行。**
+
+</Lang>
+
+<Lang lang="en">
+
+| Platform | Integration Type | Status |
+|----------|------------------|--------|
+| **Unity** | Native Plugin (`.dll` / `.so`) | ✅ Production Ready |
+| **Unreal** | Native Plugin (Planned) | 🚧 In Roadmap |
+| **Custom C++** | C ABI Header | ✅ Supported |
+
+The core goal of Cunning Engine is: **Author assets once, run efficiently everywhere.**
+
+</Lang>

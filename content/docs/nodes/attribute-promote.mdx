@@ -1,0 +1,39 @@
+---
+title: Attribute Promote
+description: Convert attributes between different geometry domains (e.g., Point to Vertex).
+icon: ArrowUpRight
+---
+
+<Lang lang="en">
+The **Attribute Promote** node converts attributes from one geometric domain (class) to another. For example, you can average per-vertex colors to create per-point colors, or promote point positions to primitive centers.
+</Lang>
+
+<Lang lang="zh">
+**Attribute Promote (属性提升)** 节点将属性从一个几何域（类）转换为另一个几何域。例如，您可以平均逐顶点颜色以创建逐点颜色，或将点位置提升为图元中心。
+</Lang>
+
+## Supported Conversions (支持的转换)
+
+| Source | Destination | Behavior |
+| :--- | :--- | :--- |
+| **Point** | **Vertex** | **Copy**: The value at the point is copied to all vertices sharing that point. |
+| **Vertex** | **Point** | **Aggregate**: Values from all vertices sharing a point are combined (Average, Sum, Min, Max). |
+| **Vertex** | **Primitive** | **Aggregate**: Values from all vertices belonging to the primitive are combined. |
+
+## Parameters (参数)
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Name** | `String` | `@Cd` | The name of the attribute to promote. |
+| **Source Level** | `Menu` | `Point` | Original domain of the attribute (`Point`, `Vertex`). |
+| **Destination Level** | `Menu` | `Vertex` | Target domain (`Point`, `Vertex`, `Primitive`). |
+| **Method** | `Menu` | `Average` | How to combine multiple values when reducing domains. <br/>- **Average**: Mean value.<br/>- **Sum**: Total value.<br/>- **Min**: Smallest value.<br/>- **Max**: Largest value. |
+| **Keep Original** | `Bool` | `True` | If false, the original attribute is deleted after promotion. |
+
+<Lang lang="en">
+> **Note**: Promoting `@P` (Position) from Point level is generally not allowed as it defines the geometry itself. To move geometry to primitive centers, promote `@P` to a new attribute on Primitive, then use it to drive a Transform or copy points.
+</Lang>
+
+<Lang lang="zh">
+> **注意**: 通常不允许从 Point 级别提升 `@P` (位置)，因为它定义了几何体本身。要将几何体移动到图元中心，请将 `@P` 提升为 Primitive 上的新属性，然后使用它来驱动变换或复制点。
+</Lang>

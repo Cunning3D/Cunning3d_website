@@ -1,0 +1,162 @@
+---
+title: ForEach Loop
+description: Iterate over geometry pieces or numbers, similar to Houdini For-Each Loops.
+icon: Repeat
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Drawio } from '@/components/mdx/drawio';
+import { Lang } from '@/components/mdx/lang';
+
+<Lang lang="en">
+# ForEach Loop
+
+The **ForEach Loop** system allows you to iterate over geometry pieces, points, primitives, or simply run a loop a fixed number of times. It is architecturally similar to Houdini's For-Each Loops but includes Cunning-specific optimizations like **GPU Loop Fusion** and **Parallel Execution**.
+
+## Core Concepts
+
+A loop consists of a **ForEach Begin** node and a **ForEach End** node, linked by a matching `Block ID`.
+
+<Drawio file="content/docs/diagrams/foreach-loop.drawio" />
+
+1.  **Begin Node**: Defines the input for each iteration (e.g., a single piece, the accumulated feedback result, or metadata).
+2.  **Loop Body**: Any chain of nodes between Begin and End.
+3.  **End Node**: Gathers the results. It controls the iteration method (Pieces vs. Count) and how results are combined (Merge vs. Feedback).
+
+## Iteration Methods
+
+### 1. By Pieces (Parallelizable)
+Splits the input geometry into sub-groups based on an attribute (default: `class` or `name`) or connectivity.
+- **Example**: Exploding a fractured mesh, processing each shard independently.
+- **Optimization**: If the loop body has no side effects (no feedback), Cunning executes iterations in **Parallel** using a thread pool.
+
+### 2. By Count (Feedback Loop)
+Runs the loop body $N$ times.
+- **Example**: Iterative smoothing, fractal generation, simulation steps.
+- **Feedback**: The output of iteration $i$ becomes the input of iteration $i+1$.
+
+## Technical Implementation
+
+### Graph Executor & Compilation
+Unlike simple interpreters, Cunning's `GraphExecutor` attempts to **compile** the loop body into a linear operation list (`CompiledBlock`).
+- **Topology Sorting**: It analyzes dependencies within the block to determine the execution order.
+- **Context Isolation**: Each iteration runs in an isolated `ExecutionContext`, ensuring thread safety.
+
+### GPU Loop Fusion (High-Performance)
+Cunning implements a cutting-edge optimization called **GPU Loop Fusion**.
+If the loop body consists purely of **Attribute Kernel (GPU)** nodes (e.g., linear math like `P * 2 + 1`):
+1.  The executor detects this linear chain.
+2.  It "folds" the operations into a single affine transform (Matrix/Vector math).
+3.  It executes a **Single GPU Kernel** on the entire input geometry at once.
+
+> **Result**: A loop that would normally dispatch 10,000 GPU kernels (one per piece) is reduced to **1 dispatch**. This yields up to **10,000x** performance improvement.
+
+### Cache Epochs
+To handle caching in dynamic loops without massive memory churn, Cunning uses an **Epoch-based Caching** strategy.
+- Instead of clearing the cache every iteration, we increment a `scope_epoch`.
+- Nodes check if their cached data matches the current epoch.
+- This allows "hot" data to persist while invalidating "stale" data from previous iterations naturally.
+
+## Comparison with Houdini
+
+| Feature | Houdini (For-Each) | Cunning (ForEach) | Advantage |
+| :--- | :--- | :--- | :--- |
+| **Execution Model** | Serial Execution (mostly). Compile Blocks can optimize linear chains. | **Automatic Parallel Execution** for independent pieces. | **Cunning**: Multithreading by default for independent tasks. |
+| **Loop Fusion** | Compile Blocks fuse some VEX ops, but context switch overhead remains. | **GPU Loop Fusion**: Folds entire linear chains into a single GPU dispatch. | **Cunning**: Massive speedup (up to 10,000x) for attribute math. |
+| **Data Flow** | Copy-on-Write (heavy for large meshes). | **Zero-Copy Views** & **Cache Epochs**. | **Cunning**: Lower memory footprint during iteration. |
+| **Feedback** | Explicit Feedback Block Begin/End. | Implicit Feedback handling in Graph Executor. | **Houdini**: More explicit control. **Cunning**: Simpler graph. |
+| **Debugging** | Single Pass parameter. | Single Pass parameter + Value selection. | **Equal**: Both provide robust debugging tools. |
+
+## Parameters
+
+### ForEach Begin
+| Parameter | Description |
+| :--- | :--- |
+| **Method** | **Fetch Input**: Get global input.<br/>**Extract Piece**: Get the current piece (for By Piece loops).<br/>**Fetch Feedback**: Get result of previous iteration.<br/>**Fetch Metadata**: Get iteration info (index, count). |
+
+### ForEach End
+| Parameter | Description |
+| :--- | :--- |
+| **Iteration Method** | **By Pieces**: Iterate over elements.<br/>**By Count**: Fixed number of loops. |
+| **Gather Method** | **Merge Results**: Union all iteration outputs (Parallelizable).<br/>**Feedback**: Output only the last iteration's result. |
+| **Piece Attribute** | The attribute name to split by (e.g., `class`). |
+| **Single Pass** | Debug mode to run only one specific iteration. |
+
+</Lang>
+
+<Lang lang="zh">
+# ForEach 循环 (ForEach Loop)
+
+**ForEach Loop** 系统允许您遍历几何碎片、点、图元，或简单地按固定次数循环。它在架构上类似于 Houdini 的 For-Each Loops，但包含了 Cunning 特有的优化，如 **GPU 循环融合 (GPU Loop Fusion)** 和 **并行执行**。
+
+## 核心概念
+
+一个循环由 **ForEach Begin** 节点和 **ForEach End** 节点组成，通过匹配的 `Block ID` 关联。
+
+<Drawio file="content/docs/diagrams/foreach-loop.drawio" />
+
+1.  **Begin 节点**：定义每次迭代的输入（例如：单个碎片、累积的反馈结果或元数据）。
+2.  **循环体 (Loop Body)**：Begin 和 End 之间的任何节点链。
+3.  **End 节点**：收集结果。它控制迭代方式（按碎片 vs 按次数）以及结果如何合并（合并 vs 反馈）。
+
+## 迭代方式
+
+### 1. 按碎片 (By Pieces) - 可并行
+根据属性（默认：`class` 或 `name`）或连通性将输入几何体拆分为子组。
+- **示例**：炸开破碎的网格，独立处理每个碎片。
+- **优化**：如果循环体没有副作用（无反馈依赖），Cunning 会使用线程池**并行 (Parallel)** 执行迭代。
+
+### 2. 按次数 (By Count) - 反馈循环
+运行循环体 $N$ 次。
+- **示例**：迭代平滑、分形生成、模拟步骤。
+- **反馈 (Feedback)**：第 $i$ 次迭代的输出成为第 $i+1$ 次迭代的输入。
+
+## 技术实现 (Technical Implementation)
+
+### 图执行器与编译 (Graph Executor & Compilation)
+与简单的解释器不同，Cunning 的 `GraphExecutor` 尝试将循环体**编译**为线性操作列表 (`CompiledBlock`)。
+- **拓扑排序**：分析块内的依赖关系以确定执行顺序。
+- **上下文隔离**：每次迭代都在隔离的 `ExecutionContext` 中运行，确保线程安全。
+
+### GPU 循环融合 (GPU Loop Fusion)
+Cunning 实现了一项前沿优化技术：**GPU 循环融合**。
+如果循环体完全由 **Attribute Kernel (GPU)** 节点组成（例如：线性数学运算如 `P * 2 + 1`）：
+1.  执行器检测到此线性链。
+2.  它将这些操作“折叠”为单个仿射变换（矩阵/向量数学）。
+3.  它对整个输入几何体一次性执行**单个 GPU Kernel**。
+
+> **结果**：原本需要调度 10,000 次 GPU Kernel（每个碎片一次）的循环被减少为 **1 次调度**。这带来了高达 **10,000倍** 的性能提升。
+
+### 缓存时代 (Cache Epochs)
+为了在动态循环中处理缓存而不产生巨大的内存抖动，Cunning 使用了 **基于 Epoch 的缓存 (Epoch-based Caching)** 策略。
+- 我们不清除每次迭代的缓存，而是递增 `scope_epoch`。
+- 节点检查其缓存数据是否与当前 epoch 匹配。
+- 这允许“热”数据保留，同时自然地使前次迭代的“陈旧”数据失效。
+
+## 与 Houdini 对比 (Comparison with Houdini)
+
+| 特性 | Houdini (For-Each) | Cunning (ForEach) | 优势对比 |
+| :--- | :--- | :--- | :--- |
+| **执行模式** | 主要是串行。Compile Blocks 可以优化部分线性链。 | **自动并行执行**（针对独立碎片）。 | **Cunning**：独立任务默认多线程并行。 |
+| **循环融合** | Compile Blocks 可融合部分 VEX 操作，但仍有上下文切换开销。 | **GPU 循环融合**：将整个线性链折叠为单次 GPU 调度。 | **Cunning**：对于属性数学运算有巨大加速 (可达 10000x)。 |
+| **数据流** | 写时复制 (Copy-on-Write)，大网格开销较重。 | **零拷贝视图 (Zero-Copy Views)** & **缓存 Epochs**。 | **Cunning**：迭代期间内存占用更低。 |
+| **反馈机制** | 显式的 Feedback Block Begin/End 节点。 | Graph Executor 中隐式处理反馈。 | **Houdini**：控制更显式。**Cunning**：图表更简洁。 |
+| **调试** | Single Pass 参数。 | Single Pass 参数 + 基于值的选择。 | **持平**：都提供了强大的调试工具。 |
+
+## 参数说明
+
+### ForEach Begin
+| 参数 | 描述 |
+| :--- | :--- |
+| **Method** | **Fetch Input**：获取全局输入。<br/>**Extract Piece**：获取当前碎片（用于按碎片循环）。<br/>**Fetch Feedback**：获取上一次迭代的结果。<br/>**Fetch Metadata**：获取迭代信息（索引、总数）。 |
+
+### ForEach End
+| 参数 | 描述 |
+| :--- | :--- |
+| **Iteration Method** | **By Pieces**：遍历元素。<br/>**By Count**：固定次数循环。 |
+| **Gather Method** | **Merge Results**：合并所有迭代输出（可并行）。<br/>**Feedback**：仅输出最后一次迭代的结果。 |
+| **Piece Attribute** | 用于拆分的属性名（例如 `class`）。 |
+| **Single Pass** | 调试模式，仅运行特定的一次迭代。 |
+
+</Lang>

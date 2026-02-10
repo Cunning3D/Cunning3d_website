@@ -1,0 +1,134 @@
+---
+title: Unity Integration
+description: Setup and usage in Unity
+icon: Gamepad2
+---
+
+## Installation
+
+### 1. Copy DLL
+
+Copy `cunning_core_ffi.dll` to your project:
+
+```
+Assets/
+└── Plugins/
+    └── x86_64/
+        └── cunning_core_ffi.dll
+```
+
+### 2. Add C# Bindings
+
+Copy `NativeMethods.cs` to your Scripts folder.
+
+### 3. Initialize
+
+```csharp
+void Awake() {
+    NativeMethods.cunning_init();
+}
+```
+
+## Using CDA Assets
+
+### Inspector Workflow
+
+1. Drag `.cda` file into scene
+2. `CunningCDAInstance` component auto-created
+3. Adjust parameters in Inspector
+4. Click **Cook**
+
+### Code Workflow
+
+```csharp
+public class ProceduralSpawner : MonoBehaviour
+{
+    public CDAAssetObject cdaAsset;
+    
+    void Start()
+    {
+        var instance = gameObject.AddComponent<CunningCDAInstance>();
+        instance.asset = cdaAsset;
+        instance.SetParam("size", 2.0f);
+        instance.Cook();
+    }
+}
+```
+
+## Direct API
+
+Create geometry without CDA files:
+
+```csharp
+void GenerateMesh()
+{
+    // Create primitives
+    ulong cube = NativeMethods.cunning_geo_create_cube(1.0f, 2, 2, 2);
+    ulong sphere = NativeMethods.cunning_geo_create_sphere(0.5f, 16, 32);
+    
+    // Boolean subtract
+    ulong result = NativeMethods.cunning_op_boolean(cube, sphere, 2);
+    
+    // Extract mesh
+    uint vertCount = NativeMethods.cunning_geo_get_vertex_count(result);
+    float[] verts = new float[vertCount * 3];
+    NativeMethods.cunning_geo_copy_vertices(result, verts);
+    
+    // Apply to MeshFilter
+    ApplyToMesh(verts, indices);
+    
+    // Cleanup
+    NativeMethods.cunning_geo_release(cube);
+    NativeMethods.cunning_geo_release(sphere);
+    NativeMethods.cunning_geo_release(result);
+}
+```
+
+## Async Cooking
+
+For complex CDAs, use async cooking:
+
+```csharp
+IEnumerator CookAsync()
+{
+    ulong jobId = NativeMethods.cunning_cda_submit(
+        cdaId, instanceId, generation, 
+        paramsJson, inputs, inputCount
+    );
+    
+    // Poll until ready
+    while (true)
+    {
+        uint status = NativeMethods.cunning_job_poll(jobId);
+        if (status == 2) break; // Ready
+        if (status == 3) { Debug.LogError("Cook failed"); yield break; }
+        yield return null;
+    }
+    
+    // Get result
+    ulong outputGeo = NativeMethods.cunning_job_get_output_handle(jobId, 0);
+    ApplyGeometry(outputGeo);
+}
+```
+
+## Runtime Deployment
+
+For shipped builds, use the runtime DLL:
+
+| Build Type | DLL |
+|------------|-----|
+| Editor | `cunning_core_ffi.dll` (full) |
+| Standalone | `cunning_core_ffi_runtime.dll` |
+
+The runtime DLL excludes editor-only operators, reducing size from ~15 MB to ~8 MB.
+
+## Best Practices
+
+<Callout type="tip">
+Use `generation` counter to cancel outdated cook jobs automatically.
+</Callout>
+
+- Pool geometry handles when possible
+- Cook asynchronously for complex assets
+- Release handles when done
+- Use runtime DLL for builds

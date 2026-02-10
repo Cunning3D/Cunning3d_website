@@ -1,0 +1,96 @@
+<mxfile host="app.diagrams.net" modified="2026-01-23T00:00:00.000Z" agent="Cunning3D" version="1.0">
+  <diagram name="Kernel Pipeline (ZH)" id="kernel-pipe-zh">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- ============ TITLE ============ -->
+        <mxCell id="title" value="高精度内核处理管线 (Kernel Pipeline)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="450" y="20" width="500" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Lanes -->
+        <mxCell id="lane1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f9f9f9;strokeColor=#cccccc" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="1320" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc" vertex="1" parent="1">
+          <mxGeometry x="40" y="250" width="1320" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 1: Input -->
+        <mxCell id="s1" value="输入几何体" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="60" y="140" width="120" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 2: Perturbation -->
+        <mxCell id="s2" value="符号扰动&#xa;(Symbolic Perturbation)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="220" y="140" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2-desc" value="微小膨胀/收缩 ε&#xa;解决相切歧义" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="220" y="200" width="140" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 3: Broad Phase -->
+        <mxCell id="s3" value="粗测阶段&#xa;(Broad Phase)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="400" y="140" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3-desc" value="查找重叠的&#xa;边 (Edge) 与面 (Face)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="400" y="200" width="120" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 4: Projection -->
+        <mxCell id="s4" value="投影计算&#xa;(Projection)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="560" y="140" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="s4-desc" value="投影至 2D (XY)&#xa;计算阴影遮挡 (Shadow)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="560" y="200" width="140" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 5: Exact Arithmetic -->
+        <mxCell id="s5" value="精确求交&#xa;(Exact Intersection)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="740" y="130" width="160" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="s5-desc" value="fma(a, b, c)&#xa;鲁棒几何谓词" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#b85450;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="740" y="210" width="160" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 6: Winding Number -->
+        <mxCell id="s6" value="广义卷绕数&#xa;(Winding Number)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="940" y="140" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="s6-desc" value="累加有符号重叠&#xa;确定 内/外 状态" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="940" y="200" width="140" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 7: Assembly -->
+        <mxCell id="s7" value="网格组装&#xa;(Assembly)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1120" y="140" width="140" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- Step 8: Reconstruction (Detailed below) -->
+        <mxCell id="s8" value="N-gon 拓扑重建" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;dashed=1" vertex="1" parent="1">
+          <mxGeometry x="1120" y="280" width="140" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- Connections -->
+        <mxCell id="e1" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="s1" target="s2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="s2" target="s3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="s3" target="s4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="s4" target="s5"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="s5" target="s6"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="s6" target="s7"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" value="" style="endArrow=classic;html=1;dashed=1" edge="1" parent="1" source="s7" target="s8"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Code Snippet Area -->
+        <mxCell id="code-bg" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1e1e1e;strokeColor=none" vertex="1" parent="1">
+          <mxGeometry x="60" y="300" width="1000" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="code" value="&lt;font color=&quot;#569cd6&quot;&gt;vec4&lt;/font&gt; Intersect(&lt;font color=&quot;#569cd6&quot;&gt;vec3&lt;/font&gt; pL, &lt;font color=&quot;#569cd6&quot;&gt;vec3&lt;/font&gt; pR, &lt;font color=&quot;#569cd6&quot;&gt;vec3&lt;/font&gt; qL, &lt;font color=&quot;#569cd6&quot;&gt;vec3&lt;/font&gt; qR) {&#xa;  &lt;font color=&quot;#6a9955&quot;&gt;// 使用 FMA (Fused Multiply-Add) 确保运算精度&lt;/font&gt;&#xa;  xyzz.x = fma(lambda, dx, useL ? pL.x : pR.x);&#xa;  xyzz.y = fma(lambda, useP ? pDy : qDy, ...);&#xa;  &lt;font color=&quot;#c586c0&quot;&gt;return&lt;/font&gt; xyzz;&#xa;}" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontFamily=monospace;fontColor=#d4d4d4;whiteSpace=wrap" vertex="1" parent="1">
+          <mxGeometry x="80" y="310" width="960" height="100" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

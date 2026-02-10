@@ -1,0 +1,120 @@
+---
+title: VDB Nodes
+description: Sparse Voxel Distance Fields for volumetric modeling
+icon: Cuboid
+---
+
+## Overview
+
+The VDB system in Cunning3D provides a powerful way to work with volumetric data. It uses **Sparse Voxel Distance Fields (SDF)** to represent geometry, allowing for robust boolean operations, smoothing, and organic modeling workflows that are difficult with traditional polygonal meshes.
+
+<Drawio file="content/docs/diagrams/vdb-workflow.drawio" height={450} title="VDB Workflow Overview (Interactive)" />
+
+### Why VDB?
+
+- **Fixes Bad Topology**: Converts messy triangle soup into clean, watertight quads.
+- **Robust Booleans**: Volume booleans never fail, unlike mesh booleans.
+- **Organic Shapes**: Natural smoothing and blending capabilities.
+- **LOD Generation**: Easily create simplified versions of complex assets.
+
+---
+
+## VDB From Polygons
+
+This node converts a polygonal mesh into a Signed Distance Field (SDF) stored in a sparse voxel grid.
+
+<Drawio file="content/docs/diagrams/mesh-to-vdb.drawio" height={500} title="Mesh to VDB Pipeline (Interactive)" />
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| **Voxel Size** | Float | 0.1 | Size of each voxel in world units. Smaller = more detail, more memory. |
+| **Bandwidth** | Int | 3 | Number of active voxel layers around the surface. |
+| **Show Points** | Toggle | Off | Debug visualization of active voxel centers. |
+
+### Technical Implementation
+
+The conversion process uses **Parry3d** for accelerated geometry queries and a highly optimized sparse chunking system:
+
+1.  **Triangle Analysis**: Identify which 16x16x16 chunks overlap the mesh surface (dilated by bandwidth).
+2.  **Sparse Collection**: Use a concurrent `DashSet` to collect unique active chunk coordinates.
+3.  **Parallel Filling**: Process active chunks in parallel (using `Rayon`). For each voxel:
+    -   Compute distance to nearest triangle using Parry's BVH.
+    -   Determine sign (inside/outside) via ray casting.
+    -   Store clamped SDF value.
+
+> **Optimization**: We collect *chunks* rather than *voxels* to reduce thread contention by ~4000x.
+
+---
+
+## VDB To Polygons
+
+This node converts a VDB volume back into a polygonal mesh using the **Surface Nets** algorithm.
+
+<Drawio file="content/docs/diagrams/vdb-to-mesh.drawio" height={500} title="VDB to Mesh Pipeline (Interactive)" />
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| **Iso Value** | Float | 0.0 | Surface threshold. 0 = exact surface. Positive/Negative expands/shrinks. |
+| **Invert** | Toggle | Off | Flip inside/outside (turns holes into solids). |
+| **Hard Surface** | Toggle | Off | (Experimental) Attempt to reconstruct sharp features. |
+
+### Technical Implementation
+
+We use **Surface Nets** instead of Marching Cubes for better topology (quads) and simplicity:
+
+1.  **Bounds Calculation**: Compute the AABB of all active sparse chunks.
+2.  **Densification**: Extract active region into a dense buffer (with padding).
+3.  **Surface Extraction**:
+    -   Identify active edges (where sign changes).
+    -   Place one vertex per active cell (average of edge crossings).
+    -   Connect vertices into quad polygons.
+4.  **Geometry Construction**: Convert raw data into Cunning3D `Geometry`, applying volume transforms.
+
+---
+
+## Sparse Voxel Structure
+
+<Drawio file="content/docs/diagrams/vdb-structure.drawio" height={700} title="Sparse Voxel Grid Structure (Interactive)" />
+
+### Concept
+
+Cunning3D uses a custom sparse voxel implementation inspired by OpenVDB but optimized for our specific needs (SDF generation and meshing).
+
+- **Chunk Size**: Fixed at **16x16x16** voxels.
+- **Storage**: `HashMap<IVec3, Chunk>` maps 3D chunk coordinates to data blocks.
+- **SDF Values**:
+    -   **Negative**: Inside the object.
+    -   **Positive**: Outside the object.
+    -   **Zero**: The surface itself.
+    -   **Magnitude**: Distance to the nearest surface point.
+
+### Memory Efficiency
+
+Only voxels within the **Bandwidth** of the surface are stored. Empty space (inside or outside far from surface) takes up zero memory. This allows for very high resolution volumes on standard hardware.
+
+---
+
+## Best Practices
+
+<Cards>
+
+<Card title="Voxel Size">
+- Start large (e.g., 0.1) for speed.
+- Decrease for final quality (e.g., 0.01).
+- **Warning**: Halving voxel size increases memory usage by 8x!
+</Card>
+
+<Card title="Bandwidth">
+- Keep low (3-5) for simple surfaces.
+- Increase if you plan to smooth or dilate the volume heavily.
+</Card>
+
+<Card title="Topology Repair">
+- Use `Mesh -> VDB -> Mesh` to fix non-manifold geometry, holes, and intersecting faces.
+</Card>
+
+</Cards>

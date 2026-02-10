@@ -1,0 +1,143 @@
+---
+title: WebAssembly
+description: Browser-based CDA playback
+icon: Globe
+---
+
+## Overview
+
+Cunning compiles to WebAssembly, enabling CDA playback in web browsers.
+
+## Build Output
+
+```
+Cunning3D_1.0/crates/cunning_player/web_output/
+├── cunning_player_bg.wasm   # Compiled runtime (~2 MB)
+├── cunning_player.js        # JS bindings
+└── index.html               # Demo player
+```
+
+## Usage
+
+### Loading the Module
+
+```javascript
+import init, { CunningPlayer } from './cunning_player.js';
+
+async function main() {
+    await init();
+    const player = new CunningPlayer();
+    
+    // Load CDA
+    const response = await fetch('asset.cda');
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    player.load_cda(bytes);
+    
+    // Cook
+    player.cook();
+    
+    // Get mesh data
+    const positions = player.get_positions();
+    const indices = player.get_indices();
+    
+    // Render with Three.js/Babylon/raw WebGL
+    renderMesh(positions, indices);
+}
+
+main();
+```
+
+### Three.js Integration
+
+```javascript
+import * as THREE from 'three';
+import init, { CunningPlayer } from './cunning_player.js';
+
+async function createProceduralMesh(cdaUrl) {
+    await init();
+    const player = new CunningPlayer();
+    
+    const bytes = await fetch(cdaUrl).then(r => r.arrayBuffer());
+    player.load_cda(new Uint8Array(bytes));
+    player.cook();
+    
+    const positions = player.get_positions();
+    const indices = player.get_indices();
+    const normals = player.get_normals();
+    
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+    geometry.setIndex(Array.from(indices));
+    
+    return new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
+}
+```
+
+## Parameters
+
+Set CDA parameters before cooking:
+
+```javascript
+player.set_param_float('size', 2.0);
+player.set_param_int('divisions', 4);
+player.set_param_vec3('offset', 1.0, 0.5, 0.0);
+
+player.cook();
+```
+
+## Web Worker
+
+For complex CDAs, cook in a Web Worker:
+
+```javascript
+// worker.js
+import init, { CunningPlayer } from './cunning_player.js';
+
+let player = null;
+
+self.onmessage = async (e) => {
+    if (e.data.type === 'init') {
+        await init();
+        player = new CunningPlayer();
+    }
+    
+    if (e.data.type === 'load') {
+        player.load_cda(e.data.bytes);
+    }
+    
+    if (e.data.type === 'cook') {
+        player.cook();
+        self.postMessage({
+            type: 'cooked',
+            positions: player.get_positions(),
+            indices: player.get_indices(),
+            normals: player.get_normals()
+        });
+    }
+};
+```
+
+## Limitations
+
+| Feature | Status |
+|---------|--------|
+| CDA loading | Yes |
+| Parameter setting | Yes |
+| Single cook | Yes |
+| Async cook | Via Web Worker |
+| Direct geometry API | Partial |
+| File system access | No (use fetch) |
+
+## Browser Support
+
+| Browser | Status |
+|---------|--------|
+| Chrome 90+ | Yes |
+| Firefox 89+ | Yes |
+| Safari 15+ | Yes |
+| Edge 90+ | Yes |
+
+<Callout type="info">
+WASM SIMD is used when available for better performance.
+</Callout>

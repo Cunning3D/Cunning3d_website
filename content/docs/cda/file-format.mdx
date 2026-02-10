@@ -1,0 +1,136 @@
+---
+title: File Format
+description: CDA binary format specification
+icon: FileCode
+---
+
+## Structure
+
+```
+┌────────────────────────────────────�?
+�? Header (12 bytes)                 �?
+├────────────────────────────────────�?
+�? Chunk Table                       �?
+├────────────────────────────────────�?
+�? [EDIT] Chunk - Editor Data        �?
+├────────────────────────────────────�?
+�? [GAME] Chunk - Runtime Data       �?
+└────────────────────────────────────�?
+```
+
+## Header
+
+| Offset | Size | Field | Value |
+|--------|------|-------|-------|
+| 0 | 4 | Magic | `CDA\0` |
+| 4 | 4 | Version | `0x00000001` |
+| 8 | 4 | Chunk Count | `2` |
+
+## Chunk Table
+
+Each entry (12 bytes):
+
+| Offset | Size | Field |
+|--------|------|-------|
+| 0 | 4 | Tag (e.g., `EDIT`, `GAME`) |
+| 4 | 4 | Offset from file start |
+| 8 | 4 | Size in bytes |
+
+## [EDIT] Chunk
+
+Full graph data for Cunning3D editor. JSON format:
+
+```json
+{
+  "uuid": "48a309f5-77e9-4feb-ade2-d99344bb28f7",
+  "name": "My Asset",
+  "graph": {
+    "nodes": [...],
+    "edges": [...]
+  },
+  "promoted_params": [...],
+  "inputs": [...],
+  "outputs": [...],
+  "hud_units": [
+    { "node_id": 1001, "label": "Voxel HUD", "order": 0, "is_default": true }
+  ],
+  "coverlay_units": [
+    { "node_id": 1001, "label": "Voxel Tools", "icon": "🧊", "order": 0, "default_on": true }
+  ],
+  "presets": [...]
+}
+```
+
+**Not shipped** in game builds.
+
+## Overlay Exposure (HUD / Coverlay)
+
+<Lang lang="zh">
+`hud_units` 与 `coverlay_units` 用于声明“该 CDA 暴露哪些交互单元”。它们只描述 **暴露关系与默认策略**，不绑定具体 UI 技术栈。
+
+- **HUD（单选）**：运行时一次只激活一个 HUD 单元
+- **Coverlay（多选）**：运行时可同时开启多个浮动面板
+
+完整设计与示例见 [Coverlay & HUD](/docs/cda/interactive-overlay)。
+</Lang>
+
+<Lang lang="en">
+`hud_units` and `coverlay_units` declare which interaction units are exposed by the CDA. They describe **exposure + defaults**, without tying to any specific UI stack.
+
+- **HUD (single-select)**: only one HUD unit active at a time
+- **Coverlay (multi-select)**: multiple floating panels can be enabled
+
+See [Coverlay & HUD](/docs/cda/interactive-overlay) for the full guide and examples.
+</Lang>
+
+## [GAME] Chunk
+
+Compact runtime representation. JSON format:
+
+```json
+{
+  "uuid": "48a309f5-77e9-4feb-ade2-d99344bb28f7",
+  "ops": [
+    { "id": 0, "code": 1, "params": {...} },
+    { "id": 1, "code": 11, "params": {...} }
+  ],
+  "topology": [[0, 1], [1, 2]],
+  "params": [...],
+  "inputs": [...],
+  "outputs": [...]
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `ops` | Operator nodes with OpCode |
+| `topology` | Execution order |
+| `params` | Exposed parameter definitions |
+| `inputs` | Input port specifications |
+| `outputs` | Output port specifications |
+
+## OpCodes
+
+| Code | Operator |
+|------|----------|
+| 1 | Input |
+| 2 | Output |
+| 10 | Boolean |
+| 11 | PolyExtrude |
+| 12 | PolyBevel |
+| 13 | GroupCreate |
+| 20 | Merge |
+| ... | ... |
+
+## Design Goals
+
+| Goal | Implementation |
+|------|----------------|
+| Human-readable | JSON chunks |
+| Git-friendly | Text-based, no binary blobs |
+| Compact runtime | Separate `[GAME]` chunk |
+| Editor roundtrip | `[EDIT]` preserves full graph |
+
+<Callout type="info">
+Use hex editor or `cunning_cda_dump` tool to inspect CDA files.
+</Callout>

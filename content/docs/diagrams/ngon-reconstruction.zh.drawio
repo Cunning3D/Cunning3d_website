@@ -1,0 +1,118 @@
+<mxfile host="app.diagrams.net" modified="2026-01-23T00:00:00.000Z" agent="Cunning3D" version="1.0">
+  <diagram name="N-gon Reconstruction (ZH)" id="ngon-recon-zh">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- ============ TITLE ============ -->
+        <mxCell id="title" value="拓扑重建算法 (Topology Reconstruction)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="450" y="20" width="500" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ============ STEP 1: INPUT ============ -->
+        <mxCell id="s1-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="220" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="s1-t" value="1. 布尔运算结果" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="110" width="220" height="30" as="geometry"/>
+        </mxCell>
+        <!-- Triangle Soup Visual -->
+        <mxCell id="s1-tri1" value="" style="triangle;whiteSpace=wrap;html=1;rotation=-90;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="100" y="160" width="60" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="s1-tri2" value="" style="triangle;whiteSpace=wrap;html=1;rotation=90;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="100" y="200" width="60" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="s1-tri3" value="" style="triangle;whiteSpace=wrap;html=1;rotation=-90;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="140" y="160" width="60" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="s1-desc" value="输入：&quot;三角形汤 (Triangle Soup)&quot;&#xa;平面上充满碎裂的细长三角形" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="50" y="320" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrow -->
+        <mxCell id="a1" value="" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#e1d5e7;strokeColor=#9673a6" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="270" y="250" as="sourcePoint"/>
+            <mxPoint x="310" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============ STEP 2: COPLANAR ANALYSIS ============ -->
+        <mxCell id="s2-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="320" y="100" width="240" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2-t" value="2. 共面分析 (Coplanar Analysis)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="320" y="110" width="240" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2-code" value="if (dot(N1, N2) &gt; 1.0 - tol)&#xa;  Link(Face A, Face B);" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#ffffff;strokeColor=#d6b656;align=left;spacingLeft=10;fontSize=11;fontFamily=monospace" vertex="1" parent="1">
+          <mxGeometry x="340" y="150" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2-vis" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="390" y="240" width="20" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2-vis2" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="430" y="240" width="20" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2-link" value="" style="endArrow=none;html=1;strokeColor=#82b366;strokeWidth=3" edge="1" parent="1" source="s2-vis" target="s2-vis2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2-desc" value="遍历每条边：&#xa;检查相邻面是否共面&#xa;且属于同一个原始曲面 (OriginalID)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="330" y="320" width="220" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrow -->
+        <mxCell id="a2" value="" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#e1d5e7;strokeColor=#9673a6" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="570" y="250" as="sourcePoint"/>
+            <mxPoint x="610" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============ STEP 3: UNION FIND ============ -->
+        <mxCell id="s3-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="620" y="100" width="240" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3-t" value="3. 连通分量 (Grouping)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="620" y="110" width="240" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3-code" value="UnionFind uf(NumTri);&#xa;uf.union(triA, triB);&#xa;groups = uf.components();" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#ffffff;strokeColor=#82b366;align=left;spacingLeft=10;fontSize=11;fontFamily=monospace" vertex="1" parent="1">
+          <mxGeometry x="640" y="150" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3-g1" value="多边形组 1" style="cloud;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="650" y="230" width="80" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3-g2" value="多边形组 2" style="cloud;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="750" y="230" width="80" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3-desc" value="利用并查集算法&#xa;将共面三角形聚类为逻辑 N-gon" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="630" y="320" width="220" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrow -->
+        <mxCell id="a3" value="" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#e1d5e7;strokeColor=#9673a6" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="870" y="250" as="sourcePoint"/>
+            <mxPoint x="910" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============ STEP 4: CONTOUR EXTRACTION ============ -->
+        <mxCell id="s4-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6" vertex="1" parent="1">
+          <mxGeometry x="920" y="100" width="240" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="s4-t" value="4. 轮廓提取 (Extraction)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="920" y="110" width="240" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="s4-vis" value="" style="shape=xor;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="990" y="180" width="100" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="s4-desc" value="追踪边界边&#xa;消融内边&#xa;输出干净的多边形 (Polygon)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="930" y="320" width="220" height="60" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

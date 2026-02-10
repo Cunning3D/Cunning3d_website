@@ -1,0 +1,97 @@
+---
+title: Nano Voxel Painter
+description: Generate a 3x2 BaseColor atlas and quantize it into voxel palette colors (supports selection mask).
+icon: Palette
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+
+# Nano Voxel Painter
+
+**Nano Voxel Painter** bridges **AI image generation** and **voxel palette coloring**. It generates a consistent **3x2 atlas** (six orthographic views), then projects and **quantizes** the result back into the voxel volume as a compact palette + `palette_index` per voxel.
+
+This is designed for hackathon-grade demos: connect a `Voxel Edit` output, optionally select a region, and repaint the voxel asset with a photo/style prompt in one click.
+
+<Drawio file="content/docs/diagrams/nano-voxel-painter-pipeline.drawio" height={340} title="Nano Voxel Painter Pipeline" />
+
+## IO
+
+| Port | Type | Notes |
+|------|------|------|
+| Input | `Voxel` | Connect a voxel geometry that carries discrete voxel payload (e.g. `Voxel Edit`). |
+| Output | `Voxel` | Voxel surface mesh with embedded discrete voxel payload and updated palette. |
+
+## Parameters
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `prompt` | String | `A stylized but physically plausible material.` | Material / style description for the atlas. |
+| `tile_res` | Int | `384` | Per-view tile resolution for the 3x2 atlas (atlas size is `tile_res*3` by `tile_res*2`). |
+| `palette_max` | Int | `64` | Maximum number of generated palette colors used for quantization. |
+| `mask_only` | Bool | `true` | If a selection mask exists, repaint only masked voxels. |
+| `reference_image` | FilePath | `""` | Optional reference photo/collage to steer generation. |
+| `generate` | Button | `0` | Runs guide capture → Gemini atlas generation. |
+
+## Typical workflow
+
+1. Create voxels with `Voxel Edit` (or import a voxel asset).
+2. (Optional) Use **Select** tools to create a mask/selection region.
+3. Connect the voxel output to `Nano Voxel Painter`.
+4. Set `prompt` (and optionally `reference_image`), then click `Generate`.
+5. The output voxel palette is updated, suitable for downstream meshing/export.
+
+## Notes
+
+- **Selection mask**: `Voxel Edit` forwards selection as `__voxel_mask_cells_i32`; with `mask_only=true`, only that region is repainted.
+- **Performance**: keep voxel bounds reasonable for interactive iteration; atlas generation is network-bound.
+
+</Lang>
+
+<Lang lang="zh">
+
+# Nano Voxel Painter
+
+**Nano Voxel Painter** 用于把 **AI 生图**和 **体素调色板上色**打通：先生成一致的 **3x2 六视图 atlas**（正交视图），再把颜色**投射回体素表面**并进行**量化**，最终输出依然是轻量的 palette + 每体素 `palette_index`。
+
+面向黑客松演示：把它接在 `Voxel Edit` 后面（可选先框选局部），一句话/一张参考图就能一键重绘上色。
+
+<Drawio file="content/docs/diagrams/nano-voxel-painter-pipeline.drawio" height={340} title="Nano Voxel Painter 工作流" />
+
+## 输入输出 (IO)
+
+| 端口 | 类型 | 说明 |
+|------|------|------|
+| 输入 | `Voxel` | 需要携带离散体素 payload 的几何（例如 `Voxel Edit` 输出）。 |
+| 输出 | `Voxel` | 输出体素表面网格 + 内嵌离散体素 payload，并写入更新后的 palette。 |
+
+## 参数
+
+| 名称 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `prompt` | String | `A stylized but physically plausible material.` | 描述材质/风格的提示词。 |
+| `tile_res` | Int | `384` | 3x2 atlas 每个 tile 的分辨率（总图为 `tile_res*3` × `tile_res*2`）。 |
+| `palette_max` | Int | `64` | 用于量化的最大调色板颜色数。 |
+| `mask_only` | Bool | `true` | 存在选择 mask 时，仅重绘 mask 覆盖的体素。 |
+| `reference_image` | FilePath | `""` | 可选参考图，用于引导生成风格。 |
+| `generate` | Button | `0` | 执行 guide 捕获 → Gemini 生成 atlas。 |
+
+## 常用流程
+
+1. 用 `Voxel Edit` 创作体素（或导入 voxel 资产）。
+2. （可选）使用 **Select** 工具框选要重绘的区域。
+3. 将 voxel 输出连接到 `Nano Voxel Painter`。
+4. 填写 `prompt`（可选 `reference_image`），点击 `Generate`。
+5. 输出 voxel palette 更新，可继续下游网格化/导出。
+
+## 备注
+
+- **局部重绘**：`Voxel Edit` 会把选择区域写到 `__voxel_mask_cells_i32`；`mask_only=true` 时只作用于选区。
+- **性能建议**：交互迭代阶段尽量控制 voxel bound；atlas 生成主要受网络与模型耗时影响。
+
+</Lang>
+

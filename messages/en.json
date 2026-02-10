@@ -1,0 +1,145 @@
+{
+  "nav": {
+    "features": "Features",
+    "showcase": "Showcase",
+    "docs": "Docs",
+    "roadmap": "Roadmap",
+    "changelog": "Changelog",
+    "blog": "Blog",
+    "me": "About Me",
+    "donate": "Donate",
+    "login": "Login"
+  },
+  "home": {
+    "hero": {
+      "title": "Your Free & Open Source Procedural Modeling Tool",
+      "subtitle": "Create your 3D models with node-based workflows, cross-platform projects, and even XR experiences!",
+      "download": "Download Latest",
+      "whatsNew": "What's New",
+      "olderVersions": "Looking for older versions or source code?"
+    },
+    "openSource": {
+      "title": "Proudly Open Source",
+      "desc": "Cunning3D is open source and powered by open source software. The code is available on",
+      "github": "GitHub",
+      "stars": "{count} stars on GitHub"
+    },
+    "stats": {
+      "title": "Project Stats",
+      "updated": "Updated: {date}",
+      "excludes": "Excludes 3rd party libraries",
+      "progress": "Development Progress"
+    },
+    "supporters": {
+      "title": "Cunning3D Supporters"
+    }
+  },
+  "features": {
+    "modeling": {
+      "title": "Procedural Modeling",
+      "desc": "Non-destructive, node-based geometry creation for infinite creative possibilities."
+    },
+    "performance": {
+      "title": "High Performance",
+      "desc": "Blazing fast operations powered by Rust and GPU compute."
+    },
+    "platform": {
+      "title": "Cross-Platform",
+      "desc": "Run everywhere: desktop, browser, game engines."
+    },
+    "extensibility": {
+      "title": "Extensibility",
+      "desc": "Customize and extend with scripts and plugins."
+    },
+    "ai": {
+      "title": "AI-Powered",
+      "desc": "Built-in AI assistance. Local-first, privacy-focused, 100% free.",
+      "tip": "No API keys required. All AI features work offline with local LLMs."
+    }
+  },
+  "download": {
+    "title": "Download Cunning3D",
+    "subtitle": "Get the latest version of Cunning3D for your platform. Free and open source.",
+    "latest": "Latest Release",
+    "all": "All Releases",
+    "source": "Build from Source",
+    "requirements": "System Requirements",
+    "coming": "Coming Soon",
+    "noReleases": "No releases available yet. Check back soon or build from source!",
+    "clone": "Clone the repository",
+    "build": "Build with Cargo",
+    "seeDoc": "See the {link} for detailed build instructions."
+  },
+  "showcase": {
+    "title": "Showcase",
+    "subtitle": "Amazing creations made with Cunning3D. Get inspired by what the community is building.",
+    "featured": "Featured Works",
+    "all": "All",
+    "noWorks": "No works found for this filter.",
+    "cta": {
+      "title": "Want to be featured?",
+      "desc": "Share your Cunning3D creations and get featured in our showcase!",
+      "discord": "Share on Discord",
+      "download": "Download & Create"
+    }
+  },
+  "roadmap": {
+    "title": "Roadmap",
+    "subtitle": "See what we're building and what's coming next. This roadmap is updated regularly based on community feedback.",
+    "status": {
+      "done": "Done",
+      "inProgress": "In Progress",
+      "planned": "Planned",
+      "future": "Future"
+    },
+    "cta": {
+      "title": "Have a feature request?",
+      "desc": "Join our community and help shape the future of Cunning3D.",
+      "issue": "Open an Issue",
+      "discord": "Join Discord"
+    }
+  },
+  "changelog": {
+    "title": "Changelog",
+    "subtitle": "Version history and release notes. Automatically synced from GitHub Releases.",
+    "latest": "Latest",
+    "prerelease": "Pre-release",
+    "noReleases": "No releases yet",
+    "noReleasesDesc": "Check back soon or follow us on GitHub for updates.",
+    "cta": {
+      "title": "Stay updated",
+      "desc": "Watch the GitHub repository or join Discord to get notified about new releases.",
+      "star": "Star on GitHub",
+      "download": "Download Latest"
+    }
+  },
+  "donate": {
+    "title": "Support the future of Cunning3D",
+    "subtitle": "Join the Development Fund and support Cunning3D to work on core procedural modeling development.",
+    "monthly": "Monthly",
+    "oneTime": "One-time",
+    "become": "Become a {tier} member!",
+    "donateBtn": "Donate ${amount}",
+    "comingSoon": "Coming Soon",
+    "crypto": "Or donate with crypto:",
+    "copyAddress": "Click to copy address",
+    "questions": "Questions?",
+    "contact": "Contact us"
+  },
+  "mePage": {
+    "name": "Your Name",
+    "title": "Your Title / Role",
+    "aboutTitle": "About Me",
+    "aboutContent": "Write your personal introduction here. Share who you are, what you do, and what makes you unique. This is your chance to tell your story and connect with your visitors.",
+    "backgroundTitle": "Background",
+    "backgroundContent": "Share your professional background, education, or any relevant experiences that shaped who you are today. This could include your career journey, significant achievements, or pivotal moments.",
+    "interestsTitle": "Interests & Hobbies",
+    "interestsContent": "What do you enjoy doing in your free time? Share your hobbies, passions, or any side projects you're working on. This helps visitors get a fuller picture of who you are beyond your professional life."
+  },
+  "common": {
+    "learnMore": "Learn more",
+    "documentation": "documentation",
+    "viewGithub": "View on GitHub",
+    "by": "by"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Platforms",
+  "description": "Engine Integrations",
+  "icon": "Layers",
+  "root": true,
+  "pages": [
+    "index",
+    "unity",
+    "bevy",
+    "wasm"
+  ]
+}

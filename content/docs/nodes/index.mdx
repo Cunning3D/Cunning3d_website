@@ -1,0 +1,102 @@
+---
+title: Node Library
+description: Procedural modeling operators
+icon: Boxes
+---
+
+## Overview
+
+Cunning3D provides 50+ nodes for procedural geometry creation and manipulation.
+
+## Categories
+
+<Cards>
+
+<Card title="Generators" href="/docs/nodes/components/generators">
+Create base geometry: Box, Sphere, Grid, Circle, Tube, Torus
+</Card>
+
+<Card title="Modeling" href="/docs/nodes/components/modeling">
+PolyExtrude, PolyBevel, Boolean, Bridge, Subdivide
+</Card>
+
+<Card title="Transform" href="/docs/nodes/components/transform">
+Transform, Copy, Mirror, Scatter, Array
+</Card>
+
+<Card title="Attributes" href="/docs/nodes/components/attributes">
+AttribCreate, AttribPromote, AttribTransfer, AttribRemap
+</Card>
+
+<Card title="Groups" href="/docs/nodes/components/groups">
+GroupCreate, GroupCombine, GroupExpand, GroupByExpression
+</Card>
+
+<Card title="Utility" href="/docs/nodes/components/utility">
+Merge, Switch, Null, Delete, Blast
+</Card>
+
+</Cards>
+
+## Node Anatomy
+
+Every node has:
+
+| Part | Description |
+|------|-------------|
+| **Inputs** | Geometry connections (0-N) |
+| **Outputs** | Result geometry (usually 1) |
+| **Parameters** | Controls (sliders, toggles, etc.) |
+
+## Common Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| Group | String | Target element group |
+| Class | Enum | Point/Vertex/Prim/Detail |
+| Keep Original | Bool | Preserve input geometry |
+
+## Editor vs Runtime
+
+Nodes are tagged as:
+
+| Tag | Description |
+|-----|-------------|
+| `runtime` | Available in shipped builds |
+| `editor` | Cunning3D editor only |
+
+<Callout type="warning">
+CDA files using editor-only nodes will fail to load in runtime builds.
+</Callout>
+
+## Quick Reference
+
+### Generators
+
+| Node | Description |
+|------|-------------|
+| Box | Axis-aligned box with divisions |
+| Sphere | UV sphere with rings/segments |
+| Grid | Flat grid with divisions |
+| Circle | N-sided polygon or polyline |
+| Tube | Cylinder/cone with caps |
+| Torus | Donut shape |
+
+### Modeling
+
+| Node | Description |
+|------|-------------|
+| PolyExtrude | Extrude faces with inset |
+| PolyBevel | Chamfer edges/vertices |
+| Boolean | Union/Intersect/Subtract |
+| Bridge | Connect edge loops |
+| Subdivide | Catmull-Clark subdivision |
+
+### Transform
+
+| Node | Description |
+|------|-------------|
+| Transform | Translate/Rotate/Scale |
+| Copy | Instance geometry to points |
+| Mirror | Reflect across plane |
+| Scatter | Random point distribution |

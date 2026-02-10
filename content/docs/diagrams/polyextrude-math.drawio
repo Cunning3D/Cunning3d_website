@@ -1,0 +1,63 @@
+<mxfile host="65bd71144e">
+    <diagram id="polyextrude-math" name="Extrusion Math">
+        <mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="1" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+
+                <!-- Title -->
+                <mxCell id="title_math" value="Vector Calculation (Mode 1)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="150" y="20" width="300" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Center Point -->
+                <mxCell id="p_center" value="Center" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+                    <mxGeometry x="290" y="290" width="20" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- Original Vertex P -->
+                <mxCell id="p_orig" value="P" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="190" y="290" width="20" height="20" as="geometry"/>
+                </mxCell>
+                
+                <!-- Inset Vector -->
+                <mxCell id="vec_inset" value="Inset" style="endArrow=classic;html=1;strokeColor=#b85450;fillColor=#f8cecc;" edge="1" parent="1" source="p_orig">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="200" y="300" as="sourcePoint"/>
+                        <mxPoint x="240" y="300" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+
+                <!-- Distance Vector (Normal) -->
+                <mxCell id="vec_dist" value="Distance * N" style="endArrow=classic;html=1;strokeColor=#82b366;fillColor=#d5e8d4;" edge="1" parent="1" source="p_orig">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="200" y="300" as="sourcePoint"/>
+                        <mxPoint x="200" y="190" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                
+                 <!-- Combined Vector -->
+                <mxCell id="vec_result" value="P_front" style="endArrow=classic;html=1;strokeColor=#0000FF;strokeWidth=2;" edge="1" parent="1" source="p_orig">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="200" y="300" as="sourcePoint"/>
+                        <mxPoint x="240" y="190" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                
+                 <!-- Result Vertex -->
+                 <mxCell id="p_final" value="P'" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="230" y="180" width="20" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- Formula Text -->
+                <mxCell id="txt_formula" value="$$ P_{front} = P + (N \cdot \text{dist}) + (\text{inset\_dir}) $$" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="350" width="400" height="40" as="geometry"/>
+                </mxCell>
+                 <mxCell id="txt_inset" value="$$ \text{inset\_dir} = \text{normalize}(P - \text{Center}) \cdot -\text{inset} $$" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#b85450;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="390" width="400" height="40" as="geometry"/>
+                </mxCell>
+
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

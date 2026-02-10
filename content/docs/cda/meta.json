@@ -1,0 +1,13 @@
+{
+  "title": "CDA",
+  "description": "Cunning Digital Asset",
+  "icon": "Package",
+  "root": true,
+  "pages": [
+    "index",
+    "file-format",
+    "usage-modes",
+    "interactive-overlay",
+    "parameters"
+  ]
+}

@@ -1,0 +1,57 @@
+<mxfile host="app.diagrams.net" modified="2026-02-07T00:00:00.000Z" agent="Cursor" version="24.7.0" type="device">
+  <diagram id="nano-voxel-painter-pipeline" name="Pipeline">
+    <mxGraphModel dx="1164" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Nano Voxel Painter" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="420" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="in_vox" value="Voxel Edit / Voxel Input&#10;(discrete payload + optional mask)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#1A73E8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="110" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="mask" value="Selection Mask&#10;__voxel_mask_cells_i32" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#D93025;" vertex="1" parent="1">
+          <mxGeometry x="40" y="205" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="guides" value="GPU Guide Capture&#10;3x2 atlas: RGB=normal, A=depth" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F4EA;strokeColor=#1E8E3E;" vertex="1" parent="1">
+          <mxGeometry x="390" y="110" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="gemini" value="Gemini Image Generation&#10;BaseColor 3x2 atlas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9AB00;" vertex="1" parent="1">
+          <mxGeometry x="740" y="110" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="proj" value="Project + Depth Test&#10;sample atlas per exposed face&#10;(fallback views)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAED;strokeColor=#5F6368;" vertex="1" parent="1">
+          <mxGeometry x="390" y="235" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="quant" value="Quantize to Voxel Palette&#10;OKLab k-means + assign palette_index" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#039BE5;" vertex="1" parent="1">
+          <mxGeometry x="740" y="235" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="out_vox" value="Output Voxel&#10;(updated palette + payload)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#9333EA;" vertex="1" parent="1">
+          <mxGeometry x="740" y="350" width="300" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="in_vox" target="guides">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="guides" target="gemini">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="gemini" target="proj">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="in_vox" target="proj">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="mask" target="proj">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="proj" target="quant">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="quant" target="out_vox">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+

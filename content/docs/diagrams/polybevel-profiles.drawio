@@ -1,0 +1,77 @@
+<mxfile host="65bd71144e">
+    <diagram id="polybevel-profiles" name="Profile Shapes">
+        <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+
+                <!-- Title -->
+                <mxCell id="title" value="Superellipse Profile Control" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="200" y="20" width="400" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- 0.0: Square In -->
+                <mxCell id="g_00" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="50" y="100" width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="bg_00" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=none;" vertex="1" parent="g_00">
+                    <mxGeometry width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="curve_00" value="" style="curved=1;endArrow=none;html=1;strokeWidth=3;strokeColor=#b85450;" edge="1" parent="g_00">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="20" y="20" as="sourcePoint"/>
+                        <mxPoint x="130" y="130" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="20" y="130"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="txt_00" value="Shape = 0.0 (Concave)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g_00">
+                    <mxGeometry y="155" width="150" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- 0.5: Circle -->
+                <mxCell id="g_05" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="250" y="100" width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="bg_05" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=none;" vertex="1" parent="g_05">
+                    <mxGeometry width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="curve_05" value="" style="curved=1;endArrow=none;html=1;strokeWidth=3;strokeColor=#82b366;" edge="1" parent="g_05">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="20" y="20" as="sourcePoint"/>
+                        <mxPoint x="130" y="130" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="20" y="75"/>
+                            <mxPoint x="75" y="130"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="txt_05" value="Shape = 0.5 (Round/Circle)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g_05">
+                    <mxGeometry y="155" width="150" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- 1.0: Square Out -->
+                <mxCell id="g_10" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="450" y="100" width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="bg_10" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=none;" vertex="1" parent="g_10">
+                    <mxGeometry width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="curve_10" value="" style="curved=1;endArrow=none;html=1;strokeWidth=3;strokeColor=#6c8ebf;" edge="1" parent="g_10">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="20" y="20" as="sourcePoint"/>
+                        <mxPoint x="130" y="130" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="130" y="20"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="txt_10" value="Shape = 1.0 (Convex/Linear)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g_10">
+                    <mxGeometry y="155" width="150" height="20" as="geometry"/>
+                </mxCell>
+
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

@@ -1,0 +1,133 @@
+---
+title: Transform
+description: Apply translation, rotation, and scale to geometry
+icon: Rotate3d
+---
+
+<Lang lang="en">
+
+# Transform
+
+**Transform** applies affine transformations (Translation, Rotation, Scale) to the input geometry. It is the primary node for moving, rotating, and resizing objects in 3D space.
+
+## Overview
+
+<Drawio file="content/docs/diagrams/transform-concept.drawio" height={400} title="Transform Concept (Interactive)" />
+
+The node modifies the position (`@P`) and orientation (`@N`) of points and primitives. It also updates the transform matrix of any VDB volumes present in the geometry.
+
+- **Interactive:** Supports direct manipulation via viewport gizmos.
+- **Efficient:** Uses copy-on-write mechanisms to modify data.
+- **Robust:** Handles points, normals, and volumes consistently.
+
+---
+
+## Transformation Order
+
+<Drawio file="content/docs/diagrams/transform-order.drawio" height={450} title="Transformation Order (Interactive)" />
+
+The node applies transformations in a fixed **Scale → Rotate → Translate** order. This ensures that scaling occurs along local axes before rotation, and rotation occurs around the origin before translation.
+
+$$
+P' = R \cdot (P \cdot (S \cdot S_{uniform})) + T
+$$
+
+Where:
+- $P$ is the original position.
+- $S$ is the **Scale** vector.
+- $S_{uniform}$ is the **Uniform Scale** scalar.
+- $R$ is the rotation quaternion derived from Euler angles (XYZ order).
+- $T$ is the **Translate** vector.
+
+---
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| **Translate** | `Vec3` | `(0, 0, 0)` | Moves the geometry along X, Y, Z axes. |
+| **Rotate** | `Vec3` | `(0, 0, 0)` | Rotates the geometry (in degrees) using Euler XYZ order. |
+| **Scale** | `Vec3` | `(1, 1, 1)` | Scales the geometry along X, Y, Z axes. |
+| **Uniform Scale** | `Float` | `1.0` | Applies a global multiplier to the scale. Final scale is `Scale * Uniform Scale`. |
+
+### Interactive Gizmo
+When this node is selected, a manipulator gizmo appears in the 3D viewport.
+- **Drag Arrows:** Update **Translate**.
+- **Drag Rings:** Update **Rotate**.
+- **Drag Cubes:** Update **Scale**.
+
+> **Note:** The gizmo is positioned at the **centroid** of the input geometry for convenience, but the parameters represent absolute transformations relative to the world origin (or the input's local space).
+
+---
+
+## Attribute Handling
+
+- **@P (Position):** Fully transformed (S/R/T).
+- **@N (Normal):** Rotated only. Normalization is reapplied after rotation. Scale is currently ignored for normals to prevent distortion, but this may change in future updates for non-uniform scaling correctness.
+- **Volumes:** The internal transform matrix of VDB grids is updated by multiplying with the node's transform matrix.
+
+</Lang>
+
+<Lang lang="zh">
+
+# Transform (变换)
+
+**Transform** 节点对输入几何体应用仿射变换（平移、旋转、缩放）。它是 3D 空间中移动、旋转和调整对象大小的主要节点。
+
+## 概述
+
+<Drawio file="content/docs/diagrams/transform-concept.drawio" height={400} title="变换概念 (可交互)" />
+
+该节点修改点和图元的位置 (`@P`) 和方向 (`@N`)。它还会更新几何体中存在的任何 VDB 体积的变换矩阵。
+
+- **交互式：** 支持通过视口 Gizmo 直接操作。
+- **高效：** 使用写时复制 (Copy-on-Write) 机制修改数据。
+- **稳健：** 一致地处理点、法线和体积。
+
+---
+
+## 变换顺序
+
+<Drawio file="content/docs/diagrams/transform-order.drawio" height={450} title="变换顺序 (可交互)" />
+
+该节点按固定的 **缩放 (Scale) → 旋转 (Rotate) → 平移 (Translate)** 顺序应用变换。这确保了缩放在旋转之前沿局部轴发生，旋转在平移之前绕原点发生。
+
+$$
+P' = R \cdot (P \cdot (S \cdot S_{uniform})) + T
+$$
+
+其中：
+- $P$ 是原始位置。
+- $S$ 是 **Scale** 向量。
+- $S_{uniform}$ 是 **Uniform Scale** 标量。
+- $R$ 是从欧拉角 (XYZ 顺序) 导出的旋转四元数。
+- $T$ 是 **Translate** 向量。
+
+---
+
+## 参数
+
+| 参数名 | 类型 | 默认值 | 描述 |
+|-----------|------|---------|-------------|
+| **Translate** (平移) | `Vec3` | `(0, 0, 0)` | 沿 X, Y, Z 轴移动几何体。 |
+| **Rotate** (旋转) | `Vec3` | `(0, 0, 0)` | 使用欧拉 XYZ 顺序旋转几何体（单位：度）。 |
+| **Scale** (缩放) | `Vec3` | `(1, 1, 1)` | 沿 X, Y, Z 轴缩放几何体。 |
+| **Uniform Scale** (统一缩放) | `Float` | `1.0` | 应用全局缩放倍数。最终缩放为 `Scale * Uniform Scale`。 |
+
+### 交互式 Gizmo
+选中此节点时，3D 视口中会出现操作手柄 (Gizmo)。
+- **拖动箭头：** 更新 **Translate**。
+- **拖动圆环：** 更新 **Rotate**。
+- **拖动方块：** 更新 **Scale**。
+
+> **注意：** 为方便起见，Gizmo 定位在输入几何体的 **质心 (centroid)** 处，但参数表示的是相对于世界原点（或输入的局部空间）的绝对变换。
+
+---
+
+## 属性处理
+
+- **@P (位置):** 应用完整变换 (S/R/T)。
+- **@N (法线):** 仅应用旋转。旋转后会重新归一化。为了防止变形，目前法线计算忽略了缩放，但这可能会在未来的更新中更改以支持非统一缩放的正确性（逆转置矩阵）。
+- **体积 (Volumes):** VDB 网格的内部变换矩阵会乘以节点的变换矩阵。
+
+</Lang>

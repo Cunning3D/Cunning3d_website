@@ -1,0 +1,206 @@
+---
+title: Coverlay & HUD
+description: Interactive CDA units for tools, overlays, and viewport HUD
+icon: LayoutPanelTop
+---
+
+<Lang lang="zh">
+## 概览
+
+我们为 **CDA（Cunning Digital Asset）** 增加了 **Coverlay** 与 **HUD** 暴露能力，让 CDA 不再只是“可调参数的程序化资产”，而是可以变成一个 **带交互工具面板 + 视口 HUD** 的小型 DCC。
+
+- **HUD（单选）**：贴在视口上的轻量交互层，适合“当前工具状态/快捷操作/轻量按钮”。
+- **Coverlay（多选）**：更强的“工具式浮动面板”，适合高频交互节点（例如体素编辑、曲线工具、绘制类节点）。
+
+关键点是：**交互 UI 本身不属于 CDA 文件格式的一部分**，CDA 只暴露“哪些交互单元可以用、默认开哪些、以及交互写回哪些参数”。这样同一个 CDA 能在 **Cunning3D 编辑器 / Unity / WASM Player** 上实现一致交互语义。
+</Lang>
+
+<Lang lang="en">
+## Overview
+
+We added **Coverlay** and **HUD** exposure for **CDA (Cunning Digital Asset)** so a CDA is not only a parameterized procedural asset, but can also behave like a **mini DCC** with interactive tool panels and viewport HUD.
+
+- **HUD (single-select)**: a lightweight layer attached to the viewport, ideal for tool state, quick actions, and small controls.
+- **Coverlay (multi-select)**: a stronger floating “tool panel” system, designed for high-interaction nodes (voxel edit, curve tools, painting tools, etc.).
+
+The important part: **the UI implementation is host-specific**, while the CDA exposes *which units exist / which are enabled by default / which parameters are written back*. This keeps the interaction semantics portable across **Cunning3D Editor / Unity / WASM Player**.
+</Lang>
+
+<Lang lang="zh">
+## 两层交互：HUD vs Coverlay
+
+```
+视口 (Viewport)
+┌──────────────────────────────────────────────┐
+│  HUD（单选）: 透明叠加层                      │
+│  - 当前工具标题/状态                          │
+│  - 轻量按钮/快捷操作                          │
+│                                              │
+│  3D 场景渲染                                  │
+│                                              │
+│  Coverlay（多选）: 浮动面板（可拖拽、可关闭）  │
+│  ┌──────────────┐  ┌──────────────┐          │
+│  │ Voxel Tools  │  │ Palette      │          │
+│  └──────────────┘  └──────────────┘          │
+└──────────────────────────────────────────────┘
+```
+
+- **HUD 单选**：一次只展示一个 HUD 单元（适合“当前选中节点的 HUD”）。
+- **Coverlay 多选**：可以同时打开多个面板（工具/调色板/调试/导入导出等）。
+</Lang>
+
+<Lang lang="en">
+## Two layers: HUD vs Coverlay
+
+```
+Viewport
+┌──────────────────────────────────────────────┐
+│  HUD (single-select): transparent overlay     │
+│  - tool title/state                           │
+│  - quick actions                              │
+│                                              │
+│  3D rendering                                 │
+│                                              │
+│  Coverlay (multi-select): floating panels     │
+│  ┌──────────────┐  ┌──────────────┐          │
+│  │ Voxel Tools  │  │ Palette      │          │
+│  └──────────────┘  └──────────────┘          │
+└──────────────────────────────────────────────┘
+```
+
+- **HUD is single-select**: show at most one HUD unit at a time (good for “active tool HUD”).
+- **Coverlay is multi-select**: multiple panels can be open simultaneously (tools/palette/debug/import-export, etc.).
+</Lang>
+
+<Lang lang="zh">
+## 资产侧（Authoring）：在 CDA 里暴露哪些交互单元
+
+在 Cunning3D 的 CDA 编辑面板里，我们可以把 **内部节点**标记为可暴露的交互单元：
+
+- `hud_units`：暴露可作为 HUD 的内部节点（单选 + 默认项）
+- `coverlay_units`：暴露可作为 Coverlay 面板的内部节点（多选 + 默认开关 + icon/排序）
+
+你可以把它理解成“把内部节点的交互能力映射到 CDA 的外部接口”，类似“参数提升（Promoted Params）”，但面向的是 **交互 UI 单元**。
+</Lang>
+
+<Lang lang="en">
+## Authoring: exposing interaction units in a CDA
+
+In the CDA editor panel, we can expose **internal nodes** as interaction units:
+
+- `hud_units`: internal nodes that can serve as HUD (single-select + default)
+- `coverlay_units`: internal nodes that can serve as Coverlay panels (multi-select + default_on + icon/order)
+
+Think of it as “mapping internal node interaction capability to the CDA external interface”. Similar spirit to promoted parameters, but for **interactive UI units**.
+</Lang>
+
+<Lang lang="zh">
+### CDA JSON（示例）
+
+下面只展示与交互相关的字段（真实格式以 `file-format` 页为准）：
+
+```json
+{
+  "hud_units": [
+    { "node_id": 1001, "label": "Voxel HUD", "order": 0, "is_default": true }
+  ],
+  "coverlay_units": [
+    { "node_id": 1001, "label": "Voxel Tools", "icon": "🧊", "order": 0, "default_on": true },
+    { "node_id": 1001, "label": "Palette", "icon": "🎨", "order": 1, "default_on": true },
+    { "node_id": 1001, "label": "Debug", "icon": "🧪", "order": 2, "default_on": false }
+  ]
+}
+```
+
+> 说明：同一个内部节点可以同时作为 HUD 与 Coverlay 单元暴露；是否在运行时显示，取决于实例态的选择。
+</Lang>
+
+<Lang lang="en">
+### CDA JSON (example)
+
+Only the interaction-related fields are shown below (see `File Format` for the full schema):
+
+```json
+{
+  "hud_units": [
+    { "node_id": 1001, "label": "Voxel HUD", "order": 0, "is_default": true }
+  ],
+  "coverlay_units": [
+    { "node_id": 1001, "label": "Voxel Tools", "icon": "🧊", "order": 0, "default_on": true },
+    { "node_id": 1001, "label": "Palette", "icon": "🎨", "order": 1, "default_on": true },
+    { "node_id": 1001, "label": "Debug", "icon": "🧪", "order": 2, "default_on": false }
+  ]
+}
+```
+
+> Note: the same internal node can be exposed as both HUD and Coverlay units. Runtime visibility is instance-controlled.
+</Lang>
+
+<Lang lang="zh">
+## 运行时（Runtime）：为什么这能做到“跨端一致交互”
+
+运行时我们把“交互结果”收敛成两类稳定数据：
+
+- **实例态选择**：当前实例打开了哪个 HUD、打开了哪些 Coverlay 单元
+- **实例态参数覆盖**：Coverlay/HUD 对内部节点做的修改，写到“内部参数覆盖表”里，而不是修改资产本体
+
+这意味着：Unity / WASM 只要能做到“写这些实例态数据”，就可以用自己的 UI 技术栈复刻同样的交互行为。
+</Lang>
+
+<Lang lang="en">
+## Runtime: why this works across platforms
+
+At runtime, we reduce “interaction results” into two stable data categories:
+
+- **Instance selection state**: which HUD is active and which Coverlay units are enabled
+- **Per-instance parameter overrides**: writes go into an override table instead of mutating the asset itself
+
+So Unity / WASM only needs to write the same instance state using their own UI stack to reproduce the same interaction behavior.
+</Lang>
+
+<Lang lang="zh">
+## 示例：Voxel Edit CDA = 体素编辑器 DCC
+
+当一个 CDA 内部包含 `Voxel Edit` 节点，并把它作为 coverlay 单元暴露后，这个 CDA 就不仅仅是“输出一个网格”，而是一个 **可交互的体素编辑器**：
+
+- Coverlay 面板提供：工具模式（Add/Paint/Select/Move/Extrude）、画笔形状、半径、对称、调色板等
+- 用户在视口里进行鼠标/触控交互
+- 交互被记录为 **命令列表**（例如 `cmds_json`），写回实例态覆盖
+- 图被标记为 dirty，重新 cook，视口显示更新后的结果
+
+你可以把这类 CDA 当成“把一套 DCC 工具打包成可移植资产”。
+
+关于该节点的详细功能，请参考 [Voxel Edit 节点文档](/docs/nodes/voxel-edit)。
+</Lang>
+
+<Lang lang="en">
+## Example: Voxel Edit CDA = a voxel editor DCC
+
+If a CDA contains a `Voxel Edit` internal node and exposes it as coverlay units, the CDA becomes more than “a mesh generator” — it behaves like an **interactive voxel editor**:
+
+- Coverlay panels provide tool mode (Add/Paint/Select/Move/Extrude), brush shape/radius, symmetry, palette, etc.
+- User interacts in the viewport (mouse/touch)
+- Interactions are recorded as a **command list** (e.g. `cmds_json`) and written back to per-instance overrides
+- The graph is marked dirty, cooked again, and the viewport updates
+
+This is how we package a DCC-like toolset as a portable asset.
+
+For detailed features of this node, see the [Voxel Edit Node Documentation](/docs/nodes/voxel-edit).
+</Lang>
+
+<Lang lang="zh">
+## 设计建议（对文档作者/资产作者）
+
+- **让交互单元“像工具”**：Coverlay 面板尽量对应清晰职责（Tools / Palette / Debug / Import / Export），避免一个面板塞满所有东西。
+- **把可回放的交互写成数据**：例如命令列表、笔刷参数、选择集等；这样可以天然支持撤销/重做与跨端同步。
+- **实例态覆盖优先**：交互写入 overrides，而不是改资产本体，避免“一个资产被多个实例共享时互相污染”。
+</Lang>
+
+<Lang lang="en">
+## Design tips (for doc authors and asset authors)
+
+- **Make units tool-like**: keep Coverlay panels focused (Tools / Palette / Debug / Import / Export) instead of one mega panel.
+- **Record interactions as data**: command lists, brush params, selections… this naturally supports undo/redo and cross-platform sync.
+- **Prefer per-instance overrides**: write to overrides instead of mutating the shared asset.
+</Lang>
+

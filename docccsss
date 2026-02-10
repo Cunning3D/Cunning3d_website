@@ -1,0 +1,136 @@
+use std::fmt;
+use std::str::FromStr;
+
+// --- Custom Error Type ---
+
+#[derive(Debug)]
+enum LogError {
+    EmptyLine,
+    InvalidFormat(String),
+    UnknownLevel(String),
+}
+
+// Implement Display for user-facing error messages
+impl fmt::Display for LogError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            LogError::EmptyLine => write!(f, "Log line cannot be empty"),
+            LogError::InvalidFormat(line) => write!(f, "Invalid log format: '{}'", line),
+            LogError::UnknownLevel(lvl) => write!(f, "Unknown log level: '{}'", lvl),
+        }
+    }
+}
+
+// Implement standard Error trait
+impl std::error::Error for LogError {}
+
+// --- Domain Types ---
+
+#[derive(Debug, PartialEq)]
+enum LogLevel {
+    INFO,
+    WARN,
+    ERROR,
+    DEBUG,
+}
+
+// Helper to convert string to LogLevel
+impl FromStr for LogLevel {
+    type Err = LogError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "INFO" => Ok(LogLevel::INFO),
+            "WARN" => Ok(LogLevel::WARN),
+            "ERROR" => Ok(LogLevel::ERROR),
+            "DEBUG" => Ok(LogLevel::DEBUG),
+            _ => Err(LogError::UnknownLevel(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug)]
+struct LogEntry {
+    timestamp: String,
+    level: LogLevel,
+    message: String,
+}
+
+// --- Traits and Implementations ---
+
+trait LogParser {
+    fn parse(&self, line: &str) -> Result<LogEntry, LogError>;
+}
+
+struct SyslogParser;
+
+impl LogParser for SyslogParser {
+    // Expected format: "[TIMESTAMP] LEVEL MESSAGE"
+    // Example: "[2023-10-27 10:00:00] INFO System started"
+    fn parse(&self, line: &str) -> Result<LogEntry, LogError> {
+        let line = line.trim();
+        if line.is_empty() {
+            return Err(LogError::EmptyLine);
+        }
+
+        // Simple manual parsing logic
+        if !line.starts_with('[') {
+            return Err(LogError::InvalidFormat(line.to_string()));
+        }
+
+        let end_bracket = line.find(']').ok_or_else(|| LogError::InvalidFormat(line.to_string()))?;
+        let timestamp = &line[1..end_bracket];
+
+        let rest = &line[end_bracket + 1..].trim();
+        let first_space = rest.find(' ').ok_or_else(|| LogError::InvalidFormat(line.to_string()))?;
+
+        let level_str = &rest[..first_space];
+        let message = &rest[first_space + 1..];
+
+        let level = LogLevel::from_str(level_str)?;
+
+        Ok(LogEntry {
+            timestamp: timestamp.to_string(),
+            level,
+            message: message.to_string(),
+        })
+    }
+}
+
+// --- Main Execution ---
+
+fn main() {
+    println!(">>> Rust Log Parser System Initialized <<<\n");
+
+    let raw_logs = vec![
+        "[2023-10-27 10:00:01] INFO Application booting up...",
+        "[2023-10-27 10:00:05] DEBUG Database connection established",
+        "", // Error case: Empty
+        "[2023-10-27 10:00:10] WARN High memory usage detected",
+        "Invalid log line without brackets", // Error case: Invalid format
+        "[2023-10-27 10:00:15] CRITICAL System crash imminent", // Error case: Unknown level
+        "[2023-10-27 10:00:20] ERROR NullPointer exception at main.rs:42",
+    ];
+
+    let parser = SyslogParser;
+
+    let mut success_count = 0;
+    let mut error_count = 0;
+
+    for (i, raw) in raw_logs.iter().enumerate() {
+        println!("Processing line {}: \"{}\"", i + 1, raw);
+        match parser.parse(raw) {
+            Ok(entry) => {
+                println!("  ✅ Parsed: [{:?}] {} at {}", entry.level, entry.message, entry.timestamp);
+                success_count += 1;
+            }
+            Err(e) => {
+                println!("  ❌ Error: {}", e);
+                error_count += 1;
+            }
+        }
+        println!("--------------------------------------------------");
+    }
+
+    println!("\n>>> Summary: {} Success, {} Failed <<<", success_count, error_count);
+}

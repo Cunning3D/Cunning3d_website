@@ -1,0 +1,42 @@
+<mxfile host="app.diagrams.net" modified="2026-02-08T00:00:00.000Z" agent="Cursor" version="24.7.0" type="device">
+  <diagram id="nano-to-mesh-pipeline-zh" name="Pipeline">
+    <mxGraphModel dx="1164" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Nano To Mesh" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="420" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="in" value="提示词 / 参考图" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#1A73E8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="gemini" value="Gemini 生成&#10;3x2 深度图集（正交）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9AB00;" vertex="1" parent="1">
+          <mxGeometry x="340" y="120" width="320" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pts" value="深度反投影&#10;点云" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F4EA;strokeColor=#1E8E3E;" vertex="1" parent="1">
+          <mxGeometry x="700" y="120" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="vdb" value="点云 Splat → VDB(SDF)&#10;稀疏 Chunk" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#039BE5;" vertex="1" parent="1">
+          <mxGeometry x="340" y="240" width="320" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="mesh" value="VDB To Polygons&#10;Surface Nets → 网格" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#9333EA;" vertex="1" parent="1">
+          <mxGeometry x="700" y="240" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="in" target="gemini">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="gemini" target="pts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="pts" target="vdb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="endArrow=block;html=1;strokeColor=#5F6368;" edge="1" parent="1" source="vdb" target="mesh">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+

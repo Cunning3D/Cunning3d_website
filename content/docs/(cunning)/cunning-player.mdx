@@ -1,0 +1,81 @@
+---
+title: Cunning Player
+description: The Web-Native Runtime for Browser-Based Proceduralism
+icon: Globe
+---
+
+## Overview
+
+<Lang lang="zh">
+
+**Cunning Player** 是 Cunning3D 生态的 **Web 端运行时**。得益于 Rust 对 **WebAssembly (WASM)** 的完美支持，我们将整个计算核心编译到了浏览器中。
+
+这意味着用户**无需安装任何软件**，仅通过一个网页链接，就能实时加载、调整并预览复杂的 CDA 资产。
+
+</Lang>
+
+<Lang lang="en">
+
+**Cunning Player** is the **Web Runtime** for the Cunning3D ecosystem. Thanks to Rust's perfect support for **WebAssembly (WASM)**, we have compiled the entire computation core to run inside the browser.
+
+This means users can load, tweak, and preview complex CDA assets in real-time via a simple web link, **without installing any software**.
+
+</Lang>
+
+## Web Capabilities
+
+<Lang lang="zh">
+
+### 🌍 客户端计算 (Client-Side Compute)
+不同于云渲染方案，Cunning Player 的所有几何计算都在**用户的浏览器本地**完成。
+- **零服务器成本**：不需要昂贵的 GPU 实例来烘焙模型。
+- **隐私安全**：资产逻辑在本地执行。
+- **离线运行**：加载完成后，即使断网也能继续调整参数。
+
+### 🧵 Web Worker 多线程
+为了防止复杂的几何运算卡死浏览器页面，我们利用 **Web Workers** 将 Cook 任务剥离到后台线程。即使是百万面的网格生成，页面 UI 依然能保持响应。
+
+### 🎨 WebGPU / WebGL2 渲染
+复用 Bevy Engine 的渲染管线，Cunning Player 在浏览器中提供了与桌面端一致的高保真视觉体验。
+- **PBR 材质**
+- **实时线框叠加**
+- **属性可视化**
+
+</Lang>
+
+<Lang lang="en">
+
+### 🌍 Client-Side Compute
+Unlike cloud rendering solutions, all Cunning Player geometry computations happen **locally in the user's browser**.
+- **Zero Server Cost**: No expensive GPU instances needed to bake models.
+- **Privacy**: Asset logic executes locally.
+- **Offline Capable**: Once loaded, parameters can be tweaked even without an internet connection.
+
+### 🧵 Web Worker Multithreading
+To prevent heavy geometry operations from freezing the browser page, we utilize **Web Workers** to offload Cook tasks to background threads. Even with million-polygon mesh generation, the page UI remains responsive.
+
+### 🎨 WebGPU / WebGL2 Rendering
+Reusing the Bevy Engine render pipeline, Cunning Player delivers high-fidelity visuals in the browser consistent with the desktop app.
+- **PBR Materials**
+- **Real-time Wireframe Overlays**
+- **Attribute Visualization**
+
+</Lang>
+
+## Use Cases
+
+<Lang lang="zh">
+
+- **在线资产库**：类似 Sketchfab，但你可以实时调整模型的参数（如桌子的长宽、树的茂密程度）。
+- **配置器 (Configurators)**：电商产品的实时 3D 定制。
+- **移动端预览**：在 iPad 或手机上快速审查 CDA 资产效果。
+
+</Lang>
+
+<Lang lang="en">
+
+- **Online Asset Library**: Like Sketchfab, but you can tweak model parameters (e.g., table dimensions, tree density) in real-time.
+- **Configurators**: Real-time 3D customization for e-commerce.
+- **Mobile Preview**: Quickly review CDA assets on iPads or mobile phones.
+
+</Lang>

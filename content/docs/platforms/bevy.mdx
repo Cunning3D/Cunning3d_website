@@ -1,0 +1,127 @@
+---
+title: Bevy Integration
+description: Native Rust integration
+icon: Cpu
+---
+
+## Setup
+
+Add `cunning_kernel` to your `Cargo.toml`:
+
+```toml
+[dependencies]
+cunning_kernel = { path = "../Cunning3D_1.0/crates/cunning_kernel" }
+bevy = "0.14"
+```
+
+## Basic Usage
+
+```rust
+use bevy::prelude::*;
+use cunning_kernel::{Geometry, ops::*};
+
+fn spawn_procedural(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+) {
+    // Create geometry
+    let cube = Geometry::cube(1.0, 2, 2, 2);
+    let sphere = Geometry::sphere(0.5, 16, 32);
+    let result = boolean(&cube, &sphere, BoolOp::Subtract);
+    
+    // Convert to Bevy mesh
+    let mesh = result.to_bevy_mesh();
+    
+    commands.spawn(PbrBundle {
+        mesh: meshes.add(mesh),
+        material: materials.add(Color::srgb(0.8, 0.2, 0.3)),
+        ..default()
+    });
+}
+```
+
+## CDA Loading
+
+```rust
+use cunning_cda_runtime::{compile, execute};
+
+fn load_cda(path: &str) -> Result<Geometry, CdaError> {
+    let bytes = std::fs::read(path)?;
+    let definition = compile(&bytes)?;
+    let params = HashMap::new();
+    let inputs = vec![];
+    
+    let outputs = execute(&definition, &params, &inputs)?;
+    Ok(outputs[0].clone())
+}
+```
+
+## ECS Pattern
+
+```rust
+#[derive(Component)]
+struct CunningGeoHandle(Arc<Geometry>);
+
+fn update_procedural_meshes(
+    mut meshes: ResMut<Assets<Mesh>>,
+    query: Query<(&CunningGeoHandle, &Handle<Mesh>), Changed<CunningGeoHandle>>,
+) {
+    for (geo_handle, mesh_handle) in query.iter() {
+        if let Some(mesh) = meshes.get_mut(mesh_handle) {
+            *mesh = geo_handle.0.to_bevy_mesh();
+        }
+    }
+}
+```
+
+## Operations
+
+| Function | Description |
+|----------|-------------|
+| `Geometry::cube(size, dx, dy, dz)` | Create box |
+| `Geometry::sphere(r, rings, segs)` | Create sphere |
+| `poly_extrude(&geo, dist, inset)` | Extrude faces |
+| `poly_bevel(&geo, dist, divs)` | Bevel edges |
+| `boolean(&a, &b, op)` | Boolean operation |
+| `merge(&[geo1, geo2, ...])` | Combine geometries |
+
+## Async Cooking
+
+For complex operations, use async tasks:
+
+```rust
+use bevy::tasks::{AsyncComputeTaskPool, Task};
+
+#[derive(Component)]
+struct CookTask(Task<Arc<Geometry>>);
+
+fn spawn_cook_tasks(
+    mut commands: Commands,
+    query: Query<(Entity, &CdaAsset), Added<CdaAsset>>,
+) {
+    let pool = AsyncComputeTaskPool::get();
+    
+    for (entity, asset) in query.iter() {
+        let asset = asset.clone();
+        let task = pool.spawn(async move {
+            // Heavy procedural work
+            execute(&asset.definition, &asset.params, &[])
+                .map(|o| o[0].clone())
+                .unwrap()
+        });
+        
+        commands.entity(entity).insert(CookTask(task));
+    }
+}
+```
+
+## Performance Tips
+
+<Callout type="tip">
+Cunning operations are thread-safe. Use Bevy's async task pool for parallel cooking.
+</Callout>
+
+- Cache compiled CDA definitions
+- Reuse geometry when possible
+- Cook in parallel with game logic

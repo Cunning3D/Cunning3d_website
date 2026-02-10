@@ -1,0 +1,170 @@
+---
+title: Why Cunning3D
+description: Architecture comparison with Houdini Engine
+icon: Zap
+---
+
+## What is Cunning3D?
+
+**Cunning3D** is a **native Rust DCC application** for procedural modeling. It is the “main software” (like Houdini), not just a runtime plugin:
+
+- A dockable, multi-panel editor UI (Egui + docking/tab system)
+- A real-time 3D viewport (Bevy 3D + custom materials/shaders)
+- A node graph authoring workflow (nodes, ports, parameters, groups)
+- A CDA asset pipeline to package graphs into reusable assets
+
+In code, the DCC “host” is the Bevy app entry in `Cunning3D_1.0/src/main.rs`, which wires UI, viewport rendering, node registries, and the async compute loop together.
+
+## What is Cunning Engine?
+
+**Cunning Engine** is the **integration layer** (similar to Houdini Engine): it runs the same procedural core inside other hosts.
+
+- **Unity**: `crates/cunning_core_ffi` exposes a C ABI DLL and an async cook job system
+- **Web (WASM)**: `crates/cunning_player` provides a WASM runtime/player
+- **Shared runtime**: `crates/cunning_cda_runtime` compiles/executes the CDA runtime chunk
+
+This is why the docs talk about DLL/FFI a lot—but that’s only one layer. The product story should be: **Cunning3D (DCC) → author assets → Cunning Engine (runtime bridge) → use in Unity/Bevy/Web**.
+
+## Editor Architecture (From Code)
+
+### Host Stack
+
+- **App/Loop**: Bevy App (`src/main.rs`)
+- **UI**: Egui + docking + editor tabs (`src/tabs_system/*`)
+- **Viewport**: Bevy 3D + custom render features/materials (`src/render/*`, `crates/cunning_viewport`)
+- **Core**: node graph, registries, scripting, profiling (`src/cunning_core/*`)
+
+### Node System (Plug-and-Play)
+
+Nodes are discovered via a static registry using `inventory` and the `register_node!` macro, then instantiated by the `NodeRegistry`.
+
+```rust
+// Simplified: Cunning3D_1.0/src/cunning_core/registries/node_registry.rs
+inventory::collect!(StaticNodeDescriptor);
+```
+
+In addition, there is a dynamic plugin loader (DLL/so/dylib) via `libloading` to register external nodes at runtime (`src/cunning_core/plugin_system`).
+
+### Non-blocking Compute Pipeline
+
+The editor uses an async compute pipeline with dirty tracking, caching, and background execution (`src/cunning_core/graph/async_compute.rs`). This is the foundation of “interactive node editing without freezing the UI”.
+
+## CDA: Author Once, Run Anywhere
+
+**CDA** (Cunning Digital Asset) is the packaging format for a graph + promoted parameters:
+
+- **In the DCC**: you edit the full graph and expose parameters
+- **In engine/runtime**: you evaluate a compact runtime representation
+
+The runtime side is implemented in `crates/cunning_cda_runtime`.
+
+## Cunning Engine vs Houdini Engine (Runtime Layer)
+
+This section is the direct comparison: **Cunning Engine** is to Cunning3D what **Houdini Engine** is to Houdini.
+
+<Drawio file="content/docs/diagrams/CDA_vs_HoudiniEngine.drawio" height={600} title="Architecture Comparison (Interactive Draw.io)" />
+
+### In-Process vs External Process
+
+The fundamental difference: **Cunning Engine runs inside your host process**, Houdini Engine typically runs with an external Houdini process + IPC.
+
+```
+Houdini Engine:
+┌─────────────�?   IPC    ┌─────────────�?�?Unity/UE    �?◄──────�?�? Houdini    �?�?(Your Game) �? ~ms     �? (Process)  �?└─────────────�?         └─────────────�?     �?serialization overhead
+
+Cunning:
+┌──────────────────────────────────────�?�?Unity/UE                              �?�?  └── cunning_core_ffi.dll (~µs)     �?�?        └── direct function call      �?└──────────────────────────────────────�?```
+
+## Comparison
+
+| Aspect | Cunning | Houdini Engine |
+|--------|---------|----------------|
+| **Integration** | In-process DLL | External process |
+| **Latency** | ~µs (function call) | ~ms (serialization) |
+| **Memory** | Shared address space | IPC marshaling |
+| **Size** | ~15 MB | 1+ GB |
+| **License** | Free | $269+/year |
+| **Runtime Deploy** | Native support | Complex |
+
+## Why This Matters
+
+### Latency
+
+Every cook in Houdini Engine requires:
+1. Serialize parameters to JSON/binary
+2. Send via IPC to Houdini process
+3. Houdini deserializes, cooks
+4. Serialize result mesh
+5. Send back, deserialize
+
+Cunning:
+1. Call function
+2. Done
+
+### Crash Isolation
+
+The Unity-facing C ABI boundary uses Rust panic isolation. If the DLL panics:
+- The panic is caught via `catch_unwind`
+- Error returned to caller
+- Unity keeps running
+
+```rust
+// FFI boundary
+pub extern "C" fn cunning_op_boolean(...) -> ulong {
+    std::panic::catch_unwind(|| {
+        // Actual operation
+    }).unwrap_or(0)
+}
+```
+
+No crash propagation. Your game stays stable.
+
+### Runtime Deployment
+
+| | Cunning | Houdini Engine |
+|-|---------|----------------|
+| Ship DLL | Yes (~15 MB) | No (needs install) |
+| Runtime cook | Native | Complex licensing |
+| Mobile support | Planned | Limited |
+| WebAssembly | Yes | No |
+
+## Editor/Runtime Split
+
+Cunning Engine provides separate DLLs:
+
+| DLL | Size | Use |
+|-----|------|-----|
+| `cunning_core_ffi.dll` | ~15 MB | Editor, full features |
+| `cunning_core_ffi_runtime.dll` | ~8 MB | Shipped game |
+
+The runtime evaluator can reject unsupported nodes at load/compile time for the current target (e.g., runtime build vs editor build), keeping shipped builds lean and predictable.
+
+## When to Use What
+
+<Cards>
+
+<Card title="Use Cunning3D + Cunning Engine When">
+- Your main workflow is a **Rust DCC** with a modern plugin architecture
+- You want **tight runtime integration** (Unity/Bevy/Web) with minimal overhead
+- You care about **interactive iteration** and non-blocking compute
+- You want **panic isolation** at the DLL boundary (host keeps running)
+</Card>
+
+<Card title="Use Houdini + Houdini Engine When">
+- You need Houdini’s mature ecosystem and tool breadth today
+- Your team is already Houdini-centric
+- Your runtime constraints and dependency size are less strict
+</Card>
+
+</Cards>
+
+## Architecture
+
+```
+┌────────────────────────────────────────────────────────────────────────�?�?                        cunning_kernel (Rust)                          �?�? Geometry / Attributes / Nodes / Algorithms                            �?└────────────────────────────────────────────────────────────────────────�?                �?                   �?                   �?    ┌───────────┴───────�?  ┌───────┴───────�?  ┌───────┴───────�?    �?cunning_core_ffi  �?  �?cunning_cda   �?  �?cunning_player�?    �?  (C ABI DLL)     �?  �?  _runtime    �?  �?  (WASM)      �?    └─────────┬─────────�?  └───────┬───────�?  └───────┬───────�?              �?                    �?                  �?    ┌─────────┴─────────�?  ┌───────┴───────�?  ┌───────┴───────�?    �?Unity / Unreal /  �?  �? Cunning3D    �?  �?  Browser     �?    �?Godot / Custom    �?  �?  Editor      �?  �?  Runtime     �?    └───────────────────�?  └───────────────�?  └───────────────�?```
+
+The same `cunning_kernel` powers all platforms. Write once, run everywhere.
+
+<Callout type="info">
+This page describes both layers: **Cunning3D (DCC)** as the main software, and **Cunning Engine** as the Houdini-Engine-like runtime bridge.
+</Callout>

@@ -1,0 +1,55 @@
+name: sync-examples
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout website
+        uses: actions/checkout@v4
+
+      # Configure these as GitHub Repository Variables:
+      # - CUNNING_EXAMPLES_REPO: e.g. "your-org/your-examples-repo"
+      # - CUNNING_EXAMPLES_PATH: e.g. "examples" (folder inside that repo containing .cda files)
+      - name: Checkout examples repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.CUNNING_EXAMPLES_REPO }}
+          path: .examples_repo
+
+      - name: Sync .cda files into public/examples
+        run: |
+          set -euo pipefail
+          mkdir -p public/examples
+          rm -f public/examples/*.cda
+          src=".examples_repo/${{ vars.CUNNING_EXAMPLES_PATH }}"
+          if [ ! -d "$src" ]; then
+            echo "Examples path does not exist: $src"
+            exit 1
+          fi
+          shopt -s nullglob
+          cp -v "$src"/*.cda public/examples/ || true
+
+      - name: Generate index.json
+        run: node scripts/generate-examples-index.mjs
+
+      - name: Commit changes
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/examples/index.json public/examples/*.cda || true
+          git commit -m "sync examples"
+          git push
+

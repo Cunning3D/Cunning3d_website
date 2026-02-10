@@ -1,0 +1,226 @@
+---
+title: Connectivity
+description: Analyze and label connected components in geometry.
+icon: Boxes
+since: v1.0
+versions: ['v1.0', 'v1.1']
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+# Connectivity
+
+The **Connectivity Node** analyzes geometric elements (points or primitives) and assigns a unique class ID to each connected region. This is essential for identifying separate "islands" of geometry, preparing meshes for UV unwrapping, or procedurally applying different treatments to disconnected components.
+
+Connectivity is determined by shared edges—two primitives are connected if they share at least one common edge. Similarly, two points are connected if there is an edge linking them.
+
+## Connectivity Types
+
+The node operates in two distinct modes, determining which geometric element is used as the basis for connectivity analysis.
+
+<Drawio file="content/docs/diagrams/connectivity-types.drawio" height={500} title="Primitive vs Point Connectivity" />
+
+### Primitive Connectivity
+Analyzes connectivity at the **primitive (face)** level. All primitives that are joined by shared edges receive the same class ID.
+
+- **Use Case**: Identifying separate mesh islands for individual processing.
+- **Output**: A primitive attribute (default name: `class`) containing the component ID.
+
+### Point Connectivity
+Analyzes connectivity at the **point (vertex)** level. All points that are linked by edges receive the same class ID.
+
+- **Use Case**: Finding welded vs. unwelded vertex components.
+- **Output**: A point attribute (default name: `class`) containing the component ID.
+
+## Advanced Features
+
+### Seam Edges
+The **Seam Group** parameter allows you to specify edges that should be treated as "cuts." Primitives sharing a seam edge will **not** be considered connected, even if they share other edges. This is critical for UV unwrapping workflows where you want to force specific cuts.
+
+### UV Connectivity
+When **Use UV Connectivity** is enabled, the node considers UV coordinates in addition to geometric connectivity. Two geometrically connected elements will only be considered part of the same component if their UVs are also within the specified tolerance.
+
+<Drawio file="content/docs/diagrams/connectivity-uv.drawio" height={400} title="UV Connectivity for UV Island Detection" />
+
+This is essential for:
+- **UV Island Detection**: Ensuring UV shells are correctly identified as separate components.
+- **Seam Validation**: Verifying that UV seams correspond to geometric boundaries.
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Connectivity Type** | Menu | Primitive | Choose between **Point** or **Primitive** connectivity analysis. |
+| **Primitive Include Group** | String | "" | Limit analysis to a specific primitive group. Empty means all primitives. |
+| **Attribute** | String | "class" | The name of the output attribute containing component IDs. |
+| **Attribute Type** | Menu | Integer | Output format: **Integer** (0, 1, 2...) or **String** ("0", "1", "2"...). |
+| **Local Variable** | String | "" | Name for a local variable to store the class ID (for use in expressions). |
+| **Seam Group** | String | "" | Edge group to treat as seams (breaks connectivity). |
+| **Use UV Connectivity** | Toggle | Off | Enable UV-based connectivity checks. |
+| **UV Attribute** | String | "uv" | Name of the UV attribute to use. |
+| **UV Tolerance** | Float | 1e-4 | Maximum UV distance for points to be considered connected. Range: 0.0 to 0.01. |
+
+## Technical Implementation
+
+The Connectivity node utilizes the **Disjoint Set Union (DSU)** algorithm, also known as Union-Find, to efficiently compute connected components with near-linear time complexity.
+
+<Drawio file="content/docs/diagrams/connectivity-dsu.drawio" height={450} title="DSU Algorithm for Connectivity" />
+
+### DSU Data Structure
+
+The DSU maintains a forest of trees where each tree represents one connected component:
+
+```rust
+struct Dsu {
+    parent: Vec<usize>,  // Parent pointer for each element
+    rank: Vec<u8>        // Tree rank for union optimization
+}
+```
+
+**Operations:**
+- **Find(x)**: Returns the root of element `x` with path compression.
+- **Union(a, b)**: Merges the sets containing `a` and `b` using union by rank.
+
+### Algorithm Complexity
+
+With path compression and union by rank optimizations:
+- **Time Complexity**: $O(n \cdot \alpha(n))$ where $\alpha$ is the inverse Ackermann function (effectively constant, < 5 for all practical inputs).
+- **Space Complexity**: $O(n)$ for the parent and rank arrays.
+
+### Primitive Connectivity Algorithm
+
+1. **Initialize DSU**: Create a set for each primitive.
+2. **Build Edge Map**: Traverse all primitives and record which primitives share each edge.
+3. **Union Connected Primitives**: When an edge is shared by multiple primitives, union their sets.
+4. **Handle Seams**: Skip union operations for edges in the seam group.
+5. **UV Check** (if enabled): Only union if UV coordinates match within tolerance.
+6. **Assign IDs**: Each unique root gets a sequential class ID.
+
+### Point Connectivity Algorithm
+
+1. **Initialize DSU**: Create a set for each point.
+2. **Traverse Edges**: For each edge connecting two points, union their sets.
+3. **Handle Seams**: Skip edges that are in the seam group.
+4. **UV Check** (if enabled): Quantize UV coordinates by tolerance and union vertices with matching quantized UVs.
+5. **Assign IDs**: Each point receives the minimum class ID of its incident vertices.
+
+### UV Quantization
+
+For UV connectivity, the algorithm quantizes UV coordinates to handle floating-point tolerance:
+
+$$
+Q_{uv} = \left( \text{round}\left(\frac{u}{\text{tol}}\right), \text{round}\left(\frac{v}{\text{tol}}\right) \right)
+$$
+
+Vertices with the same quantized coordinate are considered UV-connected.
+</Lang>
+
+<Lang lang="zh">
+# 连通性 (Connectivity)
+
+**Connectivity 节点**分析几何元素（点或图元），并为每个连通区域分配唯一的类别 ID。这对于识别独立的几何"岛屿"、准备 UV 展开或程序化地处理不连通的组件非常有用。
+
+连通性由共享边决定——如果两个图元共享至少一条边，则它们是连通的。同样，如果两个点之间有边连接，则它们是连通的。
+
+## 连通性类型
+
+该节点有两种工作模式，决定使用哪种几何元素作为连通性分析的基础。
+
+<Drawio file="content/docs/diagrams/connectivity-types.drawio" height={500} title="图元连通性与点连通性对比" />
+
+### 图元连通性 (Primitive Connectivity)
+在**图元（面）**级别分析连通性。所有通过共享边连接的图元接收相同的类别 ID。
+
+- **应用场景**：识别独立的网格岛屿以进行单独处理。
+- **输出**：图元属性（默认名：`class`），包含组件 ID。
+
+### 点连通性 (Point Connectivity)
+在**点（顶点）**级别分析连通性。所有通过边链接的点接收相同的类别 ID。
+
+- **应用场景**：查找焊接与未焊接的顶点子组件。
+- **输出**：点属性（默认名：`class`），包含组件 ID。
+
+## 高级功能
+
+### 缝合边 (Seam Edges)
+**Seam Group（缝合边组）**参数允许您指定应视为"切割"的边。即使共享其他边，共享缝合边的图元也**不会**被视为连通。这对于 UV 展开工作流中需要强制特定切割的场景非常关键。
+
+### UV 连通性
+当启用 **Use UV Connectivity（使用 UV 连通性）**时，节点除了考虑几何连通性外，还会考虑 UV 坐标。两个几何连通的元素只有在它们的 UV 坐标也在指定容差范围内时，才会被视为同一组件的一部分。
+
+<Drawio file="content/docs/diagrams/connectivity-uv.drawio" height={400} title="UV 连通性用于 UV 岛检测" />
+
+这主要用于：
+- **UV 岛检测**：确保 UV 壳正确识别为独立组件。
+- **缝合边验证**：验证 UV 缝合边是否与几何边界对应。
+
+## 参数
+
+| 参数名 | 类型 | 默认值 | 描述 |
+| :--- | :--- | :--- | :--- |
+| **Connectivity Type** | 菜单 | Primitive | 选择 **Point（点）**或 **Primitive（图元）**连通性分析。 |
+| **Primitive Include Group** | 字符串 | "" | 将分析限制到特定图元组。空表示所有图元。 |
+| **Attribute** | 字符串 | "class" | 包含组件 ID 的输出属性名称。 |
+| **Attribute Type** | 菜单 | Integer | 输出格式：**Integer** (0, 1, 2...) 或 **String** ("0", "1", "2"...)。 |
+| **Local Variable** | 字符串 | "" | 用于存储类别 ID 的局部变量名（用于表达式中）。 |
+| **Seam Group** | 字符串 | "" | 要视为缝合边的边组（断开连通性）。 |
+| **Use UV Connectivity** | 开关 | Off | 启用基于 UV 的连通性检查。 |
+| **UV Attribute** | 字符串 | "uv" | 要使用的 UV 属性名称。 |
+| **UV Tolerance** | 浮点数 | 1e-4 | 点被视为连通的最大 UV 距离。范围：0.0 到 0.01。 |
+
+## 技术实现
+
+Connectivity 节点使用**并查集（Disjoint Set Union, DSU）**算法（也称为 Union-Find），以接近线性的时间复杂度高效计算连通组件。
+
+<Drawio file="content/docs/diagrams/connectivity-dsu.drawio" height={450} title="连通性 DSU 算法" />
+
+### DSU 数据结构
+
+DSU 维护一片森林，其中每棵树代表一个连通组件：
+
+```rust
+struct Dsu {
+    parent: Vec<usize>,  // 每个元素的父指针
+    rank: Vec<u8>        // 树的秩，用于合并优化
+}
+```
+
+**操作：**
+- **Find(x)**：返回元素 `x` 的根，带路径压缩。
+- **Union(a, b)**：合并包含 `a` 和 `b` 的集合，使用按秩合并。
+
+### 算法复杂度
+
+使用路径压缩和按秩合并优化：
+- **时间复杂度**：$O(n \cdot \alpha(n))$，其中 $\alpha$ 是反阿克曼函数（实际可视为常数，对于所有实际输入 < 5）。
+- **空间复杂度**：$O(n)$，用于父指针和秩数组。
+
+### 图元连通性算法
+
+1. **初始化 DSU**：为每个图元创建一个集合。
+2. **构建边映射**：遍历所有图元，记录哪些图元共享每条边。
+3. **合并连通图元**：当一条边被多个图元共享时，合并它们的集合。
+4. **处理缝合边**：跳过对缝合边组中边的合并操作。
+5. **UV 检查**（如果启用）：仅在 UV 坐标在容差范围内匹配时才合并。
+6. **分配 ID**：每个唯一根节点获得一个顺序类别 ID。
+
+### 点连通性算法
+
+1. **初始化 DSU**：为每个点创建一个集合。
+2. **遍历边**：对于连接两点的每条边，合并它们的集合。
+3. **处理缝合边**：跳过缝合边组中的边。
+4. **UV 检查**（如果启用）：按容差量化 UV 坐标，合并具有匹配量化 UV 的顶点。
+5. **分配 ID**：每个点接收其关联顶点的最小类别 ID。
+
+### UV 量化
+
+对于 UV 连通性，算法对 UV 坐标进行量化以处理浮点容差：
+
+$$
+Q_{uv} = \left( \text{round}\left(\frac{u}{\text{tol}}\right), \text{round}\left(\frac{v}{\text{tol}}\right) \right)
+$$
+
+具有相同量化坐标的顶点被视为 UV 连通。
+</Lang>

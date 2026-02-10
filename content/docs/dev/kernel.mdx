@@ -1,0 +1,134 @@
+---
+title: The Geometric Kernel
+description: Implementation details of the Cunning High-Precision Geometric Kernel.
+icon: Cpu
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+# The Cunning Geometric Kernel
+
+The **Cunning Geometric Kernel** (internally based on Manifold3D) is the engine responsible for robust boolean operations, mesh repairs, and CSG transformations. It distinguishes itself from traditional kernels (like CGAL or Carve) by prioritizing **guaranteed 2-manifold output** and **exact arithmetic** over floating-point speed hacks.
+
+## Core Philosophy
+
+1.  **Everything is a Manifold**: The kernel enforces that every intermediate result is a valid, watertight 2-manifold.
+2.  **Symbolic Perturbation**: Degeneracies (coplanar faces, overlapping edges) are resolved not by epsilon thresholds, but by conceptually perturbing the geometry.
+3.  **Generalized Winding Numbers**: Instead of simple boolean truth tables, we compute winding numbers to correctly classify regions in complex, self-intersecting inputs.
+
+## The Execution Pipeline
+
+<Drawio file="content/docs/diagrams/cunning-kernel-pipeline.drawio" height={500} title="Kernel Execution Pipeline" />
+
+### 1. Broad Phase: Radix Tree & Morton Codes
+Before checking for intersections, the kernel must efficiently find potential colliding pairs.
+
+-   **Morton Encoding (Z-Order Curve)**: Every vertex and face center is mapped to a single integer (Morton code) that interleaves the bits of its X, Y, and Z coordinates. This preserves locality: elements close in 3D space have close Morton codes.
+-   **Linear BVH (Radix Tree)**: The sorted Morton codes are used to build a **Radix Tree** (a type of BVH). This allows for extremely fast, parallel collision detection without the overhead of building a traditional object-pointer tree.
+
+<Drawio file="content/docs/diagrams/kernel-broadphase.drawio" height={400} title="Morton Encoding & Radix Tree" />
+
+### 2. Symbolic Perturbation (SoS)
+Standard kernels fail when faces are coplanar or edges overlap exactly. Cunning uses **Simulation of Simplicity (SoS)** via symbolic perturbation.
+
+-   **Concept**: We imagine that one operand ($P$) is expanded by an infinitesimal amount ($\epsilon$) relative to the other ($Q$).
+-   **Implementation**: In the `Shadows` function, if two values are equal ($p == q$), we use the expansion direction to break the tie deterministically.
+    $$
+    Shadows(p, q, dir) = \begin{cases} p < q & \text{if } p \neq q \\ dir < 0 & \text{if } p = q \end{cases}
+    $$
+    This transforms "equality" checks into strict inequalities, removing all degenerate cases.
+
+<Drawio file="content/docs/diagrams/kernel-perturbation.drawio" height={400} title="Symbolic Perturbation Strategy" />
+
+### 3. Exact Arithmetic with FMA
+To ensure that intersections are calculated with maximum precision, the kernel relies on **Fused Multiply-Add (FMA)** instructions.
+
+-   **Why**: Computing $a \times b + c$ normally involves two rounding steps. FMA does it in one, preserving significantly more precision.
+-   **Usage**: Used in `Interpolate` (finding edge-edge intersection points) and `Intersect` (triangle-edge).
+
+```cpp
+// Kernel Implementation
+vec2 Interpolate(vec3 pL, vec3 pR, double x) {
+    // ...
+    yz[0] = fma(lambda, dLR.y, useL ? pL.y : pR.y);
+    yz[1] = fma(lambda, dLR.z, useL ? pL.z : pR.z);
+    return yz;
+}
+```
+
+### 4. Generalized Winding Number
+Finally, to determine which parts of the mesh to keep (Union, Difference, Intersection), the kernel computes the **Winding Number** for every region.
+
+-   **Traditional**: Ray casting (odd = inside, even = outside). Fails on self-intersections.
+-   **Generalized**: Sums the signed solid angle of all triangles as seen from a point.
+    $$
+    W(p) = \frac{1}{4\pi} \sum_{t \in Mesh} \Omega(p, t)
+    $$
+    In our discrete implementation, we sum the "shadow" contributions ($s02$) accumulated during the intersection phase.
+
+</Lang>
+
+<Lang lang="zh">
+# Cunning 几何核心 (The Cunning Geometric Kernel)
+
+**Cunning 几何核心**（内部基于 Manifold3D）是负责稳健布尔运算、网格修复和 CSG 变换的引擎。与传统内核（如 CGAL 或 Carve）不同，它优先考虑**保证 2-流形输出**和**精确算术**，而不是浮点速度黑客。
+
+## 核心哲学
+
+1.  **万物皆流形 (Everything is a Manifold)**：内核强制每个中间结果都是有效的、不漏水的 2-流形。
+2.  **符号扰动 (Symbolic Perturbation)**：退化情况（共面、重叠边）不是通过 Epsilon 阈值解决的，而是通过概念上扰动几何体来解决的。
+3.  **广义卷绕数 (Generalized Winding Numbers)**：我们不使用简单的布尔真值表，而是计算卷绕数以正确分类复杂、自相交输入中的区域。
+
+## 执行管线 (The Execution Pipeline)
+
+<Drawio file="content/docs/diagrams/cunning-kernel-pipeline.drawio" height={500} title="内核执行管线" />
+
+### 1. 宽阶段：基数树与 Morton 码
+在检查相交之前，内核必须有效地找到潜在的碰撞对。
+
+-   **Morton 编码 (Z-Order Curve)**：每个顶点和面中心都被映射为一个整数 (Morton 码)，该整数交错其 X、Y 和 Z 坐标的位。这保留了局部性：空间中接近的元素具有接近的 Morton 码。
+-   **线性 BVH (Radix Tree)**：排序后的 Morton 码用于构建**基数树**（一种 BVH）。这允许极快、并行的碰撞检测，而无需构建传统对象指针树的开销。
+
+<Drawio file="content/docs/diagrams/kernel-broadphase.drawio" height={400} title="Morton 编码与基数树" />
+
+### 2. 符号扰动 (Symbolic Perturbation / SoS)
+当面共面或边完全重叠时，标准内核会失败。Cunning 使用通过符号扰动实现的 **简易性模拟 (SoS)**。
+
+-   **概念**：我们想象一个操作数 ($P$) 相对于另一个 ($Q$) 膨胀了一个无穷小量 ($\epsilon$)。
+-   **实现**：在 `Shadows` 函数中，如果两个值相等 ($p == q$)，我们使用膨胀方向来确定性地打破平局。
+    $$
+    Shadows(p, q, dir) = \begin{cases} p < q & \text{if } p \neq q \\ dir < 0 & \text{if } p = q \end{cases}
+    $$
+    这将“相等”检查转化为严格的不等式，消除了所有退化情况。
+
+<Drawio file="content/docs/diagrams/kernel-perturbation.drawio" height={400} title="符号扰动策略" />
+
+### 3. FMA 精确算术
+为了确保以最大精度计算交点，内核依赖于 **融合乘加 (FMA)** 指令。
+
+-   **原因**：通常计算 $a \times b + c$ 涉及两个舍入步骤。FMA 在一步中完成，保留了更多精度。
+-   **用法**：用于 `Interpolate`（查找边-边交点）和 `Intersect`（三角形-边）。
+
+```cpp
+// 内核实现片段
+vec2 Interpolate(vec3 pL, vec3 pR, double x) {
+    // ...
+    yz[0] = fma(lambda, dLR.y, useL ? pL.y : pR.y);
+    yz[1] = fma(lambda, dLR.z, useL ? pL.z : pR.z);
+    return yz;
+}
+```
+
+### 4. 广义卷绕数 (Generalized Winding Number)
+最后，为了确定保留网格的哪些部分（并集、差集、交集），内核计算每个区域的**卷绕数**。
+
+-   **传统**：射线投射（奇数=内部，偶数=外部）。在自相交时失败。
+-   **广义**：求和从一点观察到的所有三角形的符号立体角。
+    $$
+    W(p) = \frac{1}{4\pi} \sum_{t \in Mesh} \Omega(p, t)
+    $$
+    在我们的离散实现中，我们求和在相交阶段累积的“阴影”贡献 ($s02$)。
+
+</Lang>

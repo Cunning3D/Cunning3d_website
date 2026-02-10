@@ -1,0 +1,17 @@
+{
+  "title": "Cunning Core",
+  "description": "Core Documentation",
+  "icon": "Building",
+  "root": true,
+  "pages": [
+    "---Introduction---",
+    "index",
+    "cunning3d",
+    "cunning-engine",
+    "cunning-player",
+    "what-is-cunning",
+    "---Core Concepts---",
+    "geometry",
+    "attributes"
+  ]
+}

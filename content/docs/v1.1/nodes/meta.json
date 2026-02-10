@@ -1,0 +1,5 @@
+{
+  "title": "Nodes (v1.1)",
+  "icon": "Boxes",
+  "pages": ["boolean", "polyextrude", "file", "foreach"]
+}

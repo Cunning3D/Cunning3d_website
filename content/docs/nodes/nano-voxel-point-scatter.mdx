@@ -1,0 +1,109 @@
+---
+title: Nano Voxel Point Scatter
+description: Generate colored scatter dots from a top-down reference image and apply them back onto voxel terrain.
+icon: Boxes
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+
+# Nano Voxel Point Scatter
+
+This node uses Gemini image generation to **add sparse colored dots** on a top-down reference mask, then maps those dots back to your input voxel terrain by **painting palette indices on the top surface** (or adding voxels with an offset).
+
+<Drawio file="content/docs/diagrams/nano-voxel-point-scatter-pipeline.drawio" height={280} title="AI scatter → voxel paint pipeline" />
+
+## IO
+
+| Port | Type | Notes |
+|------|------|------|
+| Input | `Geometry` | Must contain voxels (discrete payload or `Voxel Edit` cache). |
+| Output | `Voxel` | Voxel geometry with scatter colors applied. |
+
+## Parameters
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `reference_image` | `FilePath` | `""` | Top-down reference mask image (white=allowed region). Required for both Generate and Apply. |
+| `prompt` | `String` | `"Scatter a few clusters of colorful flowers, rocks, and props."` | What to scatter and how it should distribute. |
+| `seed` | `Int` | `0` | Seed hint appended to the prompt (for reproducibility). |
+| `ref_white_threshold` | `Float` | `0.30` | Only apply dots where the reference pixel brightness is above this threshold. |
+| `min_value` | `Float` | `0.35` | Ignore scatter pixels that are too dark. |
+| `min_saturation` | `Float` | `0.20` | Ignore scatter pixels that are not saturated enough. |
+| `palette_r` | `Int` | `2` | Palette index for red-dominant dots. |
+| `palette_g` | `Int` | `3` | Palette index for green-dominant dots. |
+| `palette_b` | `Int` | `4` | Palette index for blue-dominant dots. |
+| `paint_surface` | `Bool` | `true` | If true, paint the top surface voxel at each (x,z). |
+| `y_offset` | `Int` | `1` | When `paint_surface=false`, add/paint at `top_y + y_offset`. |
+| `max_points` | `Int` | `20000` | Safety cap for applied dots (0 disables the cap). |
+| `generate` | `Button` | `0` | Runs Gemini and writes `scatter_image` to `assets/textures/ai_voxel_scatter/<node_id>/`. |
+
+## Typical workflow
+
+1. Connect your voxel terrain to **Input**.
+2. Set **Reference Image** to a top-down mask (white regions are paintable).
+3. Set `palette_r/g/b` to match your voxel palette indices.
+4. Click **Generate**.
+5. The node will apply dots back onto the voxel surface on the next cook.
+
+## Notes
+
+- The generated scatter image is stored under `assets/textures/ai_voxel_scatter/<node_id>/` and referenced by the internal parameter `scatter_image`.
+- Color mapping is intentionally simple: dominant RGB channel → `palette_r/g/b`. Keep dots strongly red/green/blue for best results.
+- Knowledge source: `Cunning3D_1.0/assets/knowledge/internal_nodes/NanoVoxelPointScatter_agent.toml`.
+
+</Lang>
+
+<Lang lang="zh">
+
+# Nano Voxel Point Scatter
+
+该节点会让 Gemini 在顶视图参考 Mask 上**只撒少量高饱和的彩色点**，然后把这些彩点映射回输入的体素地形：按 \((x,z)\) 找到顶面 y，并用 **R/G/B 主色 → 调色板索引**的规则将体素上色（或按偏移添加体素）。
+
+<Drawio file="content/docs/diagrams/nano-voxel-point-scatter-pipeline.drawio" height={280} title="AI 撒点 → 体素回写流程" />
+
+## 输入输出 (IO)
+
+| 端口 | 类型 | 说明 |
+|------|------|------|
+| 输入 | `Geometry` | 需要是体素数据（离散 payload 或 `Voxel Edit` 缓存）。 |
+| 输出 | `Voxel` | 已应用撒点颜色的体素几何。 |
+
+## 参数
+
+| 名称 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `reference_image` | `FilePath` | `""` | 顶视图参考 Mask（白色=允许区域）。Generate 与 Apply 都需要。 |
+| `prompt` | `String` | `"Scatter a few clusters of colorful flowers, rocks, and props."` | 描述要撒什么与分布方式。 |
+| `seed` | `Int` | `0` | 作为可复现提示追加到 prompt。 |
+| `ref_white_threshold` | `Float` | `0.30` | 仅在参考图亮度超过阈值处应用彩点。 |
+| `min_value` | `Float` | `0.35` | 过滤过暗的彩点像素。 |
+| `min_saturation` | `Float` | `0.20` | 过滤饱和度不足的彩点像素。 |
+| `palette_r` | `Int` | `2` | 红色主导点对应的 palette index。 |
+| `palette_g` | `Int` | `3` | 绿色主导点对应的 palette index。 |
+| `palette_b` | `Int` | `4` | 蓝色主导点对应的 palette index。 |
+| `paint_surface` | `Bool` | `true` | 为 true 时直接上色顶面体素。 |
+| `y_offset` | `Int` | `1` | `paint_surface=false` 时，应用到 `top_y + y_offset`。 |
+| `max_points` | `Int` | `20000` | 安全上限（0 表示不限制）。 |
+| `generate` | `Button` | `0` | 触发 Gemini 并将 `scatter_image` 写入 `assets/textures/ai_voxel_scatter/<node_id>/`。 |
+
+## 常用流程
+
+1. 将体素地形连接到 **Input**。
+2. 设置 **Reference Image** 为顶视图 Mask（白色区域可撒点）。
+3. 配置 `palette_r/g/b` 为你想要的体素调色板索引。
+4. 点击 **Generate**。
+5. 下一次 cook 时节点会把彩点回写到体素顶面。
+
+## 备注
+
+- 生成的 scatter 图会保存在 `assets/textures/ai_voxel_scatter/<node_id>/`，并写入内部参数 `scatter_image`。
+- 颜色映射规则刻意保持极简：RGB 主通道 → `palette_r/g/b`，建议让彩点尽量接近纯红/纯绿/纯蓝。
+- Knowledge 来源：`Cunning3D_1.0/assets/knowledge/internal_nodes/NanoVoxelPointScatter_agent.toml`。
+
+</Lang>
+

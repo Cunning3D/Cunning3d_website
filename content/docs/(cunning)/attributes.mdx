@@ -1,0 +1,95 @@
+---
+title: Attributes
+description: Attribute system for geometry data
+icon: Database
+---
+
+## Overview
+
+Attributes attach data to geometry elements. Like Houdini, Cunning supports attributes on:
+
+- **Point** - Per-point data (position, normal)
+- **Vertex** - Per-vertex data (UV, color)
+- **Primitive** - Per-face data (material ID)
+- **Detail** - Whole-geometry data (name, metadata)
+
+## Attribute Types
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `Float` | Single float | density |
+| `Vec2` | 2D vector | uv |
+| `Vec3` | 3D vector | P, N, Cd |
+| `Vec4` | 4D vector | quaternion |
+| `Int` | Integer | id, class |
+| `String` | Text | name, path |
+
+## Built-in Attributes
+
+| Name | Class | Type | Description |
+|------|-------|------|-------------|
+| `P` | Point | Vec3 | Position |
+| `N` | Vertex/Point | Vec3 | Normal |
+| `uv` | Vertex | Vec2 | Texture coordinates |
+| `Cd` | Vertex/Point | Vec3 | Color (RGB) |
+| `Alpha` | Vertex/Point | Float | Opacity |
+| `id` | Point | Int | Unique identifier |
+
+## Accessing Attributes
+
+### Reading
+
+```csharp
+// Check if attribute exists
+bool hasUV = NativeMethods.cunning_geo_has_attrib(geo, "uv", AttribClass.Vertex);
+
+// Get attribute data
+float[] uvData = new float[vertCount * 2];
+NativeMethods.cunning_geo_get_attrib_v2(geo, "uv", AttribClass.Vertex, uvData);
+```
+
+### Writing
+
+```csharp
+// Create attribute
+NativeMethods.cunning_geo_create_attrib(geo, "Cd", AttribClass.Point, AttribType.Vec3);
+
+// Set values
+float[] colors = new float[pointCount * 3];
+// Fill colors...
+NativeMethods.cunning_geo_set_attrib_v3(geo, "Cd", AttribClass.Point, colors);
+```
+
+## Groups
+
+Groups are special attributes that mark element membership:
+
+```csharp
+// Create group
+NativeMethods.cunning_geo_create_group(geo, "selected", GroupType.Point);
+
+// Add to group
+NativeMethods.cunning_geo_group_add(geo, "selected", pointIndex);
+
+// Check membership
+bool inGroup = NativeMethods.cunning_geo_group_contains(geo, "selected", pointIndex);
+```
+
+## Attribute Transfer
+
+Nodes like `AttribTransfer` copy attributes between geometries based on proximity or topology:
+
+```
+[Source] ─┬─�?[AttribTransfer] ─�?[Output with transferred attribs]
+[Target] ─�?
+```
+
+## Best Practices
+
+<Callout type="warning">
+Attributes add memory overhead. Only create attributes you actually need.
+</Callout>
+
+- Use built-in attributes when possible
+- Prefer compact types (Float over Vec3 if only one component needed)
+- Clean up unused attributes before export

@@ -1,0 +1,47 @@
+---
+title: Fuse
+description: Merge distinct points that are within a specified distance.
+icon: Zap
+---
+
+<Lang lang="en">
+The **Fuse** node merges (welds) points that are close to each other. It effectively cleans up geometry by removing gaps and connecting disconnected components.
+
+This is commonly used after:
+- Mirroring geometry.
+- Merging multiple imported meshes.
+- Generating low-quality topology that needs repair.
+</Lang>
+
+<Lang lang="zh">
+**Fuse (熔合)** 节点合并（焊接）彼此靠近的点。它通过消除间隙和连接断开的组件来有效清理几何体。
+
+通常用于以下操作之后：
+- 镜像几何体。
+- 合并多个导入的网格。
+- 生成需要修复的低质量拓扑。
+</Lang>
+
+## Parameters (参数)
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Snap Distance** | `Float` | `0.001` | Points closer than this distance will be merged into a single point. |
+| **Remove Unused Points** | `Bool` | `True` | Delete points that are no longer part of any primitive after merging. |
+| **Remove Degenerate Prims** | `Bool` | `True` | Delete primitives that collapsed to a point or line segment due to point merging. |
+
+<Lang lang="en">
+### How it works
+1. **Spatial Indexing**: All input points are added to a spatial acceleration structure.
+2. **Clustering**: Points within the `Snap Distance` are grouped together.
+3. **Averaging**: The position of the new point is the average of all points in the cluster.
+4. **Remapping**: All vertices referring to the old points are updated to refer to the new point.
+</Lang>
+
+<Lang lang="zh">
+### 工作原理
+1. **空间索引**: 将所有输入点添加到空间加速结构中。
+2. **聚类**: 将 `Snap Distance` 内的点归为一组。
+3. **平均**: 新点的位置是簇中所有点位置的平均值。
+4. **重映射**: 将引用旧点的所有顶点更新为引用新点。
+</Lang>

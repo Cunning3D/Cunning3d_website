@@ -1,0 +1,90 @@
+<mxfile host="app.diagrams.net" modified="2026-01-23T00:00:00.000Z" agent="Cunning3D" version="1.0">
+  <diagram name="Boolean Groups" id="bool-groups">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="title" value="Boolean Output Groups" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="350" y="20" width="500" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- Legend -->
+        <mxCell id="legend-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="200" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="l-a" value="A (Input 1)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="60" y="100" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="l-b" value="B (Input 2)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="60" y="150" width="40" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- ============ GROUP VISUALIZATION ============ -->
+        <mxCell id="vis-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;strokeWidth=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="100" width="600" height="400" as="geometry"/>
+        </mxCell>
+        
+        <!-- The Geometry (exploded view) -->
+        <!-- aoutsideb -->
+        <mxCell id="a-out" value="aoutsideb" style="shape=partialRectangle;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;top=1;left=1;bottom=1;right=0" vertex="1" parent="1">
+          <mxGeometry x="350" y="250" width="120" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="a-out-desc" value="Part of A that is&#xa;OUTSIDE B" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="350" y="210" width="120" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- ainsideb -->
+        <mxCell id="a-in" value="ainsideb" style="shape=partialRectangle;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;dashed=1;top=1;left=0;bottom=1;right=1" vertex="1" parent="1">
+          <mxGeometry x="480" y="250" width="80" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="a-in-desc" value="Part of A that is&#xa;INSIDE B" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="470" y="360" width="100" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- aboverlap (intersection surface) -->
+        <mxCell id="overlap" value="aboverlap" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=3" vertex="1" parent="1">
+          <mxGeometry x="540" y="280" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="overlap-desc" value="New faces created&#xa;at intersection" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#d6b656;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="500" y="150" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="overlap-arr" value="" style="endArrow=classic;html=1;strokeColor=#d6b656;entryX=0.5;entryY=0;entryDx=0;entryDy=0" edge="1" parent="1" source="overlap-desc" target="overlap">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- binsidea -->
+        <mxCell id="b-in" value="binsidea" style="shape=partialRectangle;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;dashed=1;top=1;left=1;bottom=1;right=0" vertex="1" parent="1">
+          <mxGeometry x="560" y="250" width="80" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="b-in-desc" value="Part of B that is&#xa;INSIDE A" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="550" y="360" width="100" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- boutsidea -->
+        <mxCell id="b-out" value="boutsidea" style="shape=partialRectangle;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;top=1;left=0;bottom=1;right=1" vertex="1" parent="1">
+          <mxGeometry x="650" y="250" width="120" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="b-out-desc" value="Part of B that is&#xa;OUTSIDE A" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="650" y="210" width="120" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- Seam Group -->
+        <mxCell id="seam-line" value="" style="endArrow=none;html=1;strokeColor=#9673a6;strokeWidth=4" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="560" y="250" as="sourcePoint"/>
+            <mxPoint x="560" y="350" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="seam-desc" value="abseams (Edge Group)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontColor=#9673a6;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="500" y="420" width="120" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="seam-arr" value="" style="endArrow=classic;html=1;strokeColor=#9673a6;entryX=0.5;entryY=1;entryDx=0;entryDy=0" edge="1" parent="1" source="seam-desc" target="seam-line">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

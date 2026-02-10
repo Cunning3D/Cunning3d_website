@@ -1,0 +1,49 @@
+---
+title: Boolean (v1.0)
+description: Basic CSG operations.
+icon: Boxes
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+
+# Boolean (v1.0)
+
+The Boolean Node performs basic Constructive Solid Geometry (CSG) operations.
+
+## Operations
+
+- **Union**: Combines both shapes into a single mesh.
+- **Intersect**: Keeps only overlapping volume.
+- **Subtract (A - B)**: Cuts B out of A.
+
+## Limitations in v1.0
+
+- No N-gon reconstruction (outputs triangle soup)
+- Single subtract mode only (A - B)
+- No output groups
+
+</Lang>
+
+<Lang lang="zh">
+
+# Boolean (v1.0)
+
+Boolean 节点执行基础的 CSG（构造实体几何）操作。
+
+## 操作类型
+
+- **Union（并集）**：将两个形状合并为单一网格。
+- **Intersect（交集）**：仅保留重叠体积。
+- **Subtract（减法 A - B）**：从 A 中切除 B。
+
+## v1.0 版本限制
+
+- 无 N-gon 重建（输出为三角面片）
+- 仅支持单一减法模式 (A - B)
+- 无输出分组功能
+
+</Lang>

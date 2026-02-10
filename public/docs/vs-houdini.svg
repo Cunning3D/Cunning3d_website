@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 320" fill="none">
+  <defs>
+    <linearGradient id="cunning-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="houdini-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="700" height="320" fill="#0f172a"/>
+  
+  <!-- Title -->
+  <text x="350" y="35" text-anchor="middle" fill="#f8fafc" font-family="system-ui" font-size="18" font-weight="bold">Architecture Comparison</text>
+  
+  <!-- Houdini Engine Side -->
+  <g>
+    <rect x="30" y="60" width="300" height="240" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+    <text x="180" y="90" text-anchor="middle" fill="url(#houdini-grad)" font-family="system-ui" font-size="14" font-weight="bold">Houdini Engine</text>
+    
+    <!-- Unity Process -->
+    <rect x="50" y="110" width="100" height="60" rx="8" fill="#334155"/>
+    <text x="100" y="140" text-anchor="middle" fill="#f8fafc" font-family="system-ui" font-size="11" font-weight="600">Unity</text>
+    <text x="100" y="155" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="9">Process A</text>
+    
+    <!-- Houdini Process -->
+    <rect x="210" y="110" width="100" height="60" rx="8" fill="#334155"/>
+    <text x="260" y="140" text-anchor="middle" fill="#f8fafc" font-family="system-ui" font-size="11" font-weight="600">Houdini</text>
+    <text x="260" y="155" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="9">Process B</text>
+    
+    <!-- IPC Arrow -->
+    <line x1="150" y1="140" x2="205" y2="140" stroke="#f97316" stroke-width="2" stroke-dasharray="4,4"/>
+    <text x="178" y="135" text-anchor="middle" fill="#f97316" font-family="system-ui" font-size="8">IPC/Socket</text>
+    
+    <!-- Problems -->
+    <text x="50" y="195" fill="#ef4444" font-family="system-ui" font-size="10">✗ ~ms serialization latency</text>
+    <text x="50" y="215" fill="#ef4444" font-family="system-ui" font-size="10">✗ GB+ dependency size</text>
+    <text x="50" y="235" fill="#ef4444" font-family="system-ui" font-size="10">✗ Process crash = reconnect</text>
+    <text x="50" y="255" fill="#ef4444" font-family="system-ui" font-size="10">✗ License required</text>
+    <text x="50" y="275" fill="#ef4444" font-family="system-ui" font-size="10">✗ No web support</text>
+  </g>
+  
+  <!-- Cunning Engine Side -->
+  <g>
+    <rect x="370" y="60" width="300" height="240" rx="12" fill="#1e293b" stroke="url(#cunning-grad)" stroke-width="2"/>
+    <text x="520" y="90" text-anchor="middle" fill="url(#cunning-grad)" font-family="system-ui" font-size="14" font-weight="bold">Cunning Engine</text>
+    
+    <!-- Single Process -->
+    <rect x="420" y="110" width="200" height="60" rx="8" fill="#334155"/>
+    <text x="520" y="135" text-anchor="middle" fill="#f8fafc" font-family="system-ui" font-size="11" font-weight="600">Unity + Cunning DLL</text>
+    <text x="520" y="155" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="9">Single Process (In-Memory)</text>
+    
+    <!-- Rust badge -->
+    <rect x="590" y="115" width="25" height="14" rx="3" fill="#22c55e"/>
+    <text x="602" y="125" text-anchor="middle" fill="white" font-family="system-ui" font-size="7" font-weight="bold">Rust</text>
+    
+    <!-- Benefits -->
+    <text x="390" y="195" fill="#22c55e" font-family="system-ui" font-size="10">✓ ~µs function call latency</text>
+    <text x="390" y="215" fill="#22c55e" font-family="system-ui" font-size="10">✓ ~15MB DLL size</text>
+    <text x="390" y="235" fill="#22c55e" font-family="system-ui" font-size="10">✓ Panic isolation (catch_unwind)</text>
+    <text x="390" y="255" fill="#22c55e" font-family="system-ui" font-size="10">✓ MIT licensed / Open source</text>
+    <text x="390" y="275" fill="#22c55e" font-family="system-ui" font-size="10">✓ WASM web support</text>
+  </g>
+  
+  <!-- VS badge -->
+  <circle cx="350" cy="180" r="20" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+  <text x="350" y="185" text-anchor="middle" fill="#94a3b8" font-family="system-ui" font-size="11" font-weight="bold">VS</text>
+</svg>

@@ -1,0 +1,302 @@
+---
+title: Boolean
+description: Constructive solid geometry (CSG) operations.
+icon: Boxes
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+# Boolean
+
+The **Boolean Node** performs advanced Constructive Solid Geometry (CSG) operations. Unlike traditional boolean engines that result in messy "triangle soup," Cunning employs a **Topology-Aware Kernel** capable of reconstructing clean **N-gons** from the intersection results.
+
+This node is essential for procedural modeling, allowing you to combine shapes, cut holes, or extract intersections with mathematical precision while maintaining edit-ready topology.
+
+## Core Advantage: N-gon Reconstruction
+
+Standard boolean operations often leave geometry with chaotic triangulation. Cunning's Boolean engine includes a specialized **Coplanar Simplification** pass.
+
+<Drawio file="content/docs/diagrams/ngon-reconstruction.drawio" height={450} title="N-gon Reconstruction Pipeline" />
+
+- **Standard CSG**: Outputs thousands of sliver triangles.
+- **Cunning Boolean**: Intelligently dissolves edges between coplanar faces, restoring clean, concise polygons (N-gons) that are easy to select and extrude further.
+
+## Operations & Modes
+
+The node supports four primary operations. When using **Subtract**, three distinct sub-modes are available to control exactly which parts of the geometry are kept.
+
+<Drawio file="content/docs/diagrams/boolean-ops.drawio" height={550} title="Boolean Operations & Subtract Modes" />
+
+### Operation Types
+- **Union (A ∪ B)**: Combines both shapes into a single mesh. Internal geometry is removed.
+- **Intersect (A ∩ B)**: Keeps only the volume where both shapes overlap.
+- **Subtract**: Removes one shape from another.
+  - **A - B**: Default. Cuts B out of A.
+  - **B - A**: Cuts A out of B.
+  - **Both**: Keeps both the result of (A - B) and (B - A). Useful for splitting meshes.
+- **Difference (XOR)**: Removes the overlapping volume, keeping the unique parts of both A and B.
+
+## Output Groups
+
+A powerful feature of the Cunning Boolean node is its ability to automatically group parts of the output geometry based on their origin. This allows for complex procedural logic downstream (e.g., applying different materials to the "cut" surfaces).
+
+<Drawio file="content/docs/diagrams/boolean-groups.drawio" height={500} title="Automatic Output Grouping" />
+
+### Generated Groups
+- **`ainsideb`**: Parts of input A that ended up inside input B.
+- **`aoutsideb`**: Parts of input A that remained outside input B.
+- **`binsidea`**: Parts of input B that ended up inside input A.
+- **`boutsidea`**: Parts of input B that remained outside input A.
+- **`aboverlap`**: The new surface generated at the intersection/cut boundary.
+- **`abseams`**: Edges where the two meshes were welded together.
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Group A** | String | "" | Filter specific primitives from Input A. |
+| **Group B** | String | "" | Filter specific primitives from Input B. |
+| **Treat As** | Menu | Solid | **Solid**: Treats inputs as closed volumes.<br/>**Surface**: Treats inputs as open sheets (experimental). |
+| **Operation** | Menu | Subtract | The boolean operation to perform (Union, Intersect, Subtract, Difference). |
+| **Subtract** | Menu | A - B | (Only active when Operation is Subtract) Controls the subtraction direction. |
+| **Output Topology** | Menu | Polygons | **Polygons (N-gons)**: Merges coplanar faces for cleaner topology.<br/>**Triangles**: Outputs pure triangles. |
+| **Preserve Hard Edges**| Toggle | On | Keeps sharp edges from inputs sharp in the output. |
+| **Normal Strategy** | Menu | Transfer | **Transfer**: Interpolates normals from input surfaces.<br/>**Recompute**: Recalculates normals based on new geometry. |
+| **Welding Tolerance** | Float | 1e-4 | Distance threshold for merging vertices. |
+
+## Technical Implementation
+
+The Boolean node utilizes a custom **High-Precision Geometric Kernel**.
+
+<Drawio file="content/docs/diagrams/cunning-kernel-pipeline.drawio" height={450} title="Kernel Execution Pipeline" />
+
+1. **Symbolic Perturbation (SoS)**:
+
+   To resolve geometric degeneracy (e.g., coplanar faces, touching edges), the kernel applies **Simulation of Simplicity**. Conceptually, vertices are perturbed by an infinitesimal $\epsilon$ along their normal vector $N$:
+
+   $$
+   V' = V + s \cdot \epsilon \cdot N
+   $$
+
+   Where $s \in \{-1, 1\}$ is determined by the boolean operation (e.g., Union vs Intersection). In practice, this converts equality checks ($p = q$) into deterministic inequalities based on the normal direction, ensuring no two geometric elements are ever treated as "exactly coincident."
+
+2. **Shadow Projection Kernel**:
+
+   The intersection testing is strictly hierarchical to maximize performance:
+
+   - **Level 3 (Broad Phase)**: 3D Bounding Box & Edge-Triangle collision detection.
+   - **Level 2 (Projection Phase)**: Geometry is projected onto 2D planes (XY, YZ, ZX). Overlaps are computed using specialized 1D shadow tests:
+
+     $$
+     \text{Shadow}(p, q, \text{dir}) = \begin{cases} \text{dir} < 0 & \text{if } p = q \\ p < q & \text{if } p \neq q \end{cases}
+     $$
+
+     This logic underpins the **Shadow01** (Point-Edge), **Shadow11** (Edge-Edge), and **Shadow02** (Point-Face) routines.
+
+3. **Exact Arithmetic with FMA**:
+
+   Intersection points are computed using **Fused Multiply-Add (FMA)** instructions. FMA computes $a \cdot b + c$ with only a single rounding step, significantly reducing the accumulated error $\delta$ compared to standard floating-point operations:
+
+   $$
+   \text{Result} = \text{fma}(\lambda, \Delta P, P_{\text{start}}) = \text{round}( \lambda \cdot \Delta P + P_{\text{start}} )
+   $$
+
+   This ensures that calculated intersection points remain consistent across different stages of the pipeline.
+
+4. **Topology Reconstruction**:
+   - **Coplanar Analysis**: Edges separating coplanar faces are identified.
+   - **Component Grouping**: A Union-Find algorithm groups these faces into logical polygons.
+   - **Contour Extraction**: The boundary of these groups is traced to form the final N-gon.
+
+## Generalized Winding Number
+
+The **Generalized Winding Number** is a mathematically rigorous method for determining whether a point lies inside or outside a 3D mesh. Unlike traditional ray-casting, which counts intersection crossings and can fail with "leaky" geometry, the winding number is a continuous property that handles holes, self-intersections, and non-manifold edges gracefully.
+
+### Mathematical Definition
+
+For a closed surface $S$, the winding number $w(p)$ at a point $p$ is defined as the integral of the signed solid angle subtended by the surface:
+
+$$
+w(p) = \frac{1}{4\pi} \iint_S \frac{(x - p) \cdot n(x)}{\|x - p\|^3} \, dA(x)
+$$
+
+Where:
+- $x$ is a point on the surface $S$.
+- $n(x)$ is the unit normal vector at $x$.
+- $dA(x)$ is the differential area element.
+
+### Discrete Implementation
+
+For a triangle mesh, this integral becomes a discrete sum over all triangles $T_i$:
+
+$$
+w(p) = \frac{1}{4\pi} \sum_{i} \Omega(p, T_i)
+$$
+
+Here, $\Omega(p, T_i)$ is the signed solid angle subtended by triangle $T_i$ at point $p$. This can be efficiently computed using the arctangent of the triple scalar product:
+
+$$
+\Omega(p, T_i) = 2 \arctan \left( \frac{\det(a, b, c)}{\|a\|\|b\|\|c\| + (a \cdot b)\|c\| + (b \cdot c)\|a\| + (c \cdot a)\|b\|} \right)
+$$
+
+Where $a, b, c$ are the vectors from $p$ to the three vertices of the triangle.
+
+### Robustness
+
+- **Inside ($w \approx 1$)**: The point is fully enclosed by the mesh.
+- **Outside ($w \approx 0$)**: The point is outside the mesh.
+- **Boundary ($w \approx 0.5$)**: The point lies exactly on the surface.
+
+Our kernel uses this value to reliably classify regions even when the input geometry is imperfect (e.g., has small gaps or overlapping faces), ensuring boolean operations never fail due to "bad" topology.
+</Lang>
+
+<Lang lang="zh">
+# 布尔运算 (Boolean)
+
+**Boolean 节点** 执行高级实体几何构造 (CSG) 运算。与产生杂乱“三角形汤（Triangle Soup）”的传统布尔引擎不同，Cunning 采用**拓扑感知内核（Topology-Aware Kernel）**，能够从交集结果中重建出干净的 **N-gons（多边形）**。
+
+此节点是程序化建模的核心，允许您以数学精度合并形状、挖洞或提取交集，同时保持即刻可编辑的拓扑结构。
+
+## 核心优势：N-gon 拓扑还原
+
+标准的布尔运算通常会留下混乱的三角面。Cunning 的布尔引擎内置了专用的**共面简化（Coplanar Simplification）**通道。
+
+<Drawio file="content/docs/diagrams/ngon-reconstruction.drawio" height={450} title="N-gon 拓扑重建流程" />
+
+- **普通 CSG**：输出成千上万个细碎的三角形。
+- **Cunning Boolean**：智能消融共面面片之间的边，还原出干净、简洁的多边形（N-gons），便于后续的选择和挤出操作。
+
+## 运算模式 (Operations & Modes)
+
+该节点支持四种主要运算。当使用 **Subtract (减去)** 模式时，还可以选择三种子模式来精确控制保留哪部分几何体。
+
+<Drawio file="content/docs/diagrams/boolean-ops.drawio" height={550} title="布尔运算与减法模式图解" />
+
+### 运算类型
+- **Union (并集 A ∪ B)**：将两个形状合并为一个网格。内部的重叠几何体会被移除。
+- **Intersect (交集 A ∩ B)**：仅保留两个形状重叠的体积部分。
+- **Subtract (减去)**：从一个形状中减去另一个形状。
+  - **A - B**：默认。从 A 中挖去 B。
+  - **B - A**：从 B 中挖去 A。
+  - **Both (两者)**：同时保留 (A - B) 和 (B - A) 的结果。用于将网格切开但保留两边。
+- **Difference (异或 XOR)**：移除重叠的体积，保留 A 和 B 各自独有的部分。
+
+## 输出分组 (Output Groups)
+
+Cunning Boolean 节点的一个强大功能是可以根据几何体的来源自动对输出部分进行分组。这使得下游的程序化逻辑（例如给“切面”赋予不同的材质）变得非常容易。
+
+<Drawio file="content/docs/diagrams/boolean-groups.drawio" height={500} title="自动输出分组示意图" />
+
+### 生成的组
+- **`ainsideb`**：输入 A 中最终落在输入 B **内部**的部分。
+- **`aoutsideb`**：输入 A 中保留在输入 B **外部**的部分。
+- **`binsidea`**：输入 B 中最终落在输入 A **内部**的部分。
+- **`boutsidea`**：输入 B 中保留在输入 A **外部**的部分。
+- **`aboverlap`**：在交集/切割边界处**新生成**的面。
+- **`abseams`**：两个网格焊接在一起的边缘线（Edge Group）。
+
+## 参数 (Parameters)
+
+| 参数名 | 类型 | 默认值 | 描述 |
+| :--- | :--- | :--- | :--- |
+| **Group A** | String | "" | 仅对输入 A 中的特定图元组进行运算。 |
+| **Group B** | String | "" | 仅对输入 B 中的特定图元组进行运算。 |
+| **Treat As** | Menu | Solid | **Solid**：将输入视为封闭实体体积。<br/>**Surface**：将输入视为开放曲面（实验性）。 |
+| **Operation** | Menu | Subtract | 要执行的布尔运算类型 (Union, Intersect, Subtract, Difference)。 |
+| **Subtract** | Menu | A - B | (仅当 Operation 为 Subtract 时激活) 控制减法方向。 |
+| **Output Topology** | Menu | Polygons | **Polygons (N-gons)**：合并共面，生成更干净的拓扑。<br/>**Triangles**：输出纯三角形网格。 |
+| **Preserve Hard Edges**| Toggle | On | 在输出中保留输入的锐利边缘信息。 |
+| **Normal Strategy** | Menu | Transfer | **Transfer**：从输入表面插值法线。<br/>**Recompute**：根据新几何体重新计算法线。 |
+| **Welding Tolerance** | Float | 1e-4 | 合并顶点的距离阈值。 |
+
+## 技术实现 (Technical Implementation)
+
+Boolean 节点基于我们自主研发的**高精度几何内核**。
+
+<Drawio file="content/docs/diagrams/cunning-kernel-pipeline.drawio" height={450} title="内核执行管线" />
+
+1. **符号扰动 (Symbolic Perturbation / SoS)**：
+
+   为了解决几何退化问题（如共面、边缘相切），内核采用了 **Simulation of Simplicity (SoS)** 技术。在概念上，每个顶点都会沿着其法线 $N$ 移动一个无穷小量 $\epsilon$：
+
+   $$
+   V' = V + s \cdot \epsilon \cdot N
+   $$
+
+   其中 $s \in \{-1, 1\}$ 取决于布尔运算类型（如并集或交集）。在代码实现中，这并不改变坐标数值，而是将所有等式判断 ($p = q$) 转化为基于法线方向的确定性不等式，从而保证没有任何两个几何元素被视为“完全重合”。
+
+2. **投影计算内核 (Shadow Projection Kernel)**：
+
+   相交测试采用严格的分层策略以最大化性能：
+
+   - **Level 3 (Broad Phase)**：3D 包围盒与“边-三角形”碰撞检测。
+   - **Level 2 (Projection Phase)**：将几何体投影到 2D 平面 (XY, YZ, ZX)。使用特定的 1D 投影覆盖测试计算重叠：
+
+     $$
+     \text{Shadow}(p, q, \text{dir}) = \begin{cases} \text{dir} < 0 & \text{当 } p = q \\ p < q & \text{当 } p \neq q \end{cases}
+     $$
+
+     这一逻辑构成了 **Shadow01** (点-边)、**Shadow11** (边-边) 和 **Shadow02** (点-面) 等核心例程的基础。
+
+3. **基于 FMA 的精确算术**：
+
+   交点计算广泛使用 **融合乘加 (Fused Multiply-Add, FMA)** 指令。FMA 可以在单次舍入中计算 $a \cdot b + c$，相比传统浮点运算，它显著减少了累积误差 $\delta$：
+
+   $$
+   \text{Result} = \text{fma}(\lambda, \Delta P, P_{\text{start}}) = \text{round}( \lambda \cdot \Delta P + P_{\text{start}} )
+   $$
+
+   这确保了在管线的不同阶段，计算出的交点坐标始终保持一致，避免了“裂缝”的产生。
+
+4. **广义卷绕数 (Generalized Winding Number)**：内核计算每个顶点的卷绕数，以鲁棒地确定它在另一个形状的内部还是外部，即使输入网格有孔洞或自相交也能正确处理。
+
+5. **拓扑重建 (Topology Reconstruction)**：
+   - **共面分析**：识别分隔共面面片的边。
+   - **组件分组**：使用并查集 (Union-Find) 算法将这些面片聚类为逻辑多边形。
+   - **轮廓提取**：追踪这些组的边界，形成最终的 N-gon。
+
+## 广义卷绕数 (Generalized Winding Number)
+
+**广义卷绕数** 是一种判定点在 3D 网格内部还是外部的数学严谨方法。传统的射线投射法 (Ray-casting) 通过计算射线与网格的交点奇偶性来判断，容易受“漏水”几何体（有孔洞）的影响而失效。相比之下，卷绕数是一个连续的属性，能够优雅地处理孔洞、自相交和非流形边缘。
+
+### 数学定义
+
+对于封闭曲面 $S$，点 $p$ 处的卷绕数 $w(p)$ 定义为该曲面所张成的有符号立体角的积分：
+
+$$
+w(p) = \frac{1}{4\pi} \iint_S \frac{(x - p) \cdot n(x)}{\|x - p\|^3} \, dA(x)
+$$
+
+其中：
+- $x$ 是曲面 $S$ 上的一点。
+- $n(x)$ 是 $x$ 处的单位法向量。
+- $dA(x)$ 是微元面积。
+
+### 离散实现
+
+对于三角形网格，该积分转化为对所有三角形 $T_i$ 的离散求和：
+
+$$
+w(p) = \frac{1}{4\pi} \sum_{i} \Omega(p, T_i)
+$$
+
+这里，$\Omega(p, T_i)$ 是三角形 $T_i$ 在点 $p$ 处张成的有符号立体角。可以使用混合积的反正切函数高效计算：
+
+$$
+\Omega(p, T_i) = 2 \arctan \left( \frac{\det(a, b, c)}{\|a\|\|b\|\|c\| + (a \cdot b)\|c\| + (b \cdot c)\|a\| + (c \cdot a)\|b\|} \right)
+$$
+
+其中 $a, b, c$ 是从点 $p$ 指向三角形三个顶点的向量。
+
+### 鲁棒性优势
+
+- **内部 ($w \approx 1$)**：点完全在网格内部。
+- **外部 ($w \approx 0$)**：点在网格外部。
+- **边界 ($w \approx 0.5$)**：点恰好位于曲面上。
+
+我们的内核利用这一数值来可靠地分类区域，即使输入几何体不完美（例如有微小缝隙或面片重叠），也能确保布尔运算不会因为“糟糕”的拓扑结构而失败。
+</Lang>

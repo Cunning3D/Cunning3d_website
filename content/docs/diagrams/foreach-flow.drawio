@@ -1,0 +1,87 @@
+<mxfile host="Electron" modified="2024-01-26T10:00:00.000Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.8 Chrome/114.0.5735.289 Electron/25.5.0 Safari/537.36" etag="foreach-flow" version="21.6.8" type="device">
+  <diagram id="foreach-flow" name="ForEach Flow">
+    <mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Input Geometry -->
+        <mxCell id="input" value="Input Geometry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="340" y="40" width="120" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ForEach Begin -->
+        <mxCell id="begin" value="ForEach Begin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="340" y="120" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="edge1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="input" target="begin">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Loop Body -->
+        <mxCell id="process" value="Process Nodes...&#xa;(Transform, Extrude, etc.)" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="320" y="200" width="160" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="edge2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="begin" target="process">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ForEach End -->
+        <mxCell id="end" value="ForEach End" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="340" y="300" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="edge3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="process" target="end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Control Logic -->
+        <mxCell id="logic" value="Control Logic (Graph Executor)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;startSize=23;" vertex="1" parent="1">
+          <mxGeometry x="600" y="80" width="200" height="280" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="l1" value="1. Split Input into Pieces" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="logic">
+          <mxGeometry x="10" y="40" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l2" value="2. Push Piece[i] to Begin" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="logic">
+          <mxGeometry x="10" y="80" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l3" value="3. Compute Loop Body" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="logic">
+          <mxGeometry x="10" y="120" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l4" value="4. Collect Result from End" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="logic">
+          <mxGeometry x="10" y="160" width="180" height="20" as="geometry" />
+        </mxCell>
+         <mxCell id="l5" value="5. Merge All Results" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="logic">
+          <mxGeometry x="10" y="200" width="180" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Control Arrows -->
+        <mxCell id="c1" value="Injects Piece" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#9673a6;" edge="1" parent="1" source="logic" target="begin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="c2" value="Triggers Loop" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#9673a6;" edge="1" parent="1" source="end" target="logic">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="320" />
+              <mxPoint x="550" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Iteration View -->
+        <mxCell id="iter" value="Iteration i" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#FF6B35;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="250" y="200" width="60" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

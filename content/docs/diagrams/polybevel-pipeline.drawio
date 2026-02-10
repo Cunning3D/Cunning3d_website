@@ -1,0 +1,108 @@
+<mxfile host="65bd71144e">
+    <diagram id="polybevel-pipeline" name="Bevel Pipeline">
+        <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+
+                <!-- Title -->
+                <mxCell id="title" value="PolyBevel Processing Pipeline" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="200" y="20" width="400" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Step 1: Original Mesh -->
+                <mxCell id="g1" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="50" y="100" width="120" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1_cube" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="g1">
+                    <mxGeometry width="120" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1_txt" value="1. Input" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g1">
+                    <mxGeometry y="130" width="120" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- Arrow -->
+                <mxCell id="arr1" value="Select Edges" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#f5f5f5;strokeColor=#666666;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="180" y="160" as="sourcePoint"/>
+                        <mxPoint x="240" y="160" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+
+                <!-- Step 2: Inset -->
+                <mxCell id="g2" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="250" y="100" width="120" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="s2_face" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="g2">
+                    <mxGeometry x="20" y="20" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="s2_txt" value="2. Inset Faces" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g2">
+                    <mxGeometry y="130" width="120" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="s2_note" value="Original faces shrink" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666;" vertex="1" parent="g2">
+                    <mxGeometry y="150" width="120" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- Arrow -->
+                <mxCell id="arr2" value="Build Profiles" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#f5f5f5;strokeColor=#666666;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="380" y="160" as="sourcePoint"/>
+                        <mxPoint x="440" y="160" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+
+                <!-- Step 3: Profiles -->
+                <mxCell id="g3" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="450" y="100" width="120" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="s3_base" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#none;strokeColor=#d6b656;dashed=1;" vertex="1" parent="g3">
+                    <mxGeometry x="20" y="20" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="s3_prof1" value="" style="curved=1;endArrow=none;html=1;strokeWidth=2;strokeColor=#d6b656;" edge="1" parent="g3">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="20" y="20" as="sourcePoint"/>
+                        <mxPoint x="10" y="10" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="15" y="20"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                 <mxCell id="s3_prof2" value="" style="curved=1;endArrow=none;html=1;strokeWidth=2;strokeColor=#d6b656;" edge="1" parent="g3">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="100" y="20" as="sourcePoint"/>
+                        <mxPoint x="110" y="10" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="105" y="20"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s3_txt" value="3. Profiles" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g3">
+                    <mxGeometry y="130" width="120" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- Arrow -->
+                <mxCell id="arr3" value="Fill Corners" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#f5f5f5;strokeColor=#666666;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="160" as="sourcePoint"/>
+                        <mxPoint x="640" y="160" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+
+                <!-- Step 4: Corner Patch (VMesh) -->
+                <mxCell id="g4" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="650" y="100" width="120" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="s4_patch" value="" style="shape=curve;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="g4">
+                    <mxGeometry x="10" y="10" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="s4_txt" value="4. VMesh Patch" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g4">
+                    <mxGeometry y="130" width="120" height="20" as="geometry"/>
+                </mxCell>
+                 <mxCell id="s4_note" value="Cubic Subdiv" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666;" vertex="1" parent="g4">
+                    <mxGeometry y="150" width="120" height="20" as="geometry"/>
+                </mxCell>
+
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

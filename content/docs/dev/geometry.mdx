@@ -1,0 +1,174 @@
+---
+title: The Core Geometry
+description: Deep dive into the central data structures of the Cunning3D engine.
+icon: Database
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+# The Core Geometry
+
+The **Geometry** struct is the heart of the Cunning3D engine. It is designed to be a high-performance, attribute-centric data structure, similar in philosophy to Houdini's geometry model but implemented in Rust for safety and concurrency.
+
+At its core, `Geometry` is a collection of parallel arrays (arenas) and attribute maps that define the shape and properties of a 3D object.
+
+## Data Structure Overview
+
+<Drawio file="content/docs/diagrams/geometry-structure.drawio" height={550} title="Geometry Data Structure Layout" />
+
+## Topology Domains
+
+Cunning3D distinguishes between **Points** and **Vertices**, a critical distinction for handling sharp edges and UV seams.
+
+### 1. Points
+- **Concept**: A "Point" represents a unique location in 3D space. It is the fundamental topological atom.
+- **Storage**: `points: SparseSetArena<()>`
+- **Attributes**: Shared by all connected faces. Commonly stores `@P` (Position), `@v` (Velocity), `@mass`.
+- **Use Case**: Deforming a point moves all connected faces smoothly.
+
+### 2. Vertices
+- **Concept**: A "Vertex" is a reference to a Point, but it belongs to a specific Primitive (face). A single Point may be referenced by multiple Vertices (one for each face sharing that point).
+- **Storage**: `vertices: SparseSetArena<GeoVertex>` where `GeoVertex { point_id }`.
+- **Attributes**: Unique per face-corner. Stores `@N` (Normals), `@uv` (Texture Coordinates), `@Cd` (Colors).
+- **Use Case**: Hard edges are achieved by having different Normals on the Vertices sharing the same Point.
+
+### 3. Primitives
+- **Concept**: A geometric element formed by a list of Vertices.
+- **Storage**: `primitives: SparseSetArena<GeoPrimitive>`
+- **Types**:
+  - **Polygon**: A face defined by 3 or more vertices (N-gon).
+  - **Polyline**: An open or closed curve.
+  - **BezierCurve**: A curve with tangent handles.
+- **Attributes**: Stores `@material`, `@name`, `@area`.
+
+### 4. Detail (Global)
+- **Concept**: Attributes that apply to the entire geometry object, not specific elements.
+- **Use Case**: Bounding box info, time, global metadata.
+
+## Attribute System
+
+Data in Cunning3D is not stored in fixed structs (like `struct Point { pos: Vec3, normal: Vec3 }`). Instead, it uses a **Column-Oriented** storage via Attributes.
+
+- **Dynamic Typing**: Attributes are type-erased (`Box<dyn AttributeStorage>`) and can store `f32`, `Vec3`, `i32`, `String`, etc.
+- **Storage Backends**:
+  - **`Vec<T>`**: Standard contiguous memory, used for small datasets.
+  - **`PagedBuffer<T>`**: A chunked storage system that activates automatically when element counts exceed `8192`. This prevents memory fragmentation and allows for O(1) growth without massive reallocations.
+- **Copy-on-Write**: `AttributeHandle` uses `Arc` and versioning (`dirty_id`) to allow cheap cloning of Geometry. Data is only duplicated when modified.
+
+```rust
+// Accessing attributes in Rust
+let positions = geometry.get_point_attribute("@P").unwrap().as_slice::<Vec3>().unwrap();
+```
+
+## Safety & Performance
+
+### Generational IDs
+Unlike standard C++ arrays, Cunning3D uses **Generational Indices** (`PointId`, `VertexId`, `PrimId`).
+- **Structure**: `{ index: u32, generation: u32 }`
+- **Benefit**: Prevents "ABA Problems". If an element is deleted and its slot is reused, old handles become invalid rather than pointing to wrong data.
+- **SparseSetArena**: The underlying storage allows O(1) insertion, deletion, and lookup while maintaining a packed `dense` array for iteration performance.
+
+### Parallel Queries
+The engine includes a safe parallel iteration system via the `GeoQuery` trait. It uses runtime borrow checking (`QueryGuard`) to ensure thread safety when accessing multiple attributes simultaneously.
+
+```rust
+// Parallel iteration over positions and normals
+let guard = geometry.query_points::<(&Vec3, &mut Vec3)>(("@P", "@v")).unwrap();
+guard.par_iter().for_each(|(pos, vel)| {
+    // ... logic ...
+});
+```
+
+## Advanced Topology
+
+The `Topology` struct provides a full **Half-Edge** graph for complex traversals.
+
+- **Non-Manifold Support**: Unlike traditional half-edge structures, Cunning3D supports non-manifold geometry. Instead of a single `pair` pointer, it maintains a `next_equivalent` ring, allowing multiple faces to share the same edge.
+- **Lazy Evaluation**: Topology is built only when needed (e.g., for subdivision or beveling) and cached until the geometry changes.
+
+</Lang>
+
+<Lang lang="zh">
+# 核心几何结构 (The Core Geometry)
+
+**Geometry** 结构体是 Cunning3D 引擎的心脏。它是一个高性能、以属性为中心的数据结构，其设计哲学类似于 Houdini 的几何模型，但完全采用 Rust 实现以确保安全性和并发能力。
+
+从本质上讲，`Geometry` 是一组并行数组（Arenas）和属性映射表的集合，它们共同定义了 3D 对象的形状和属性。
+
+## 数据结构概览
+
+<Drawio file="content/docs/diagrams/geometry-structure.drawio" height={550} title="几何数据结构布局" />
+
+## 拓扑域 (Topology Domains)
+
+Cunning3D 区分了 **点 (Points)** 和 **顶点 (Vertices)**，这是处理锐利边缘和 UV 接缝的关键区别。
+
+### 1. 点 (Points)
+- **概念**：“点”代表 3D 空间中的一个唯一位置。它是最基本的拓扑原子。
+- **存储**：`points: SparseSetArena<()>`
+- **属性**：被所有连接的面共享。通常存储 `@P` (位置), `@v` (速度), `@mass` (质量)。
+- **用例**：移动一个点会平滑地拉动所有连接的面。
+
+### 2. 顶点 (Vertices)
+- **概念**：“顶点”是对“点”的引用，但它属于特定的图元（面）。一个“点”可以被多个“顶点”引用（每个共享该点的面都有一个对应的顶点）。
+- **存储**：`vertices: SparseSetArena<GeoVertex>`，其中包含 `point_id`。
+- **属性**：每个面的角独有。存储 `@N` (法线), `@uv` (纹理坐标), `@Cd` (颜色)。
+- **用例**：通过让共享同一个点的不同顶点拥有不同的法线，可以实现硬边效果。
+
+### 3. 图元 (Primitives)
+- **概念**：由一系列顶点组成的几何元素。
+- **存储**：`primitives: SparseSetArena<GeoPrimitive>`
+- **类型**：
+  - **Polygon (多边形)**：由 3 个或更多顶点定义的面 (N-gon)。
+  - **Polyline (折线)**：开放或闭合的线段。
+  - **BezierCurve (贝塞尔曲线)**：带有切线手柄的曲线。
+- **属性**：存储 `@material` (材质), `@name` (名称), `@area` (面积)。
+
+### 4. 详情 (Detail / Global)
+- **概念**：适用于整个几何对象而非特定元素的属性。
+- **用例**：存储包围盒信息、时间、全局元数据。
+
+## 属性系统 (Attribute System)
+
+Cunning3D 的数据并不存储在固定的结构体中（如 `struct Point { pos: Vec3, normal: Vec3 }`）。相反，它使用**面向列 (Column-Oriented)** 的属性存储方式。
+
+- **动态类型**：属性被类型擦除 (`Box<dyn AttributeStorage>`)，可以存储 `f32`, `Vec3`, `i32`, `String` 等。
+- **存储后端**：
+  - **`Vec<T>`**：标准连续内存，用于小型数据集。
+  - **`PagedBuffer<T>`**：分块存储系统，当元素数量超过 `8192` 时自动激活。这防止了内存碎片化，并允许在不进行大规模重新分配的情况下实现 O(1) 增长。
+- **写时复制 (Copy-on-Write)**：`AttributeHandle` 使用 `Arc` 和版本控制 (`dirty_id`) 来允许廉价地克隆几何体。数据仅在被修改时才会被复制。
+
+```rust
+// Rust 中访问属性的示例
+let positions = geometry.get_point_attribute("@P").unwrap().as_slice::<Vec3>().unwrap();
+```
+
+## 安全性与性能 (Safety & Performance)
+
+### 代际 ID (Generational IDs)
+与标准 C++ 数组不同，Cunning3D 使用**代际索引** (`PointId`, `VertexId`, `PrimId`)。
+- **结构**：`{ index: u32, generation: u32 }`
+- **优势**：防止 "ABA 问题"。如果一个元素被删除且其槽位被重用，旧的句柄将变为无效，而不是指向错误的数据。
+- **SparseSetArena**：底层存储允许 O(1) 的插入、删除和查找，同时维护一个紧凑的 `dense` 数组以保证迭代性能。
+
+### 并行查询 (Parallel Queries)
+引擎通过 `GeoQuery` trait 提供了一套安全的并行迭代系统。它使用运行时借用检查 (`QueryGuard`) 来确保在同时访问多个属性时的线程安全。
+
+```rust
+// 并行迭代位置和速度
+let guard = geometry.query_points::<(&Vec3, &mut Vec3)>(("@P", "@v")).unwrap();
+guard.par_iter().for_each(|(pos, vel)| {
+    // ... logic ...
+});
+```
+
+## 高级拓扑 (Advanced Topology)
+
+`Topology` 结构体提供了完整的**半边 (Half-Edge)** 图用于复杂的遍历操作。
+
+- **非流形支持 (Non-Manifold)**：与传统的半边结构不同，Cunning3D 支持非流形几何。它维护一个 `next_equivalent` 环，而不是单个 `pair` 指针，允许任意数量的面共享同一条边。
+- **惰性计算 (Lazy Evaluation)**：拓扑结构仅在需要时（例如进行细分或倒角时）构建，并缓存直到几何体发生变化。
+
+</Lang>

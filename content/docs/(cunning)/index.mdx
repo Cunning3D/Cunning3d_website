@@ -1,0 +1,122 @@
+---
+title: Introduction
+description: Next-Generation Procedural Modeling in Rust
+icon: Box
+---
+
+{/* Hero Section - Blue Fox Theme ❄️🦊 */}
+<div className="-mx-6 -mt-6 mb-10 rounded-b-2xl bg-gradient-to-br from-slate-600 via-slate-700 to-slate-900 px-6 py-12 text-white md:px-10 md:py-16 relative overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(91,155,213,0.15),_transparent_50%)]" />
+  <div className="relative z-10">
+    <Lang lang="zh">
+    <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-5xl bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">Cunning3D 文档</h1>
+    <div className="mb-6 max-w-2xl text-lg text-slate-300 md:text-xl">高性能跨平台程序化建模生态系统 —— 从 Rust 编辑器到 Unity 集成、再到 Web 预览的完整解决方案。</div>
+    </Lang>
+    <Lang lang="en">
+    <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-5xl bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">Cunning3D Documentation</h1>
+    <div className="mb-6 max-w-2xl text-lg text-slate-300 md:text-xl">High-performance cross-platform procedural modeling ecosystem — a complete solution from Rust editor to Unity integration and Web preview.</div>
+    </Lang>
+    <div className="flex flex-wrap gap-3">
+      <a href="/docs/cunning3d" className="inline-flex items-center rounded-md px-5 py-2.5 font-medium text-white transition hover:brightness-110" style={{background: 'linear-gradient(135deg, #5B9BD5 0%, #4A6FA5 100%)'}}>
+        <Lang lang="zh">快速开始</Lang>
+        <Lang lang="en">Quick Start</Lang>
+        <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+      </a>
+      <a href="/docs/nodes" className="inline-flex items-center rounded-md border border-slate-400/40 px-5 py-2.5 font-medium text-slate-200 transition hover:bg-white/10 hover:border-slate-300/60">
+        <Lang lang="zh">节点库</Lang>
+        <Lang lang="en">Node Library</Lang>
+      </a>
+    </div>
+  </div>
+</div>
+
+<Lang lang="zh">
+
+**Cunning3D** 是一个为了**高性能、跨平台与现代工作流**而从零构建的程序化建模生态系统。
+
+该项目不仅仅是一个软件，更是一套**完整的几何计算解决方案**。核心使用 Rust 编写，涵盖了从桌面端 DCC 到游戏引擎集成（Unity），再到 Web 端预览（WASM）的全链路流程。
+
+</Lang>
+
+<Lang lang="en">
+
+**Cunning3D** is a procedural modeling ecosystem built from scratch for **high performance, cross-platform deployment, and modern workflows**.
+
+It is more than just software; it is a **complete geometry computing solution**. Written in Rust, it spans the entire pipeline from desktop DCC to game engine integration (Unity) and web preview (WASM).
+
+</Lang>
+
+<div className="my-8 rounded-xl overflow-hidden border border-fd-border">
+  <img src="/docs/cunning-ecosystem.svg" alt="Cunning3D Ecosystem" className="w-full" />
+</div>
+
+<Cards>
+  <Card title="Cunning3D (DCC)" href="/docs/cunning3d" icon="AppWindow">
+    <Lang lang="zh">
+    高性能的原生 Rust 节点编辑器与几何创作环境。
+    </Lang>
+    <Lang lang="en">
+    The high-performance native Rust node editor and authoring environment.
+    </Lang>
+  </Card>
+  <Card title="Cunning Engine" href="/docs/cunning-engine" icon="Cpu">
+    <Lang lang="zh">
+    同进程 DLL 集成层，为 Unity 等引擎提供零延迟的几何计算能力。
+    </Lang>
+    <Lang lang="en">
+    In-process DLL integration layer delivering zero-latency geometry compute for Unity and more.
+    </Lang>
+  </Card>
+  <Card title="Cunning Player" href="/docs/cunning-player" icon="Globe">
+    <Lang lang="zh">
+    基于 WASM 的 Web 运行时，让复杂的程序化资产在浏览器中直接运行。
+    </Lang>
+    <Lang lang="en">
+    WASM-based Web Runtime that runs complex procedural assets directly in the browser.
+    </Lang>
+  </Card>
+  <Card title="CDA Asset System" href="/docs/cda" icon="Package">
+    <Lang lang="zh">
+    一次创作，随处运行的资产格式 (.cda)。
+    </Lang>
+    <Lang lang="en">
+    Author once, run everywhere asset format (.cda).
+    </Lang>
+  </Card>
+</Cards>
+
+## Installation
+
+<Lang lang="zh">
+
+### 1. Cunning3D (编辑器)
+由于处于快速迭代期，目前建议直接从源码构建：
+```bash
+git clone https://github.com/YourRepo/Cunning3D.git
+cd Cunning3D
+cargo run --release
+```
+
+### 2. Cunning Engine (Unity 插件)
+1. 复制 `crates/cunning_core_ffi/dll` 下的库文件到 Unity 项目的 `Assets/Plugins` 目录。
+2. 安装对应的 C# 脚本包。
+3. 详细步骤请参考 [Unity 集成文档](/docs/platforms/unity)。
+
+</Lang>
+
+<Lang lang="en">
+
+### 1. Cunning3D (Editor)
+Currently in rapid development, building from source is recommended:
+```bash
+git clone https://github.com/YourRepo/Cunning3D.git
+cd Cunning3D
+cargo run --release
+```
+
+### 2. Cunning Engine (Unity Plugin)
+1. Copy library files from `crates/cunning_core_ffi/dll` to your Unity project's `Assets/Plugins` folder.
+2. Install the corresponding C# scripts.
+3. See [Unity Integration](/docs/platforms/unity) for details.
+
+</Lang>

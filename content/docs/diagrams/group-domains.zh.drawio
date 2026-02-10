@@ -1,0 +1,121 @@
+<mxfile host="65bd71144e">
+    <diagram id="group-domains-zh" name="Group Domains ZH">
+        <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+
+                <!-- Title -->
+                <mxCell id="title" value="组域类型 (Group Domains)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="200" y="20" width="400" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Points -->
+                <mxCell id="g_points" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="50" y="100" width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="p_bg" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=none;" vertex="1" parent="g_points">
+                    <mxGeometry width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="p_tri1" value="" style="endArrow=none;html=1;strokeWidth=1;strokeColor=#999999;" edge="1" parent="g_points">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="30" y="120" as="sourcePoint"/>
+                        <mxPoint x="75" y="40" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p_tri2" value="" style="endArrow=none;html=1;strokeWidth=1;strokeColor=#999999;" edge="1" parent="g_points">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="120" y="120" as="sourcePoint"/>
+                        <mxPoint x="75" y="40" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p_tri3" value="" style="endArrow=none;html=1;strokeWidth=1;strokeColor=#999999;" edge="1" parent="g_points">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="30" y="120" as="sourcePoint"/>
+                        <mxPoint x="120" y="120" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p_pt" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ff0000;strokeColor=#b85450;" vertex="1" parent="g_points">
+                    <mxGeometry x="70" y="35" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="p_pt2" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ff0000;strokeColor=#b85450;" vertex="1" parent="g_points">
+                    <mxGeometry x="25" y="115" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="p_pt3" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ff0000;strokeColor=#b85450;" vertex="1" parent="g_points">
+                    <mxGeometry x="115" y="115" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="txt_points" value="Points (点)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g_points">
+                    <mxGeometry y="155" width="150" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- Vertices -->
+                <mxCell id="g_verts" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="250" y="100" width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_bg" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=none;" vertex="1" parent="g_verts">
+                    <mxGeometry width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_tri1" value="" style="triangle;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999999;rotation=-90;" vertex="1" parent="g_verts">
+                    <mxGeometry x="50" y="35" width="50" height="80" as="geometry"/>
+                </mxCell>
+                <!-- Separated Vertices Visual -->
+                 <mxCell id="v_pt1" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#00ff00;strokeColor=#82b366;" vertex="1" parent="g_verts">
+                    <mxGeometry x="72" y="38" width="6" height="6" as="geometry"/>
+                </mxCell>
+                 <mxCell id="v_pt2" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#00ff00;strokeColor=#82b366;" vertex="1" parent="g_verts">
+                    <mxGeometry x="38" y="112" width="6" height="6" as="geometry"/>
+                </mxCell>
+                 <mxCell id="v_pt3" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#00ff00;strokeColor=#82b366;" vertex="1" parent="g_verts">
+                    <mxGeometry x="105" y="112" width="6" height="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="txt_verts" value="Vertices (顶点)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g_verts">
+                    <mxGeometry y="155" width="150" height="20" as="geometry"/>
+                </mxCell>
+
+                <!-- Primitives -->
+                <mxCell id="g_prims" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="450" y="100" width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr_bg" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=none;" vertex="1" parent="g_prims">
+                    <mxGeometry width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr_tri1" value="1" style="triangle;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;rotation=-90;" vertex="1" parent="g_prims">
+                    <mxGeometry x="50" y="35" width="50" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="txt_prims" value="Primitives (图元/面)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g_prims">
+                    <mxGeometry y="155" width="150" height="20" as="geometry"/>
+                </mxCell>
+                
+                <!-- Edges -->
+                <mxCell id="g_edges" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="650" y="100" width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_bg" value="" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=none;" vertex="1" parent="g_edges">
+                    <mxGeometry width="150" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_l1" value="" style="endArrow=none;html=1;strokeWidth=4;strokeColor=#FFD966;" edge="1" parent="g_edges">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="30" y="120" as="sourcePoint"/>
+                        <mxPoint x="75" y="40" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_l2" value="" style="endArrow=none;html=1;strokeWidth=4;strokeColor=#FFD966;" edge="1" parent="g_edges">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="120" y="120" as="sourcePoint"/>
+                        <mxPoint x="75" y="40" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_l3" value="" style="endArrow=none;html=1;strokeWidth=4;strokeColor=#FFD966;" edge="1" parent="g_edges">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="30" y="120" as="sourcePoint"/>
+                        <mxPoint x="120" y="120" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="txt_edges" value="Edges (边)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="g_edges">
+                    <mxGeometry y="155" width="150" height="20" as="geometry"/>
+                </mxCell>
+
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

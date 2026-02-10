@@ -1,0 +1,128 @@
+---
+title: Resample
+description: Resamples geometry to create uniform or adaptive point distributions.
+icon: Boxes
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Drawio } from 'components/mdx/drawio';
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+
+# Resample
+
+The **Resample** node rebuilds the point structure of curves, polylines, and polygon boundaries. It is primarily used to:
+- Convert uneven hand-drawn curves into uniform segments.
+- Adaptively reduce point count on flat curve sections while preserving curvature.
+- Prepare curves for simulation (e.g., hair, rope) by ensuring consistent segment length.
+
+## Modes
+
+The node operates in three distinct modes to control point distribution:
+
+### 0. Uniform Length
+Divides the curve into segments of equal length. This is ideal for simulations or UV mapping where consistent spacing is required.
+- **Algorithm**: It walks along the total arc length of the input. If `Keep Knots` is off, original vertices are ignored, and new points are placed strictly at `Length` intervals.
+
+### 1. Fixed Segment Count
+Divides the curve into a specific number of segments (`Segments` parameter).
+- **Formula**: $\text{Step Length} = \frac{\text{Total Length}}{\text{Segments}}$
+
+### 2. Adaptive (Curvature)
+Only available for **Bezier Curves**. It reduces the point count by removing vertices on straight sections while adding more vertices on curved sections to maintain shape fidelity.
+- **Algorithm**: Recursive subdivision based on **Chord Error**. A segment is split if the distance from the curve midpoint to the chord exceeds the `Tolerance` (Length parameter).
+
+<Drawio file="content/docs/diagrams/resample-algo.drawio" height={400} title="Resample Algorithms: Adaptive vs Uniform" />
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| **Method** | Dropdown | Uniform | Choose between Uniform Length, Fixed Count, or Adaptive. |
+| **Length / Tolerance** | Float | 0.1 | Target segment length (Uniform) or max chord error (Adaptive). |
+| **Segments** | Int | 10 | Number of segments (Fixed Count mode only). |
+| **Keep Knots** | Bool | On | If enabled, original control points/vertices are preserved in the output. Useful for retaining sharp corners in polylines. |
+| **Resample Poly Edges**| Bool | On | If enabled, processes Polygon boundaries. If disabled, only Polyline and Curve primitives are affected. |
+
+## Output Attributes
+
+The node can generate useful attributes for downstream processing:
+
+- **`tangentu`** (`vector3`): The normalized tangent vector at each point. Useful for orientation alignment (e.g., Copy to Points).
+- **`curveu`** (`float`): A 0-1 value representing the normalized position along the curve. 0 at the start, 1 at the end.
+
+## Technical Details
+
+### Polygon Handling
+When `Resample Polygon Edges` is enabled, the node deconstructs polygon boundaries into segments, resamples them, and then reconstructs the polygon. This is particularly useful for creating high-density edges for deformation without subdividing the interior.
+
+### Adaptive Algorithm
+The adaptive resampler uses a high-performance **Recursive Chord Error** metric.
+Given a Bezier span defined by control points $P_0, P_1, P_2, P_3$:
+1. Calculate the chord $L = P_3 - P_0$.
+2. Evaluate the curve at $t=0.5$ to get $P_{mid}$.
+3. Calculate distance $d = \text{dist}(P_{mid}, \text{line}(P_0, P_3))$.
+4. If $d > \text{Tolerance}$, split the curve at $t=0.5$ and recurse.
+
+</Lang>
+
+<Lang lang="zh">
+
+# Resample (重采样)
+
+**Resample** 节点用于重建曲线、折线和多边形边界的点结构。主要用途包括：
+- 将不均匀的手绘曲线转换为均匀分段。
+- 自适应地减少平直曲线段的点数，同时在弯曲处保持形状。
+- 为模拟（如头发、绳索）准备曲线，确保分段长度一致。
+
+## 模式 (Modes)
+
+该节点提供三种模式来控制点的分布：
+
+### 0. Uniform Length (均匀长度)
+将曲线分割为等长的段。这对于需要一致间距的模拟或 UV 映射非常理想。
+- **算法**：沿输入的总弧长行进。如果关闭 `Keep Knots`，原始顶点将被忽略，新点严格按 `Length` 间隔放置。
+
+### 1. Fixed Segment Count (固定段数)
+将曲线分割为指定数量的段（`Segments` 参数）。
+- **公式**：$\text{步长} = \frac{\text{总长度}}{\text{段数}}$
+
+### 2. Adaptive (Curvature) (自适应曲率)
+仅适用于 **Bezier 曲线**。它通过移除直线段上的顶点来减少点数，同时在弯曲部分增加顶点以保持形状保真度。
+- **算法**：基于 **弦误差 (Chord Error)** 的递归细分。如果曲线中点到弦的距离超过 `Tolerance`（Length 参数），则分割线段。
+
+<Drawio file="content/docs/diagrams/resample-algo.zh.drawio" height={400} title="重采样算法：自适应 vs 均匀" />
+
+## 参数 (Parameters)
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| **Method** | 下拉菜单 | Uniform | 选择均匀长度、固定段数或自适应模式。 |
+| **Length / Tolerance** | Float | 0.1 | 目标分段长度 (Uniform) 或最大弦误差 (Adaptive)。 |
+| **Segments** | Int | 10 | 分段数量 (仅 Fixed Count 模式)。 |
+| **Keep Knots** | Bool | On | 如果启用，保留输出中的原始控制点/顶点。对于保留折线的尖锐转角很有用。 |
+| **Resample Poly Edges**| Bool | On | 如果启用，处理 Polygon 边界。如果禁用，仅影响 Polyline 和 Curve 图元。 |
+
+## 输出属性 (Output Attributes)
+
+节点可以生成用于下游处理的有用属性：
+
+- **`tangentu`** (`vector3`)：每个点的归一化切线向量。用于方向对齐（例如 Copy to Points）。
+- **`curveu`** (`float`)：沿曲线的归一化位置值（0-1）。起点为 0，终点为 1。
+
+## 技术细节
+
+### 多边形处理 (Polygon Handling)
+当启用 `Resample Polygon Edges` 时，节点将多边形边界解构为线段，对其进行重采样，然后重建多边形。这对于在不细分内部的情况下创建用于变形的高密度边缘特别有用。
+
+### 自适应算法 (Adaptive Algorithm)
+自适应重采样器使用高性能的 **递归弦误差 (Recursive Chord Error)** 度量。
+给定由控制点 $P_0, P_1, P_2, P_3$ 定义的 Bezier 跨度：
+1. 计算弦 $L = P_3 - P_0$。
+2. 在 $t=0.5$ 处评估曲线得到 $P_{mid}$。
+3. 计算距离 $d = \text{dist}(P_{mid}, \text{line}(P_0, P_3))$。
+4. 如果 $d > \text{Tolerance}$，则在 $t=0.5$ 处分割曲线并递归。
+
+</Lang>

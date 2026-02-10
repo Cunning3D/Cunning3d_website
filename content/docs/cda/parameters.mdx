@@ -1,0 +1,125 @@
+---
+title: Parameters
+description: CDA parameter system
+icon: SlidersHorizontal
+---
+
+## Overview
+
+CDA parameters expose internal node settings to the external interface:
+
+```
+Internal Graph                    CDA Interface
+┌──────────────────�?            ┌──────────────────�?
+�? PolyExtrude     �?            �?                 �?
+�?  distance: 0.5 ─┼─────────────┼─�?Extrude Depth  �?
+�?  inset: 0.1    ─┼─────────────┼─�?Inset Amount   �?
+�?                 �?            �?                 �?
+�? PolyBevel       �?            �?                 �?
+�?  amount: 0.05 ──┼─────────────┼─�?Bevel Size     �?
+└──────────────────�?            └──────────────────�?
+```
+
+## Parameter Types
+
+| Type | Widget | Example |
+|------|--------|---------|
+| Float | Slider | `0.5` |
+| Int | Integer field | `4` |
+| Bool | Toggle | `true` |
+| Vec2 | XY inputs | `[1.0, 0.5]` |
+| Vec3 | XYZ inputs | `[1.0, 0.5, 0.0]` |
+| Vec4 | XYZW inputs | `[1.0, 0.5, 0.0, 1.0]` |
+| String | Text field | `"name"` |
+| Menu | Dropdown | `0` (index) |
+| Color | Color picker | `[1.0, 0.0, 0.0, 1.0]` |
+
+## Creating Parameters
+
+In Cunning3D editor:
+
+1. Open CDA property panel
+2. Find internal node parameter
+3. Drag to "Promoted Parameters" section
+4. Parameter appears in CDA interface
+
+## Parameter Properties
+
+| Property | Description |
+|----------|-------------|
+| Name | Display name |
+| Default | Initial value |
+| Min/Max | Range constraints (Float/Int) |
+| Tooltip | Help text |
+| Group | UI grouping |
+
+## Binding
+
+A parameter can bind to multiple internal parameters:
+
+```
+CDA Param: "Size"
+  ├── Box.size_x
+  ├── Box.size_y
+  └── Box.size_z
+```
+
+All three internal parameters update when "Size" changes.
+
+## Unity Access
+
+### Inspector
+
+Parameters appear automatically in `CunningCDAInstance` Inspector.
+
+### Code
+
+```csharp
+var instance = GetComponent<CunningCDAInstance>();
+
+// Set parameters
+instance.SetParam("depth", 0.5f);
+instance.SetParam("divisions", 4);
+instance.SetParam("offset", new Vector3(1, 0, 0));
+
+// Get parameters
+float depth = instance.GetParam<float>("depth");
+
+// Cook with new parameters
+instance.Cook();
+```
+
+### JSON
+
+Parameters can be serialized as JSON:
+
+```json
+{
+  "depth": 0.5,
+  "divisions": 4,
+  "offset": [1.0, 0.0, 0.0]
+}
+```
+
+## Presets
+
+Save parameter combinations as presets:
+
+```csharp
+// Save current parameters as preset
+instance.SavePreset("HighDetail");
+
+// Load preset
+instance.LoadPreset("HighDetail");
+```
+
+## Best Practices
+
+<Callout type="tip">
+Use meaningful parameter names and provide tooltips. Future you will thank present you.
+</Callout>
+
+- Group related parameters
+- Set sensible defaults
+- Use Min/Max to prevent invalid values
+- Document expected ranges in tooltips

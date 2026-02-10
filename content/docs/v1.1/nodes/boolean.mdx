@@ -1,0 +1,61 @@
+---
+title: Boolean (v1.1)
+description: Enhanced CSG with N-gon support.
+icon: Boxes
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Lang } from 'components/mdx/lang';
+
+<Lang lang="en">
+
+# Boolean (v1.1)
+
+The Boolean Node performs advanced CSG operations with **N-gon reconstruction**.
+
+## What's New in v1.1
+
+- ✅ **N-gon Reconstruction**: Clean polygon output instead of triangle soup
+- ✅ **Multiple Subtract Modes**: A-B, B-A, Both
+- ✅ **Difference (XOR)** operation added
+
+## Operations
+
+- **Union (A ∪ B)**: Combines both shapes.
+- **Intersect (A ∩ B)**: Keeps overlapping volume.
+- **Subtract**: Three modes available (A-B, B-A, Both).
+- **Difference (XOR)**: Keeps non-overlapping parts.
+
+## Limitations in v1.1
+
+- No output groups (added in v1.2)
+- No Generalized Winding Number (added in v1.2)
+
+</Lang>
+
+<Lang lang="zh">
+
+# Boolean (v1.1)
+
+Boolean 节点执行高级 CSG 操作，支持 **N-gon 重建**。
+
+## v1.1 新功能
+
+- ✅ **N-gon 重建**：输出干净的多边形，而非三角面片
+- ✅ **多种减法模式**：A-B、B-A、Both
+- ✅ 新增 **Difference (XOR)** 操作
+
+## 操作类型
+
+- **Union (A ∪ B)**：合并两个形状。
+- **Intersect (A ∩ B)**：保留重叠体积。
+- **Subtract**：三种模式可选（A-B、B-A、Both）。
+- **Difference (XOR)**：保留非重叠部分。
+
+## v1.1 版本限制
+
+- 无输出分组（v1.2 新增）
+- 无广义卷绕数（v1.2 新增）
+
+</Lang>

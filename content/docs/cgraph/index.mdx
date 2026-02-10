@@ -1,0 +1,64 @@
+---
+title: CGraph
+description: Hybrid code + graph workflow
+icon: GitBranch
+---
+
+## Coming Soon
+
+CGraph is a hybrid workflow combining code and visual graphs.
+
+<Callout type="info">
+This feature is currently in design. Documentation will be updated as development progresses.
+</Callout>
+
+## Planned Features
+
+### Graph Loading
+
+```csharp
+// Load graph asset
+NativeMethods.cunning_load_graph_asset("Assets/MyProcedural.cgraph");
+
+// Cook entire graph
+NativeMethods.cunning_cook_async();
+
+// Get output
+ulong geo = NativeMethods.cunning_get_output_geo();
+```
+
+### Partial Evaluation
+
+Cook specific nodes instead of entire graph:
+
+```csharp
+// Cook up to specific node
+NativeMethods.cunning_cook_to_node(nodeId);
+```
+
+### Runtime Data Injection
+
+Inject data into graph at runtime:
+
+```csharp
+// Set parameter before cook
+NativeMethods.cunning_set_param("scatter_count", 1000);
+NativeMethods.cunning_set_input_geo(0, playerPosition);
+```
+
+## Use Cases
+
+| Scenario | Benefit |
+|----------|---------|
+| Complex procedural logic | Author visually, execute efficiently |
+| Runtime data integration | Inject game state into graph |
+| Partial evaluation | Cook only what you need |
+| Rapid iteration | Modify graph, see results instantly |
+
+## Roadmap
+
+- [ ] Graph serialization format
+- [ ] Node subset cooking
+- [ ] External input binding
+- [ ] Graph hot-reload
+- [ ] Debugging tools

@@ -1,0 +1,109 @@
+---
+title: Group
+description: Manage selections of geometry elements.
+icon: Boxes
+---
+
+import { Drawio } from '@/components/mdx/drawio';
+import { Lang } from '@/components/mdx/lang';
+
+<Lang lang="en">
+The **Group** system in Cunning3D is the foundation for procedural modeling. It allows you to create, modify, and manage selections of geometry elements (Points, Vertices, Primitives, Edges) and pass them to subsequent nodes for targeted operations.
+
+Unlike traditional modeling where selection is transient, in Cunning3D, selections are stored as named **Groups** on the geometry itself, persisting through the node graph.
+</Lang>
+<Lang lang="zh">
+Cunning3D 中的 **组 (Group)** 系统是程序化建模的基础。它允许您创建、修改和管理几何元素（点、顶点、图元、边）的选集，并将它们传递给后续节点进行针对性操作。
+
+与传统建模中转瞬即逝的“选择”不同，在 Cunning3D 中，选集作为命名的 **组 (Group)** 存储在几何体上，并在节点图中持久存在。
+</Lang>
+
+## Core Concepts (核心概念)
+
+<Lang lang="en">
+### Data Structure & Efficiency
+Under the hood, Cunning3D groups are implemented as highly efficient **Bitsets** (`Vec<u64>`). This ensures that checking group membership is an `O(1)` operation and memory usage is minimal (1 bit per element).
+</Lang>
+<Lang lang="zh">
+### 数据结构与效率
+在底层，Cunning3D 的组实现为高效的 **位集 (Bitset)** (`Vec<u64>`)。这确保了检查组成员资格是 `O(1)` 操作，且内存占用极低（每个元素仅占 1 bit）。
+</Lang>
+
+### Group Domains (组域)
+
+<Lang lang="en">
+There are four types of element groups, corresponding to the four geometry domains:
+</Lang>
+<Lang lang="zh">
+对应四种几何域，组也有四种类型：
+</Lang>
+
+<Drawio file="content/docs/diagrams/group-domains.drawio" height={300} title="Group Domains" />
+
+| Domain | Description | Common Use Case |
+| :--- | :--- | :--- |
+| **Point** | Shared 3D positions in space. | Deforming geometry, moving points. |
+| **Vertex** | A reference to a point within a primitive (face corner). Can split texture coordinates or normals. | UV mapping, hard edges (split normals). |
+| **Primitive** | A face (triangle, quad, polygon) or other entity (volume, curve). | Extruding faces, deleting faces, assigning materials. |
+| **Edge** | A line connecting two points. | Beveling edges, wireframe rendering. |
+
+## Nodes (节点)
+
+### Group Create
+
+<Lang lang="en">
+The **Group Create** node is the primary tool for generating selections. It combines multiple filtering criteria using Boolean logic (AND) to define a group.
+</Lang>
+<Lang lang="zh">
+**Group Create** 节点是生成选集的主要工具。它结合多种筛选标准（使用 AND 逻辑）来定义组。
+</Lang>
+
+#### Filters (筛选器)
+
+<Drawio file="content/docs/diagrams/group-filters.drawio" height={400} title="Group Create Filters" />
+
+<Lang lang="en">
+1.  **Base Group**: Starts with all elements, or a subset defined by a pattern (e.g., `0-10`, `1 3 5`).
+2.  **Bounding**: Keeps elements inside a Box, Sphere, or a volume from the second input.
+3.  **Normal**: Keeps elements facing a specific direction (e.g., Up `(0, 1, 0)`) within a spread angle.
+4.  **Edge**: (For Edge groups) Keeps only boundary edges (edges shared by only one primitive).
+</Lang>
+<Lang lang="zh">
+1.  **Base Group (基础组)**: 从所有元素开始，或由模式定义的子集（如 `0-10`, `1 3 5`）。
+2.  **Bounding (包围)**: 保留位于 盒、球 或第二个输入的体积内的元素。
+3.  **Normal (法线)**: 保留朝向特定方向（如向上 `(0, 1, 0)`）且在扩散角范围内的元素。
+4.  **Edge (边)**: （针对边组）仅保留边界边（仅被一个图元共享的边）。
+</Lang>
+
+### Group Promote
+
+<Lang lang="en">
+The **Group Promote** node converts a group from one domain to another. For example, selecting the points of a face, or the outline edges of a selection.
+</Lang>
+<Lang lang="zh">
+**Group Promote** 节点将组从一个域转换到另一个域。例如，选择某个面的所有点，或选区的轮廓边。
+</Lang>
+
+<Drawio file="content/docs/diagrams/group-promote.drawio" height={350} title="Group Promotion Modes" />
+
+<Lang lang="en">
+- **Convert**: Translates selection (e.g., Primitive -> Point selects all points of the selected primitives).
+- **Boundary Only**: When promoting to Edges, this mode selects only the **outline** of the source group, ignoring internal shared edges.
+</Lang>
+<Lang lang="zh">
+- **Convert (转换)**: 转换选区（例如，Primitive -> Point 会选中所有被选中图元包含的点）。
+- **Boundary Only (仅边界)**: 当提升到 Edge 时，此模式仅选择源组的 **轮廓**，忽略内部共享边。
+</Lang>
+
+### Other Utility Nodes (其他工具节点)
+
+<Lang lang="en">
+- **Group Combine**: Performs boolean operations (Union, Intersect, Subtract) between two existing groups.
+- **Group Manage**: Renames, deletes, or copies groups.
+- **Group Normalize**: Resizes internal bitmasks to match current geometry size (useful if topology changed without updating groups).
+</Lang>
+<Lang lang="zh">
+- **Group Combine**: 在两个现有组之间执行布尔运算（并集、交集、差集）。
+- **Group Manage**: 重命名、删除或复制组。
+- **Group Normalize**: 调整内部位掩码大小以匹配当前几何体大小（如果拓扑改变但组未更新时很有用）。
+</Lang>

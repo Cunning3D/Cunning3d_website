@@ -1,0 +1,145 @@
+{
+  "nav": {
+    "features": "功能",
+    "showcase": "案例",
+    "docs": "文档",
+    "roadmap": "路线图",
+    "changelog": "更新日志",
+    "blog": "博客",
+    "me": "关于我",
+    "donate": "捐赠",
+    "login": "登录"
+  },
+  "home": {
+    "hero": {
+      "title": "免费开源的程序化建模工具",
+      "subtitle": "使用节点化工作流创建 3D 模型，支持跨平台项目，甚至 XR 体验！",
+      "download": "下载最新版",
+      "whatsNew": "新功能",
+      "olderVersions": "寻找旧版本或源代码？"
+    },
+    "openSource": {
+      "title": "骄傲的开源项目",
+      "desc": "Cunning3D 是开源软件，由开源技术驱动。代码托管在",
+      "github": "GitHub",
+      "stars": "GitHub 上有 {count} 个 Star"
+    },
+    "stats": {
+      "title": "项目统计",
+      "updated": "更新于: {date}",
+      "excludes": "不含第三方库",
+      "progress": "开发进度"
+    },
+    "supporters": {
+      "title": "Cunning3D 支持者"
+    }
+  },
+  "features": {
+    "modeling": {
+      "title": "程序化建模",
+      "desc": "非破坏性、基于节点的几何创建，实现无限创意可能。"
+    },
+    "performance": {
+      "title": "高性能",
+      "desc": "Rust 和 GPU 计算驱动的极速操作。"
+    },
+    "platform": {
+      "title": "跨平台",
+      "desc": "桌面端、浏览器、游戏引擎，随处运行。"
+    },
+    "extensibility": {
+      "title": "可扩展",
+      "desc": "通过脚本和插件自定义和扩展功能。"
+    },
+    "ai": {
+      "title": "AI 驱动",
+      "desc": "内置 AI 辅助。本地优先，隐私保护，完全免费。",
+      "tip": "无需 API 密钥。所有 AI 功能支持本地 LLM 离线使用。"
+    }
+  },
+  "download": {
+    "title": "下载 Cunning3D",
+    "subtitle": "获取适合你平台的最新版本。免费且开源。",
+    "latest": "最新版本",
+    "all": "所有版本",
+    "source": "从源码构建",
+    "requirements": "系统要求",
+    "coming": "即将推出",
+    "noReleases": "暂无可用版本。请稍后再来或从源码构建！",
+    "clone": "克隆仓库",
+    "build": "使用 Cargo 构建",
+    "seeDoc": "查看{link}获取详细构建说明。"
+  },
+  "showcase": {
+    "title": "案例展示",
+    "subtitle": "使用 Cunning3D 创作的精彩作品。看看社区在创造什么！",
+    "featured": "精选作品",
+    "all": "全部",
+    "noWorks": "该筛选条件下暂无作品。",
+    "cta": {
+      "title": "想要展示你的作品？",
+      "desc": "分享你的 Cunning3D 作品，有机会在这里展示！",
+      "discord": "分享到 Discord",
+      "download": "下载并创作"
+    }
+  },
+  "roadmap": {
+    "title": "开发路线图",
+    "subtitle": "了解我们正在构建的功能和未来计划。路线图会根据社区反馈定期更新。",
+    "status": {
+      "done": "已完成",
+      "inProgress": "进行中",
+      "planned": "已规划",
+      "future": "未来计划"
+    },
+    "cta": {
+      "title": "有功能建议？",
+      "desc": "加入我们的社区，一起塑造 Cunning3D 的未来。",
+      "issue": "提交 Issue",
+      "discord": "加入 Discord"
+    }
+  },
+  "changelog": {
+    "title": "更新日志",
+    "subtitle": "版本历史和发布说明。自动从 GitHub Releases 同步。",
+    "latest": "最新",
+    "prerelease": "预发布",
+    "noReleases": "暂无版本",
+    "noReleasesDesc": "请稍后再来或关注 GitHub 获取更新。",
+    "cta": {
+      "title": "保持更新",
+      "desc": "关注 GitHub 仓库或加入 Discord 获取新版本通知。",
+      "star": "在 GitHub 加星",
+      "download": "下载最新版"
+    }
+  },
+  "donate": {
+    "title": "支持 Cunning3D 的未来",
+    "subtitle": "加入开发基金，支持 Cunning3D 核心程序化建模功能的开发。",
+    "monthly": "每月",
+    "oneTime": "一次性",
+    "become": "成为 {tier} 会员！",
+    "donateBtn": "捐赠 ${amount}",
+    "comingSoon": "即将推出",
+    "crypto": "或使用加密货币捐赠：",
+    "copyAddress": "点击复制地址",
+    "questions": "有问题？",
+    "contact": "联系我们"
+  },
+  "mePage": {
+    "name": "你的名字",
+    "title": "你的职位/角色",
+    "aboutTitle": "关于我",
+    "aboutContent": "在这里写一篇简短的自我介绍。可以包括你的专业背景、驱动你的动力、你的理念，或者让你与众不同的地方。用能够与你的受众产生共鸣的方式讲述你的故事。",
+    "backgroundTitle": "背景经历",
+    "backgroundContent": "描述你的职业历程、教育背景、重要成就或塑造了今天的你的经历。这里是突出关键里程碑、专业领域或职业生涯中关键时刻的好地方。",
+    "interestsTitle": "兴趣爱好",
+    "interestsContent": "分享你在工作之外喜欢做的事情。可以是爱好、激情、副业项目，或者任何其他给你带来快乐和平衡的事物。这有助于访客看到职业背后真实的你。"
+  },
+  "common": {
+    "learnMore": "了解更多",
+    "documentation": "文档",
+    "viewGithub": "在 GitHub 查看",
+    "by": "作者"
+  }
+}

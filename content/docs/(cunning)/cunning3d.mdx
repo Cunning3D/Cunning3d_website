@@ -1,0 +1,127 @@
+---
+title: Cunning3D
+description: The Native Rust DCC for Next-Gen Procedural Modeling
+icon: AppWindow
+---
+
+## Overview
+
+<Lang lang="zh">
+
+**Cunning3D** 是为了挑战程序化建模性能极限而生的 **原生 Rust DCC 软件**。
+
+它不仅仅是一个编辑器，更是一个现代化的**高性能几何计算平台**。它摒弃了陈旧的历史包袱，基于 **Bevy Engine** 和 **WGPU** 构建，为你提供丝滑的节点编辑体验和工业级的渲染视口。从粒子到体素，从网格到曲线，Cunning3D 让创意在非破坏性的工作流中自由流动。
+
+</Lang>
+
+<Lang lang="en">
+
+**Cunning3D** is a **Native Rust DCC** built to challenge the limits of procedural modeling performance.
+
+More than just an editor, it is a modern **high-performance geometry computing platform**. Built on **Bevy Engine** and **WGPU**, it sheds legacy debt to deliver a silky-smooth node editing experience and an industrial-grade viewport. From particles to voxels, meshes to curves, Cunning3D lets creativity flow freely in a non-destructive workflow.
+
+</Lang>
+
+## Core Experience
+
+<Lang lang="zh">
+
+### ⚡️ 极致性能 (Rust & WGPU)
+基于 Rust 内存安全与零成本抽象，结合 WGPU 的现代图形管线。无论是启动速度还是百万级面的视口漫游，Cunning3D 都致力于提供**瞬时响应**的操作手感。
+
+### 🕸️ 无限节点图 (Infinite Graph)
+专为复杂逻辑设计的节点编辑器。支持**无限画布**、智能自动布局、分组封装。配合**非阻塞异步计算（Async Compute）**架构，即使后台正在解算复杂的布尔运算，你的 UI 依然保持 60FPS 流畅响应，绝不卡顿。
+
+### 🎨 实时高保真视口
+所见即所得。内置 Bevy PBR 渲染管线，支持：
+- **实时光影与材质**
+- **SDF GPU 文本渲染**（极其清晰的属性数值显示）
+- **高性能线框与 Group 可视化**
+- **VDB 体积渲染预览**
+
+</Lang>
+
+<Lang lang="en">
+
+### ⚡️ Extreme Performance (Rust & WGPU)
+Built on Rust's memory safety and zero-cost abstractions, combined with the WGPU modern graphics pipeline. From startup speed to viewport navigation with millions of polygons, Cunning3D is dedicated to **instant responsiveness**.
+
+### 🕸️ Infinite Node Graph
+A node editor designed for complex logic. Supports **infinite canvas**, smart auto-layout, and grouping. Powered by a **Non-blocking Async Compute** architecture, your UI stays silky smooth at 60FPS even while heavy boolean operations are solving in the background.
+
+### 🎨 Real-time High-Fidelity Viewport
+What you see is what you get. Built-in Bevy PBR rendering pipeline supports:
+- **Real-time lighting & materials**
+- **SDF GPU Text Rendering** (Crystal clear attribute values)
+- **High-performance Wireframe & Group Visualization**
+- **VDB Volume Rendering Preview**
+
+</Lang>
+
+## Modeling Powerhouse
+
+<Lang lang="zh">
+
+Cunning3D 提供了一套完整且不断扩展的程序化建模工具集，满足专业制作需求：
+
+| 模块 | 能力 |
+|------|------|
+| **Mesh Modeling** | 包含 PolyExtrude, Boolean, Bevel, Remesh 等核心拓扑操作。 |
+| **VDB Volumes** | 工业级稀疏体素操作（OpenVDB），支持 SDF 建模、布尔与平滑。 |
+| **Splines & Curves** | 强大的曲线系统，支持重采样、扫描（Sweep）与路径变形。 |
+| **Attributes** | 类似 Houdini 的属性系统。数据在 Point/Vertex/Primitive 间自由流转，驱动一切几何变换。 |
+| **Groups** | 灵活的组系统，支持表达式筛选与可视化调试。 |
+
+</Lang>
+
+<Lang lang="en">
+
+Cunning3D provides a complete and expanding set of procedural modeling tools for professional production:
+
+| Module | Capabilities |
+|--------|--------------|
+| **Mesh Modeling** | Core topology ops like PolyExtrude, Boolean, Bevel, Remesh. |
+| **VDB Volumes** | Industrial-grade sparse voxel operations (OpenVDB) for SDF modeling, booleans, and smoothing. |
+| **Splines & Curves** | Powerful curve system supporting resampling, sweeping, and path deformation. |
+| **Attributes** | Houdini-like attribute system. Data flows freely between Points/Vertices/Primitives to drive all transformations. |
+| **Groups** | Flexible group system with expression filtering and visual debugging. |
+
+</Lang>
+
+## Modern Architecture
+
+<Lang lang="zh">
+
+### 🧩 Plug-and-Play 插件系统
+我们重新定义了扩展性。
+- **静态发现**：Rust 宏自动注册，编译即用。
+- **动态加载**：支持在运行时热加载 `.dll/.dylib` 节点插件。
+只需将插件文件放入目录，编辑器即可自动识别并加载新的节点类型，无需繁琐配置。
+
+### 📦 CDA 资产流程
+**一次创作，随处运行。**
+在 Cunning3D 中将你的节点图封装为 **CDA (Cunning Digital Asset)**。暴露参数，定义接口，然后直接导出。
+这个资产可以在 **Unity**、**Web (WASM)** 甚至服务器端无缝运行，由 **Cunning Engine** 保证一致的计算结果。
+
+### 🤖 AI Native (实验性)
+内置本地 LLM 支持（TinyModel），探索通过自然语言构建节点图、解释复杂逻辑或生成脚本的可能性。我们相信 AI 是程序化建模的未来助手。
+
+</Lang>
+
+<Lang lang="en">
+
+### 🧩 Plug-and-Play Plugin System
+Redefining extensibility.
+- **Static Discovery**: Rust macros for compile-time registration.
+- **Dynamic Loading**: Hot-load `.dll/.dylib` node plugins at runtime.
+Simply drop plugin files into the directory, and the editor automatically discovers and loads new node types without configuration.
+
+### 📦 CDA Asset Workflow
+**Author once, run everywhere.**
+Encapsulate your node graphs as **CDA (Cunning Digital Asset)** within Cunning3D. Expose parameters, define interfaces, and export.
+This asset runs seamlessly in **Unity**, **Web (WASM)**, or servers, with **Cunning Engine** guaranteeing consistent results.
+
+### 🤖 AI Native (Experimental)
+Built-in local LLM support (TinyModel) to explore building node graphs, explaining complex logic, or generating scripts via natural language. We believe AI is the future copilot for procedural modeling.
+
+</Lang>

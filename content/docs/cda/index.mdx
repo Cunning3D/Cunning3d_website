@@ -1,0 +1,145 @@
+---
+title: CDA Overview
+description: Cunning Digital Asset system
+icon: Package
+---
+
+<Lang lang="zh">
+## 什么是 CDA？
+
+**CDA（Cunning Digital Asset）** 是我们用于交付“可复用程序化资产”的格式。它把一个内部节点图（Internal Graph）连同对外接口（输入/输出、提升参数、预设等）打包成一个文件，用于在 **Cunning3D / Unity / Web(WASM)** 等宿主中运行。
+</Lang>
+
+<Lang lang="en">
+## What is CDA?
+
+**CDA** (Cunning Digital Asset) is a reusable procedural asset format. Like Houdini Digital Assets, CDAs encapsulate node graphs with exposed parameters.
+</Lang>
+
+```
+┌─────────────────────────────────────�?�?            CDA File                �?�? ┌─────────────────────────────�?   �?�? �?     Internal Graph         �?   �?�? �? [Box]─►[Extrude]─►[Bevel]  �?   �?�? └─────────────────────────────�?   �?�?                                    �?�? Exposed Parameters:                �?�? �?size: 1.0                        �?�? �?extrude_dist: 0.5                �?�? �?bevel_amount: 0.1                �?�?                                    �?�? Inputs: 0                          �?�? Outputs: 1                         �?└─────────────────────────────────────�?```
+
+<Lang lang="zh">
+## 交互型 CDA：Coverlay & HUD
+
+我们为 CDA 增加了 **Coverlay（工具面板）** 与 **HUD（视口叠加层）** 的暴露能力，让 CDA 可以承载“带交互的节点”，从而把一段资产提升为一套可移植的工具（例如：**Voxel Edit CDA = 体素编辑器 DCC**）。
+
+这部分的完整说明见：
+
+- [Coverlay & HUD](/docs/cda/interactive-overlay)
+</Lang>
+
+<Lang lang="en">
+## Interactive CDA: Coverlay & HUD
+
+We support exposing **Coverlay (tool panels)** and **HUD (viewport overlay)** from a CDA. This enables interactive nodes and lets a CDA behave like a portable toolset (e.g. **Voxel Edit CDA = a voxel editor DCC**).
+
+Read the full guide:
+
+- [Coverlay & HUD](/docs/cda/interactive-overlay)
+</Lang>
+
+## Workflow
+
+<div className="my-6 rounded-xl overflow-hidden border border-fd-border">
+  <img src="/docs/cda-workflow.svg" alt="CDA Workflow" className="w-full" />
+</div>
+
+<Steps>
+
+### Author
+
+Create node graph in Cunning3D editor.
+
+### Expose
+
+Drag parameters to CDA interface panel.
+
+### Export
+
+Save as `.cda` file.
+
+### Use
+
+Drag into Unity/Bevy/Web project.
+
+### Tweak
+
+Adjust parameters in Inspector, cook, done.
+
+</Steps>
+
+## File Format
+
+<Drawio file="content/docs/diagrams/CDA_File_Format.drawio" height={700} title="CDA File Format & Architecture (Interactive)" />
+
+| Chunk | Purpose | Shipped? |
+|-------|---------|----------|
+| `[EDIT]` | Cunning3D reopening | No |
+| `[GAME]` | Engine runtime | Yes |
+
+## Parameters
+
+CDAs expose parameters for runtime control:
+
+| Type | UI Widget |
+|------|-----------|
+| Float | Slider |
+| Int | Integer field |
+| Vec3 | XYZ inputs |
+| Bool | Toggle |
+| String | Text field |
+| Menu | Dropdown |
+
+### Parameter Binding
+
+In Cunning3D, drag from internal node parameters to CDA interface:
+
+```
+Internal Node              CDA Interface
+┌──────────────�?         ┌──────────────�?�?PolyExtrude  �?         �? distance    │◄─── User adjusts
+�? distance ●──┼──────────�?             �?�? inset       �?         �? inset       │◄─── User adjusts  
+└──────────────�?         └──────────────�?```
+
+## Inputs & Outputs
+
+CDAs can have multiple inputs and outputs:
+
+```
+      ┌─────────────�?[In0]─�?            ├─[Out0] Main mesh
+[In1]─�?   CDA      ├─[Out1] Collision
+      �?            ├─[Out2] LOD
+      └─────────────�?```
+
+## Unity Usage
+
+```csharp
+// Automatic (Inspector)
+// 1. Drag .cda into scene
+// 2. CunningCDAInstance created
+// 3. Adjust params, click Cook
+
+// Manual (Code)
+ulong cdaId = NativeMethods.cunning_cda_load("path/to/asset.cda");
+ulong jobId = NativeMethods.cunning_cda_submit(cdaId, instanceId, gen, paramsJson, inputs, inputCount);
+
+// Poll until ready
+while (NativeMethods.cunning_job_poll(jobId) == 1) {
+    yield return null;
+}
+
+// Get output
+ulong outputGeo = NativeMethods.cunning_job_get_output_handle(jobId, 0);
+```
+
+## Best Practices
+
+<Callout type="tip">
+Keep CDAs focused. One CDA = one procedural concept.
+</Callout>
+
+- Group related parameters
+- Provide sensible defaults
+- Use meaningful parameter names
+- Test with extreme values
+- Document expected input geometry

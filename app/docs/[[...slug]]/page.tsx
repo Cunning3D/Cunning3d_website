@@ -1,0 +1,81 @@
+import { source } from '@/lib/source';
+import { DocsPage, DocsBody, DocsTitle, DocsDescription } from 'fumadocs-ui/page';
+import { getMDXComponents } from '@/mdx-components';
+import { notFound } from 'next/navigation';
+import { VersionSwitcher } from '@/components/docs/version-switcher';
+
+const VERSION_LIST = ['v1.2', 'v1.1', 'v1.0'];
+type Version = 'v1.2' | 'v1.1' | 'v1.0';
+const LATEST = 'v1.2';
+
+interface PageProps { params: Promise<{ slug?: string[] }> }
+
+// Detect current version from slug
+function detectVersion(slug?: string[]): Version {
+  if (!slug || slug.length < 1) return LATEST;
+  const match = VERSION_LIST.find((v) => slug[0] === v);
+  return (match as Version) || LATEST;
+}
+
+// Get the node name from slug (e.g., ['nodes', 'boolean'] -> 'boolean', ['v1.1', 'nodes', 'boolean'] -> 'boolean')
+function getNodeName(slug?: string[]): string | null {
+  if (!slug) return null;
+  const nodesIdx = slug.indexOf('nodes');
+  if (nodesIdx === -1 || nodesIdx >= slug.length - 1) return null;
+  return slug[nodesIdx + 1];
+}
+
+// Check which versions have docs for this node
+function getAvailableVersions(nodeName: string): string[] {
+  const available: string[] = [];
+  // Check latest (no version prefix)
+  if (source.getPage(['nodes', nodeName])) available.push(LATEST);
+  // Check versioned paths
+  for (const v of VERSION_LIST) {
+    if (v === LATEST) continue;
+    if (source.getPage([v, 'nodes', nodeName])) available.push(v);
+  }
+  return available.length > 0 ? available : [LATEST];
+}
+
+export default async function Page({ params }: PageProps) {
+  const { slug } = await params;
+  const page = source.getPage(slug);
+  if (!page) notFound();
+
+  const { body: MDX, toc } = await page.data.load();
+  const nodeName = getNodeName(slug);
+  const isNodeDoc = !!nodeName && nodeName !== 'index';
+  const currentVersion = detectVersion(slug);
+  const availableVersions = nodeName ? getAvailableVersions(nodeName) : [];
+  const showVersionSwitcher = isNodeDoc && availableVersions.length > 1;
+  const since = (page.data as any).since;
+
+  return (
+    <DocsPage toc={toc} tableOfContent={{ style: 'clerk' }}>
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <DocsTitle>{page.data.title}</DocsTitle>
+        {isNodeDoc && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground shrink-0">
+            {since && <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-0.5">Since {since}</span>}
+            {showVersionSwitcher && <VersionSwitcher currentVersion={currentVersion} availableVersions={availableVersions} />}
+            {!showVersionSwitcher && <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-0.5">{currentVersion}</span>}
+          </div>
+        )}
+      </div>
+      <DocsDescription>{page.data.description}</DocsDescription>
+      <DocsBody>
+        <MDX components={getMDXComponents()} />
+      </DocsBody>
+    </DocsPage>
+  );
+}
+
+export async function generateStaticParams() { return source.generateParams(); }
+
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params;
+  const page = source.getPage(slug);
+  if (!page) notFound();
+  return { title: page.data.title, description: page.data.description };
+}

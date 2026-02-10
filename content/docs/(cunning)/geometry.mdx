@@ -1,0 +1,93 @@
+---
+title: Geometry
+description: Core geometry data structures
+icon: Box
+---
+
+## Overview
+
+Cunning uses a polygon-based geometry representation similar to Houdini. Every geometry object contains:
+
+- **Points** - 3D positions
+- **Vertices** - Point references with additional data
+- **Primitives** - Polygon faces
+- **Attributes** - Data attached to elements
+
+## Geometry Handle
+
+All geometry in Cunning is accessed via handles:
+
+```csharp
+// Create geometry
+ulong geo = NativeMethods.cunning_geo_create_cube(1.0f, 1, 1, 1);
+
+// Query data
+uint pointCount = NativeMethods.cunning_geo_get_point_count(geo);
+uint vertCount = NativeMethods.cunning_geo_get_vertex_count(geo);
+uint primCount = NativeMethods.cunning_geo_get_prim_count(geo);
+
+// Extract mesh data
+float[] positions = new float[vertCount * 3];
+NativeMethods.cunning_geo_copy_vertices(geo, positions);
+```
+
+## Primitive Types
+
+| Type | Description |
+|------|-------------|
+| Polygon | N-sided face |
+| PolyLine | Open/closed curve |
+| Point | Single point |
+
+## Creating Geometry
+
+### Primitives
+
+```csharp
+// Box
+ulong cube = NativeMethods.cunning_geo_create_cube(size, divX, divY, divZ);
+
+// Sphere
+ulong sphere = NativeMethods.cunning_geo_create_sphere(radius, rings, segments);
+
+// Grid
+ulong grid = NativeMethods.cunning_geo_create_grid(sizeX, sizeZ, divX, divZ);
+```
+
+### Manual Construction
+
+```csharp
+ulong geo = NativeMethods.cunning_geo_create();
+
+// Add points
+int p0 = NativeMethods.cunning_geo_add_point(geo, 0, 0, 0);
+int p1 = NativeMethods.cunning_geo_add_point(geo, 1, 0, 0);
+int p2 = NativeMethods.cunning_geo_add_point(geo, 1, 1, 0);
+int p3 = NativeMethods.cunning_geo_add_point(geo, 0, 1, 0);
+
+// Add polygon
+int[] pts = { p0, p1, p2, p3 };
+NativeMethods.cunning_geo_add_poly(geo, pts, 4);
+```
+
+## Operations
+
+| Operation | Function |
+|-----------|----------|
+| Boolean | `cunning_op_boolean(geoA, geoB, opType)` |
+| Extrude | `cunning_op_poly_extrude(geo, dist, inset)` |
+| Bevel | `cunning_op_poly_bevel(geo, dist, divs)` |
+| Merge | `cunning_op_merge(geos, count)` |
+| Transform | `cunning_op_transform(geo, matrix)` |
+
+## Memory Management
+
+Geometry handles are reference-counted internally. When no longer needed:
+
+```csharp
+NativeMethods.cunning_geo_release(handle);
+```
+
+<Callout type="info">
+CDA job outputs are managed automatically. Only manually created geometry needs explicit release.
+</Callout>

@@ -1,0 +1,145 @@
+<mxfile host="65bd71144e">
+    <diagram id="geometry-structure-detailed-zh" name="Page-1">
+        <mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                
+                <!-- Detail Container (Global Scope) -->
+                <mxCell id="2" value="Detail (全局容器)" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;fillColor=#FFF2CC;strokeColor=#d6b656;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="40" width="300" height="520" as="geometry"/>
+                </mxCell>
+
+                <!-- Index Maps -->
+                <mxCell id="3" value="点索引映射 (SparseSet)" style="text;strokeColor=#d6b656;fillColor=#FFE6CC;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontStyle=1" vertex="1" parent="2">
+                    <mxGeometry y="30" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="顶点索引映射 (SparseSet)" style="text;strokeColor=#82b366;fillColor=#D5E8D4;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontStyle=1" vertex="1" parent="2">
+                    <mxGeometry y="60" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="图元索引映射 (SparseSet)" style="text;strokeColor=#9673a6;fillColor=#E1D5E7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontStyle=1" vertex="1" parent="2">
+                    <mxGeometry y="90" width="300" height="30" as="geometry"/>
+                </mxCell>
+                
+                <!-- Primitive List -->
+                <mxCell id="6" value="图元列表 [ vertices: VertexId[] ]" style="text;strokeColor=#9673a6;fillColor=#E1D5E7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontStyle=1" vertex="1" parent="2">
+                    <mxGeometry y="120" width="300" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Attributes Section -->
+                <mxCell id="7" value="属性 (Attributes)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=25;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;fillColor=#DAE8FC;strokeColor=#6c8ebf;" vertex="1" parent="2">
+                    <mxGeometry y="150" width="300" height="260" as="geometry"/>
+                </mxCell>
+                
+                <!-- Point Attrs -->
+                <mxCell id="8" value="&lt;P&gt; (Vec3)" style="text;strokeColor=#d6b656;fillColor=#FFE6CC;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="7">
+                    <mxGeometry y="25" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="&lt;Cd&gt; (Vec3)" style="text;strokeColor=#d6b656;fillColor=#FFE6CC;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="7">
+                    <mxGeometry y="55" width="300" height="30" as="geometry"/>
+                </mxCell>
+                
+                <!-- Vertex Attrs (Including point ref!) -->
+                <mxCell id="10" value="&lt;_vertex_pointRef&gt; (PointId)" style="text;strokeColor=#82b366;fillColor=#D5E8D4;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontStyle=1" vertex="1" parent="7">
+                    <mxGeometry y="85" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="&lt;uv&gt; (Vec2)" style="text;strokeColor=#82b366;fillColor=#D5E8D4;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="7">
+                    <mxGeometry y="115" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="&lt;N&gt; (Vec3)" style="text;strokeColor=#82b366;fillColor=#D5E8D4;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="7">
+                    <mxGeometry y="145" width="300" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Prim Attrs -->
+                <mxCell id="13" value="&lt;material&gt; (String)" style="text;strokeColor=#9673a6;fillColor=#E1D5E7;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="7">
+                    <mxGeometry y="175" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="&lt;area&gt; (f32)" style="text;strokeColor=#9673a6;fillColor=#E1D5E7;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="7">
+                    <mxGeometry y="205" width="300" height="30" as="geometry"/>
+                </mxCell>
+                
+                <!-- Detail Attrs -->
+                 <mxCell id="15" value="&lt;bbox&gt; (Bounds)" style="text;strokeColor=#d6b656;fillColor=#FFF2CC;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="7">
+                    <mxGeometry y="235" width="300" height="25" as="geometry"/>
+                </mxCell>
+
+                <!-- Groups Section -->
+                <mxCell id="16" value="组 (Groups)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=25;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;fillColor=#B1DDF0;strokeColor=#10739e;" vertex="1" parent="2">
+                    <mxGeometry y="410" width="300" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="点组 (Point Groups)" style="text;strokeColor=none;fillColor=#FFE6CC;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="16">
+                    <mxGeometry y="25" width="300" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="顶点组 (Vertex Groups)" style="text;strokeColor=none;fillColor=#D5E8D4;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="16">
+                    <mxGeometry y="50" width="300" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="图元组 (Primitive Groups)" style="text;strokeColor=none;fillColor=#E1D5E7;align=left;verticalAlign=middle;spacingLeft=20;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="16">
+                    <mxGeometry y="75" width="300" height="35" as="geometry"/>
+                </mxCell>
+
+                <!-- Visual Topology (Right Side) -->
+                <!-- Parallelogram Points -->
+                <!-- P0 (Bottom Left) -->
+                <mxCell id="30" value="0" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#FFE6CC;strokeColor=#d79b00;fontSize=14;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="400" y="450" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <!-- P1 (Bottom Right) -->
+                <mxCell id="31" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#FFE6CC;strokeColor=#d79b00;fontSize=14;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="600" y="450" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <!-- P2 (Top Right) -->
+                <mxCell id="32" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#FFE6CC;strokeColor=#d79b00;fontSize=14;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="650" y="300" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <!-- P3 (Top Left) -->
+                <mxCell id="33" value="3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#FFE6CC;strokeColor=#d79b00;fontSize=14;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="450" y="300" width="30" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Primitives -->
+                <!-- Tri 0 (Bottom Left) P0-P1-P3 -->
+                <mxCell id="40" value="0" style="triangle;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673a6;rotation=-18.4;opacity=60;fontSize=30;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="420" y="320" width="180" height="120" as="geometry"/>
+                </mxCell>
+                <!-- Tri 1 (Top Right) P1-P2-P3 -->
+                <mxCell id="41" value="1" style="triangle;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673a6;rotation=161.6;opacity=60;fontSize=30;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="480" y="320" width="180" height="120" as="geometry"/>
+                </mxCell>
+
+                <!-- Vertices (Squares with Labels V[P]) -->
+                <!-- Tri 0 Vertices: v0[0], v1[1], v2[3] -->
+                <mxCell id="50" value="0[0]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+                    <mxGeometry x="425" y="435" width="30" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="51" value="1[1]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+                    <mxGeometry x="560" y="435" width="30" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="2[3]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+                    <mxGeometry x="460" y="325" width="30" height="15" as="geometry"/>
+                </mxCell>
+
+                <!-- Tri 1 Vertices: v3[1], v4[2], v5[3] -->
+                <mxCell id="53" value="3[1]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+                    <mxGeometry x="585" y="420" width="30" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" value="4[2]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+                    <mxGeometry x="625" y="315" width="30" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="5[3]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="315" width="30" height="15" as="geometry"/>
+                </mxCell>
+
+                <!-- Connections/Arrows -->
+                <!-- Primitive List points to Primitive 0 -->
+                <mxCell id="60" value="" style="endArrow=classic;html=1;entryX=0.2;entryY=0.6;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;" edge="1" parent="1" source="6" target="40">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+                </mxCell>
+                <!-- _vertex_pointRef points to Point 0 -->
+                <mxCell id="61" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;" edge="1" parent="1" source="10" target="30">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+                </mxCell>
+
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

@@ -1,0 +1,54 @@
+# 自动同步捐款数据 - 每小时运行一次
+name: Sync Donors
+
+on:
+  schedule:
+    - cron: '0 * * * *' # 每小时运行
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      - name: Sync Ko-fi donors
+        env:
+          KOFI_API_KEY: ${{ secrets.KOFI_API_KEY }}
+        run: |
+          # Ko-fi 目前没有公开的捐款者列表 API
+          # 主要依赖 Webhook 实时推送
+          # 这里可以添加其他数据源的同步逻辑
+          echo "Ko-fi sync: relying on webhook"
+      
+      - name: Sync GitHub Sponsors (if available)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 如果开通了 GitHub Sponsors，可以用 GraphQL API 查询
+          # 参考: https://docs.github.com/en/graphql/reference/objects#sponsorconnection
+          echo "GitHub Sponsors sync: TODO"
+      
+      - name: Sync Crypto donations
+        run: |
+          # 可以用 Etherscan/Blockchain API 查询链上交易
+          # 示例: curl "https://api.etherscan.io/api?module=account&action=txlist&address=$ETH_ADDRESS"
+          echo "Crypto sync: TODO"
+      
+      - name: Update metrics
+        run: |
+          # 计算统计数据并更新 config/donate.ts
+          echo "Metrics update: TODO"
+      
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "chore: sync donor data [skip ci]"
+          git push

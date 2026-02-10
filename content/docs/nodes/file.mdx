@@ -1,0 +1,38 @@
+---
+title: File
+description: Universal 3D geometry file importer.
+icon: File
+since: v1.0
+versions: ['v1.0', 'v1.1', 'v1.2']
+---
+
+import { Drawio } from '@/components/mdx/drawio';
+
+<div className="flex gap-2 mb-4">
+  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">IO</span>
+  <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Importer</span>
+</div>
+
+# File Node
+
+The File node is the primary entry point for importing external geometric data into Cunning3D. It features a unified interface that automatically detects and handles various standard 3D file formats through an extensible registry system.
+
+<Drawio file="content/docs/diagrams/file-node.drawio" />
+
+## Supported Formats
+
+The node currently supports the following industry-standard formats:
+
+| Format | Extensions | Description | Supported Features |
+| :--- | :--- | :--- | :--- |
+| **FBX** | `.fbx` | Autodesk Filmbox | Geometry, Normals, UVs, Colors |
+| **OBJ** | `.obj` | Wavefront Object | Geometry, Normals, UVs |
+| **GLTF** | `.gltf`, `.glb` | GL Transmission Format | Full PBR Scene support (flattened to geometry) |
+| **STL** | `.stl` | Stereolithography | Geometry only (Triangle Soup) |
+| **PLY** | `.ply` | Polygon File Format | Point Clouds, Scanned Data |
+
+## Parameters
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| **File** | `FilePath` | The absolute or relative path to the source file. The file picker automatically filters based on supported extensions. |

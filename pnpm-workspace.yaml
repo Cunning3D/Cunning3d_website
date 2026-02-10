@@ -1,5 +1,5 @@
 packages:
-  - fumadocs-dev/packages/*
+  - "."
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - esbuild

@@ -7,9 +7,9 @@
   },
   "packageManager": "pnpm@9.0.0",
   "scripts": {
-    "predev": "node scripts/sync-wasm-player.mjs && pnpm exec fumadocs-mdx",
+    "predev": "node scripts/sync-wasm-player.mjs && node node_modules/fumadocs-mdx/dist/bin.js",
     "dev": "next dev",
-    "prebuild": "node scripts/sync-wasm-player.mjs && node scripts/generate-examples-index.mjs && pnpm exec fumadocs-mdx",
+    "prebuild": "node scripts/sync-wasm-player.mjs && node scripts/generate-examples-index.mjs && node node_modules/fumadocs-mdx/dist/bin.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

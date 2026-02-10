@@ -27,6 +27,14 @@ async function exists(p) {
 
 async function main() {
   if (!(await exists(srcDir))) {
+    const wasmPath = path.join(dstDir, "cunning_player_bg.wasm");
+    if (await exists(wasmPath)) {
+      console.log(
+        `[sync-wasm-player] source not found, using existing public assets: ${wasmPath}`
+      );
+      process.exit(0);
+    }
+
     console.warn(`[sync-wasm-player] source not found: ${srcDir}`);
     console.warn(
       `[sync-wasm-player] build WASM first: Cunning3D_1.0/crates/cunning_player/scripts/build_wasm.ps1`

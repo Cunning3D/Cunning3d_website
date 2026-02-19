@@ -9,6 +9,7 @@ import { buildJsx } from 'estree-util-build-jsx';
 import type { Program } from 'estree';
 import React, { ReactNode } from 'react';
 import type { Nodes } from 'hast';
+import { AsyncLocalStorage } from 'node:async_hooks';
 
 /**
  * Experimental usage of `get-llm-text.rsc`, not working for client components yet.
@@ -18,7 +19,7 @@ import type { Nodes } from 'hast';
  * still have to add stringify layer from `remark-mdx`.
  */
 export async function getLLMText(page: Page) {
-  if (page.data.type === 'openapi') return '';
+  if (page.data._openapi) return '';
   const tree = await page.data.getMDAST();
   const tasks: Promise<void>[] = [];
 
@@ -77,12 +78,7 @@ interface LLMStorage {
   isLLM: boolean;
 }
 
-const llmStorage = new AsyncLocalStorage<LLMStorage>({
-  name: 'llm-storage',
-  defaultValue: {
-    isLLM: false,
-  },
-});
+const llmStorage = new AsyncLocalStorage<LLMStorage>();
 
 async function renderToString(node: ReactNode): Promise<string> {
   const { renderToReadableStream } = await import('react-dom/server.edge');
@@ -96,7 +92,7 @@ async function renderToString(node: ReactNode): Promise<string> {
 }
 
 export function isLLM() {
-  return llmStorage.getStore()!.isLLM;
+  return llmStorage.getStore()?.isLLM ?? false;
 }
 
 function evaluateEstreeExpression(astNode: Program, context = {}) {

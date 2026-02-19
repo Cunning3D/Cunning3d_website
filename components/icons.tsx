@@ -22,10 +22,10 @@ import {
   TwitterLogo,
   User,
   X,
-  type Icon,
-} from "@phosphor-icons/react/dist/ssr"
+} from "@phosphor-icons/react/dist/ssr";
+import type { ComponentType } from "react";
 
-export type { Icon }
+export type Icon = ComponentType<any>;
 
 export const Icons = {
   logo: Command,

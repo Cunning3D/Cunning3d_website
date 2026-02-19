@@ -56,6 +56,29 @@ The bevel operation transforms sharp edges into rounded surfaces through a disti
 | **Loop Slide** | Toggle | On | Slides vertices along adjacent unselected edges to maintain even width. |
 | **Outer Miter** | Menu | Sharp | How to handle sharp outer corners.<br/>**Sharp**: Extends edges to a point.<br/>**Patch**: Fills with a polygon.<br/>**Arc**: Rounds the corner. |
 
+### Debug (Diagnostics)
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **Flip Input** | Toggle | Off | Reverses input polygon winding before bevel (helps diagnose winding-dependent artifacts). |
+| **Invert Profile** | Toggle | Off | Inverts the bevel profile direction. |
+| **Corner Scale** | Float | 1.0 | Scales corner patching behavior for debugging. |
+| **Spoke Order** | Menu | Default | Overrides the per-vertex spoke order used by the bevel solver.<br/>**Reverse** / **Rotate ±1** can reveal left/right ordering bugs. |
+| **Swap Left/Right** | Toggle | Off | Swaps boundary ownership (left/right) when building corner boundaries. |
+| **Invert Face Normals** | Toggle | Off | Multiplies computed face normals by \(-1\) before bevel (diagnostic for normal-direction issues). |
+| **Flip Output Winding** | Toggle | Off | Reverses all output polygon winding after bevel (pure diagnostic). |
+| **Disable Strip Orient Fix** | Toggle | Off | Disables quad orientation correction for edge strips. |
+| **Disable Face Rebuild Orient Fix** | Toggle | Off | Disables winding correction when rebuilding original faces. |
+| **Invert Edge Dirs** | Toggle | Off | Negates the per-spoke edge direction vectors used by the corner boundary solver. |
+| **Invert Edge Ends** | Toggle | Off | Mirrors edge endpoints around the corner (makes end vectors consistent with inverted direction tests). |
+| **Swap Offsets L/R** | Toggle | Off | Swaps spoke offset L/R inputs before boundary construction. |
+| **Swap Face/Pair Normals** | Toggle | Off | Swaps face normals with their paired face normals for boundary computation. |
+| **Invert Pair Face Normals** | Toggle | Off | Negates paired-face normals only (diagnostic). |
+| **Invert Arc Direction** | Toggle | Off | Inverts the arc/profile direction flag used when mapping boundary points to profile samples. |
+| **Disable Adjust Offsets** | Toggle | Off | Disables the adjust-offsets pre-pass (loop-slide stabilization). |
+| **Disable Offset Limit** | Toggle | Off | Disables overlap clamping (useful to see raw “overshoot” behavior). |
+| **Disable SquareIn VMesh** | Toggle | Off | Disables SquareIn tri-corner special welding branch. |
+| **Disable SquareOut Adj VMesh** | Toggle | Off | Disables SquareOut special adjacent vmesh adjustment. |
+
 ## Technical Details
 
 ### VMesh Corner Patching
@@ -145,6 +168,29 @@ This implementation adopts a **Hybrid Architecture** approach. While Cunning3D's
 | **Clamp Overlap**| Toggle | On | 防止倒角过大导致几何体反转/重叠。 |
 | **Loop Slide** | Toggle | On | 使顶点沿相邻的未选中边滑动，以保持均匀宽度。 |
 | **Outer Miter** | Menu | Sharp | 如何处理锐利的外角。<br/>**Sharp**：延长边缘到一个尖点。<br/>**Patch**：用多边形填充。<br/>**Arc**：圆滑角点。 |
+
+### 调试 (Debug / Diagnostics)
+| 参数名 | 类型 | 默认值 | 描述 |
+| :--- | :--- | :--- | :--- |
+| **Flip Input** | Toggle | Off | 在倒角前反转输入多边形绕序（用于定位绕序相关问题）。 |
+| **Invert Profile** | Toggle | Off | 反转倒角轮廓方向。 |
+| **Corner Scale** | Float | 1.0 | 用于调试的角点尺度控制。 |
+| **Spoke Order** | Menu | Default | 覆盖每个顶点的 spoke 顺序（倒角求解器依赖该顺序）。<br/>**Reverse** / **Rotate ±1** 可用于快速验证左右/方向问题。 |
+| **Swap Left/Right** | Toggle | Off | 在角点边界构建阶段交换 left/right 归属。 |
+| **Invert Face Normals** | Toggle | Off | 在倒角前将计算出的面法线乘以 \(-1\)（用于定位法线方向问题）。 |
+| **Flip Output Winding** | Toggle | Off | 倒角后反转所有输出多边形绕序（纯诊断）。 |
+| **Disable Strip Orient Fix** | Toggle | Off | 禁用边带(Strip)四边形的绕序修正。 |
+| **Disable Face Rebuild Orient Fix** | Toggle | Off | 禁用重建原始面时的绕序修正。 |
+| **Invert Edge Dirs** | Toggle | Off | 对用于角点边界求解的每条 spoke 方向向量取反。 |
+| **Invert Edge Ends** | Toggle | Off | 将边端点围绕角点做镜像（用于一致地测试端点向量反向）。 |
+| **Swap Offsets L/R** | Toggle | Off | 在构建边界前交换 spoke 的 offset L/R 输入。 |
+| **Swap Face/Pair Normals** | Toggle | Off | 在边界计算中交换 face normal 与 pair face normal。 |
+| **Invert Pair Face Normals** | Toggle | Off | 仅对 pair-face normals 取反（诊断用）。 |
+| **Invert Arc Direction** | Toggle | Off | 反转 boundary→profile 采样映射时使用的弧段方向标记。 |
+| **Disable Adjust Offsets** | Toggle | Off | 禁用 adjust-offsets 预处理（loop-slide 稳定步骤）。 |
+| **Disable Offset Limit** | Toggle | Off | 禁用重叠/越界的 offset 限制（观察原始 overshoot）。 |
+| **Disable SquareIn VMesh** | Toggle | Off | 禁用 SquareIn 三叉角特殊焊接分支。 |
+| **Disable SquareOut Adj VMesh** | Toggle | Off | 禁用 SquareOut 特殊邻接 vmesh 调整。 |
 
 ## 技术细节 (Technical Details)
 

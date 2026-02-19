@@ -1,0 +1,209 @@
+diff --git a/dist/components/dialog/search.js b/dist/components/dialog/search.js
+index d95c753addf4583d26f62ada85d1f7ba18b7ad99..b047020de0539ffe9219bacc69504e639b045802 100644
+--- a/dist/components/dialog/search.js
++++ b/dist/components/dialog/search.js
+@@ -3,7 +3,7 @@
+ import { I18nLabel, useI18n } from "../../contexts/i18n.js";
+ import { cn } from "../../utils/cn.js";
+ import { buttonVariants } from "../ui/button.js";
+-import { Fragment, createContext, use, useCallback, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
++import { Fragment, createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import { useRouter } from "fumadocs-core/framework";
+ import { Fragment as Fragment$1, jsx, jsxs } from "react/jsx-runtime";
+ import { ChevronRight, Hash, Search } from "lucide-react";
+@@ -15,6 +15,14 @@ import { createMarkdownRenderer } from "fumadocs-core/content/md";
+ import rehypeRaw from "rehype-raw";
+ import { visit } from "unist-util-visit";
+ 
++function useEffectEvent(fn) {
++	const fnRef = useRef(fn);
++	useEffect(() => {
++		fnRef.current = fn;
++	});
++	return useCallback((...args) => fnRef.current?.(...args), []);
++}
++
+ //#region src/components/dialog/search.tsx
+ const RootContext = createContext(null);
+ const ListContext = createContext(null);
+diff --git a/dist/components/toc/index.js b/dist/components/toc/index.js
+index f7cb0ee9efa4b084b1816429d9731511764a9d21..de9218a65160468cfd1d7e7ece048d6cb82d91d1 100644
+--- a/dist/components/toc/index.js
++++ b/dist/components/toc/index.js
+@@ -2,11 +2,19 @@
+ 
+ import { cn } from "../../utils/cn.js";
+ import { mergeRefs } from "../../utils/merge-refs.js";
+-import { createContext, use, useEffect, useEffectEvent, useRef } from "react";
++import { createContext, use, useCallback, useEffect, useRef } from "react";
+ import { jsx } from "react/jsx-runtime";
+ import * as Primitive from "fumadocs-core/toc";
+ import { useOnChange } from "fumadocs-core/utils/use-on-change";
+ 
++function useEffectEvent(fn) {
++	const fnRef = useRef(fn);
++	useEffect(() => {
++		fnRef.current = fn;
++	});
++	return useCallback((...args) => fnRef.current?.(...args), []);
++}
++
+ //#region src/components/toc/index.tsx
+ const TOCContext = createContext([]);
+ function useTOCItems() {
+diff --git a/dist/components/ui/tabs.js b/dist/components/ui/tabs.js
+index ef1b91303cd60f70b15c166af967121c98c7cff0..5d9b112aaacadcb592b6c427457127e8a8f6c6ca 100644
+--- a/dist/components/ui/tabs.js
++++ b/dist/components/ui/tabs.js
+@@ -1,10 +1,18 @@
+ 'use client';
+ 
+ import { mergeRefs } from "../../utils/merge-refs.js";
+-import { createContext, use, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
++import { createContext, use, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+ import { jsx } from "react/jsx-runtime";
+ import * as Primitive from "@radix-ui/react-tabs";
+ 
++function useEffectEvent(fn) {
++	const fnRef = useRef(fn);
++	useLayoutEffect(() => {
++		fnRef.current = fn;
++	});
++	return useCallback((...args) => fnRef.current?.(...args), []);
++}
++
+ //#region src/components/ui/tabs.tsx
+ const listeners = /* @__PURE__ */ new Map();
+ const TabsContext = createContext(null);
+diff --git a/dist/contexts/search.js b/dist/contexts/search.js
+index 875031d1ce70d663d647e61eda30cc0878271990..f3f94ea069c05208be6be78bd8119461c2513773 100644
+--- a/dist/contexts/search.js
++++ b/dist/contexts/search.js
+@@ -1,8 +1,16 @@
+ 'use client';
+ 
+-import { Suspense, createContext, use, useEffect, useEffectEvent, useMemo, useState } from "react";
++import { Suspense, createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ 
++function useEffectEvent(fn) {
++	const fnRef = useRef(fn);
++	useEffect(() => {
++		fnRef.current = fn;
++	});
++	return useCallback((...args) => fnRef.current?.(...args), []);
++}
++
+ //#region src/contexts/search.tsx
+ const SearchContext = createContext({
+ 	enabled: false,
+diff --git a/dist/layouts/docs/page/client.js b/dist/layouts/docs/page/client.js
+index 2806f158996ee5b46893275940f214f70ad83cb9..05d5a20b36cce1b34777672db7bf2753c201e3e6 100644
+--- a/dist/layouts/docs/page/client.js
++++ b/dist/layouts/docs/page/client.js
+@@ -8,7 +8,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../../co
+ import { useTOCItems } from "../../../components/toc/index.js";
+ import { LayoutContext } from "../client.js";
+ import { useFooterItems } from "../../../utils/use-footer-items.js";
+-import { Fragment, createContext, use, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
++import { Fragment, createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import { usePathname } from "fumadocs-core/framework";
+ import { Fragment as Fragment$1, jsx, jsxs } from "react/jsx-runtime";
+ import Link from "fumadocs-core/link";
+@@ -16,6 +16,14 @@ import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+ import { getBreadcrumbItemsFromPath } from "fumadocs-core/breadcrumb";
+ import { useActiveAnchor } from "fumadocs-core/toc";
+ 
++function useEffectEvent(fn) {
++	const fnRef = useRef(fn);
++	useEffect(() => {
++		fnRef.current = fn;
++	});
++	return useCallback((...args) => fnRef.current?.(...args), []);
++}
++
+ //#region src/layouts/docs/page/client.tsx
+ const TocPopoverContext = createContext(null);
+ function PageTOCPopover({ className, children, ...rest }) {
+diff --git a/dist/layouts/flux/page/client.js b/dist/layouts/flux/page/client.js
+index 3827af794be72cfc7f45705d13b07e235a9bb9d9..6e2bd29f03cc2c54af63b0ca6665eac8d073ebd5 100644
+--- a/dist/layouts/flux/page/client.js
++++ b/dist/layouts/flux/page/client.js
+@@ -7,7 +7,7 @@ import { isActive } from "../../../utils/urls.js";
+ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../../components/ui/collapsible.js";
+ import { useTOCItems } from "../../../components/toc/index.js";
+ import { useFooterItems } from "../../../utils/use-footer-items.js";
+-import { Fragment, createContext, use, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
++import { Fragment, createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import { usePathname } from "fumadocs-core/framework";
+ import { Fragment as Fragment$1, jsx, jsxs } from "react/jsx-runtime";
+ import Link from "fumadocs-core/link";
+@@ -17,6 +17,14 @@ import { useActiveAnchor } from "fumadocs-core/toc";
+ import { AnimatePresence, motion } from "motion/react";
+ import { createPortal } from "react-dom";
+ 
++function useEffectEvent(fn) {
++	const fnRef = useRef(fn);
++	useEffect(() => {
++		fnRef.current = fn;
++	});
++	return useCallback((...args) => fnRef.current?.(...args), []);
++}
++
+ //#region src/layouts/flux/page/client.tsx
+ const TocPopoverContext = createContext(null);
+ function PageTOCPopover(props) {
+diff --git a/dist/layouts/flux/sidebar.js b/dist/layouts/flux/sidebar.js
+index 7106cec7392d6788c7ec542c8be0e6b6190eff20..c3c317efb0d069fbdbb54d332d263a29da073adf 100644
+--- a/dist/layouts/flux/sidebar.js
++++ b/dist/layouts/flux/sidebar.js
+@@ -5,12 +5,20 @@ import { mergeRefs } from "../../utils/merge-refs.js";
+ import { SidebarCollapseTrigger as SidebarCollapseTrigger$1, SidebarFolder as SidebarFolder$1, SidebarFolderContent as SidebarFolderContent$1, SidebarFolderLink as SidebarFolderLink$1, SidebarFolderTrigger as SidebarFolderTrigger$1, SidebarItem as SidebarItem$1, SidebarProvider, SidebarSeparator as SidebarSeparator$1, SidebarTrigger as SidebarTrigger$1, SidebarViewport as SidebarViewport$1, useFolder, useFolderDepth, useSidebar } from "../../components/sidebar/base.js";
+ import { createLinkItemRenderer } from "../../components/sidebar/link-item.js";
+ import { createPageTreeRenderer } from "../../components/sidebar/page-tree.js";
+-import { useEffect, useEffectEvent, useRef } from "react";
++import { useCallback, useEffect, useRef } from "react";
+ import { jsx } from "react/jsx-runtime";
+ import { cva } from "class-variance-authority";
+ import { motion } from "motion/react";
+ import { RemoveScroll } from "react-remove-scroll";
+ 
++function useEffectEvent(fn) {
++	const fnRef = useRef(fn);
++	useEffect(() => {
++		fnRef.current = fn;
++	});
++	return useCallback((...args) => fnRef.current?.(...args), []);
++}
++
+ //#region src/layouts/flux/sidebar.tsx
+ const MotionSidebarItem = motion.create(SidebarItem$1);
+ const MotionSidebarFolderTrigger = motion.create(SidebarFolderTrigger$1);
+diff --git a/dist/layouts/notebook/page/client.js b/dist/layouts/notebook/page/client.js
+index a5bde260714efa0e2798c813c2607c9611e987d7..35959fee86938f71784e3fe0ffade44642e695dd 100644
+--- a/dist/layouts/notebook/page/client.js
++++ b/dist/layouts/notebook/page/client.js
+@@ -8,7 +8,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../../co
+ import { useTOCItems } from "../../../components/toc/index.js";
+ import { useFooterItems } from "../../../utils/use-footer-items.js";
+ import { LayoutContext } from "../client.js";
+-import { Fragment, createContext, use, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
++import { Fragment, createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import { usePathname } from "fumadocs-core/framework";
+ import { Fragment as Fragment$1, jsx, jsxs } from "react/jsx-runtime";
+ import Link from "fumadocs-core/link";
+@@ -16,6 +16,14 @@ import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+ import { getBreadcrumbItemsFromPath } from "fumadocs-core/breadcrumb";
+ import { useActiveAnchor } from "fumadocs-core/toc";
+ 
++function useEffectEvent(fn) {
++	const fnRef = useRef(fn);
++	useEffect(() => {
++		fnRef.current = fn;
++	});
++	return useCallback((...args) => fnRef.current?.(...args), []);
++}
++
+ //#region src/layouts/notebook/page/client.tsx
+ const TocPopoverContext = createContext(null);
+ function PageTOCPopover({ className, children, ...rest }) {

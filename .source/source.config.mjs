@@ -60,7 +60,9 @@ var docs = defineDocs({
             ...rehypeCodeDefaultOptions.transformers ?? [],
             transformerTwoslash({
               typesCache: createFileSystemTypesCache(),
-              twoslashOptions: { compilerOptions: { moduleResolution: 100, skipLibCheck: true }, filterRecoverable: () => true }
+              twoslashOptions: {
+                compilerOptions: { moduleResolution: 100, skipLibCheck: true }
+              }
             }),
             transformerEscape()
           ]

@@ -13,7 +13,9 @@
   <body>
     <canvas id="bevy"></canvas>
     <script type="module">
-      import init from "./cunning_player.js?v=31";
+      // Always cache-bust during dev; avoids stale WASM/JS after rebuild.
+      const __v = Date.now();
+      const { default: init } = await import(`./cunning_player.js?v=${__v}`);
       const c = document.getElementById("bevy");
       // Prevent browser context menu / image-save UI on RMB (especially on Edge).
       c?.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -31,7 +33,7 @@
       };
       window.addEventListener("error", (e) => show("Runtime error", e.error || e.message));
       window.addEventListener("unhandledrejection", (e) => show("Unhandled rejection", e.reason));
-      init({ module_or_path: "./cunning_player_bg.wasm?v=31" }).catch((e) => {
+      init({ module_or_path: `./cunning_player_bg.wasm?v=${__v}` }).catch((e) => {
         show("cunning_player init failed:", e);
       });
     </script>

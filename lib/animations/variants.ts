@@ -14,7 +14,7 @@ import type { Variants, Transition } from "framer-motion";
 export interface AnimationConfig {
   duration?: number;
   delay?: number;
-  ease?: number[] | string;
+  ease?: Transition["ease"];
   spring?: SpringConfig;
 }
 
@@ -279,10 +279,4 @@ export const variants = {
 export const config = {
   easings,
   springs,
-};
-
-export type {
-  AnimationConfig,
-  SpringConfig,
-  AnimationDirection,
 };

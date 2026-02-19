@@ -52,8 +52,20 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ ...props }) => <CaretLeft className="h-4 w-4" weight="light" />,
-        IconRight: ({ ...props }) => <CaretRight className="h-4 w-4" weight="light" />,
+        Chevron: ({ orientation, className }) => {
+          if (orientation === "left") {
+            return <CaretLeft className={cn("h-4 w-4", className)} weight="light" />
+          }
+          if (orientation === "right") {
+            return (
+              <CaretRight className={cn("h-4 w-4", className)} weight="light" />
+            )
+          }
+          if (orientation === "up") {
+            return <CaretLeft className={cn("h-4 w-4 rotate-90", className)} weight="light" />
+          }
+          return <CaretLeft className={cn("h-4 w-4 -rotate-90", className)} weight="light" />
+        },
       }}
       {...props}
     />

@@ -6,7 +6,8 @@ export async function buildGraph(): Promise<Graph> {
 
   await Promise.all(
     source.getPages().map(async (page) => {
-      if (page.data.type === 'openapi') return;
+      // OpenAPI pages don't participate in the docs link graph.
+      if (page.data._openapi) return;
 
       graph.nodes.push({
         id: page.url,

@@ -1,0 +1,23 @@
+diff --git a/dist/toc.js b/dist/toc.js
+index d653c770734e4ecedfcab1b4ce8e4f1dfb143917..c50d478f1a65d65a4aa241a4f03a7f3809332da8 100644
+--- a/dist/toc.js
++++ b/dist/toc.js
+@@ -1,9 +1,17 @@
+ 'use client';
+ 
+-import { createContext, useContext, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
++import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+ import { jsx } from "react/jsx-runtime";
+ import scrollIntoView from "scroll-into-view-if-needed";
+ 
++function useEffectEvent(fn) {
++	const fnRef = useRef(fn);
++	useLayoutEffect(() => {
++		fnRef.current = fn;
++	});
++	return useCallback((...args) => fnRef.current?.(...args), []);
++}
++
+ //#region src/utils/merge-refs.ts
+ function mergeRefs(...refs) {
+ 	return (value) => {

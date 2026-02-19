@@ -13,13 +13,14 @@ import { useInView, type UseInViewOptions } from "framer-motion"
 // Types
 // =============================================================================
 
-export interface ScrollAnimationOptions extends UseInViewOptions {
+export interface ScrollAnimationOptions
+  extends Omit<UseInViewOptions, "once" | "amount" | "margin"> {
   /** Trigger animation only once */
   once?: boolean
   /** Amount of element visible (0-1) */
   amount?: "some" | "all" | number
   /** Margin around viewport */
-  margin?: string
+  margin?: UseInViewOptions["margin"]
 }
 
 export interface ScrollProgress {

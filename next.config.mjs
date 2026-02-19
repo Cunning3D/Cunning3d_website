@@ -20,6 +20,11 @@ const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH);
 const nextConfig = {
   reactStrictMode: true,
   basePath,
+  // We read `.drawio` XML files at runtime via `fs.readFile()` in `components/mdx/drawio.tsx`.
+  // Ensure Vercel/Next output-file-tracing bundles these files into the serverless output.
+  outputFileTracingIncludes: {
+    '*': ['content/docs/diagrams/**'],
+  },
   images: {
     remotePatterns: [
       { hostname: 'avatars.githubusercontent.com' },

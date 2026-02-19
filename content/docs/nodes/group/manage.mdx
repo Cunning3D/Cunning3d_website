@@ -7,14 +7,91 @@ icon: Boxes
 import { Drawio } from '@/components/mdx/drawio';
 import { Lang } from '@/components/mdx/lang';
 
+## Overview
+
 <Lang lang="en">
-**Group Manage** is used to rename, delete, or copy groups.
+**Group Manage** is used to rename, delete, or copy existing groups.
 </Lang>
 <Lang lang="zh">
-**Group Manage** 用于重命名、删除或复制组。
+**Group Manage** 用于重命名、删除或复制已有的组。
 </Lang>
 
 <Drawio file="content/docs/diagrams/group-manage.drawio" height={520} title="Group Manage Operations" />
+
+## Inputs / Outputs
+
+<Lang lang="en">
+- **Input 0**: Geometry containing the groups.
+- **Output 0**: The same geometry, with group metadata updated.
+</Lang>
+<Lang lang="zh">
+- **输入 0**：包含组信息的几何体。
+- **输出 0**：同一份几何体，组的元数据被更新。
+</Lang>
+
+## Parameters
+
+| Parameter | Type | Default | Notes |
+| --- | --- | --- | --- |
+| Domain | Enum | Primitive | Point / Vertex / Primitive / Edge |
+| Action | Enum | Copy | Copy / Rename / Delete |
+| From | String | (empty) | Source group name |
+| To | String | (empty) | Destination group name (used by Copy/Rename) |
+
+## Examples
+
+<Lang lang="en">
+### Copy
+Duplicate a group under a new name.
+</Lang>
+<Lang lang="zh">
+### 复制
+把一个组复制成另一个名字。
+</Lang>
+
+```txt
+Domain = Edge
+Action = Copy
+From = edge_sharp
+To = edge_sharp_work
+```
+
+<Lang lang="en">
+### Rename
+</Lang>
+<Lang lang="zh">
+### 重命名
+</Lang>
+
+```txt
+Domain = Primitive
+Action = Rename
+From = prim_wall
+To = prim_facade
+```
+
+<Lang lang="en">
+### Delete
+</Lang>
+<Lang lang="zh">
+### 删除
+</Lang>
+
+```txt
+Domain = Vertex
+Action = Delete
+From = vtx_tmp
+To = (ignored)
+```
+
+## Notes
+
+<Lang lang="en">
+Group Manage does not change geometry itself. It only changes group names/existence. If `From` does not exist, it is a no-op.
+</Lang>
+<Lang lang="zh">
+Group Manage 不会修改几何体本身，只会改变组的名称/存在性。如果 `From` 不存在，则不会产生效果。
+</Lang>
 
 <Lang lang="en">
 Add parameter breakdown and examples.

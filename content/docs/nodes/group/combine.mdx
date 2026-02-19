@@ -7,14 +7,82 @@ icon: Boxes
 import { Drawio } from '@/components/mdx/drawio';
 import { Lang } from '@/components/mdx/lang';
 
+## Overview
+
 <Lang lang="en">
-**Group Combine** performs boolean operations (Union / Intersect / Subtract) between two existing groups.
+**Group Combine** performs boolean operations (Union / Intersect / Subtract) between two existing groups on the geometry.
 </Lang>
 <Lang lang="zh">
-**Group Combine** 用于对两个已有组执行布尔运算（并集 / 交集 / 差集）。
+**Group Combine** 用于对几何体上的两个已有组执行布尔运算（并集 / 交集 / 差集）。
 </Lang>
 
+## Inputs / Outputs
+
+<Lang lang="en">
+- **Input 0**: Geometry containing the groups.
+- **Output 0**: The same geometry, with a new (or overwritten) group written to `Out`.
+</Lang>
+<Lang lang="zh">
+- **输入 0**：包含组信息的几何体。
+- **输出 0**：同一份几何体，在 `Out` 写入一个新组（或覆盖同名组）。
+</Lang>
+
+## Parameters
+
+| Parameter | Type | Default | Notes |
+| --- | --- | --- | --- |
+| Domain | Enum | Primitive | Point / Vertex / Primitive / Edge |
+| A | String | (empty) | Group name for operand A |
+| Op | Enum | Union | Union / Intersect / Subtract |
+| B | String | (empty) | Group name for operand B |
+| Out | String | `group1` | Output group name |
+
 <Drawio file="content/docs/diagrams/group-combine.drawio" height={520} title="Group Combine Operations" />
+
+## Examples
+
+<Lang lang="en">
+### Union
+Combine two groups into a single selection.
+</Lang>
+<Lang lang="zh">
+### 并集
+把两个组并成一个选集。
+</Lang>
+
+```txt
+Domain = Primitive
+A = prim_wall
+Op = Union
+B = prim_roof
+Out = prim_building
+```
+
+<Lang lang="en">
+### Subtract
+Keep A but remove everything that is also in B.
+</Lang>
+<Lang lang="zh">
+### 差集
+保留 A，但移除同时属于 B 的部分。
+</Lang>
+
+```txt
+Domain = Point
+A = pts_all
+Op = Subtract
+B = pts_inside_box
+Out = pts_outside_box
+```
+
+## Notes
+
+<Lang lang="en">
+This node is typically implemented as a fast bitwise operation on internal group bitsets.
+</Lang>
+<Lang lang="zh">
+该节点底层通常是对组的 Bitset 做快速位运算。
+</Lang>
 
 <Lang lang="en">
 Add parameter breakdown and examples.

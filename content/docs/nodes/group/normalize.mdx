@@ -7,6 +7,8 @@ icon: Boxes
 import { Drawio } from '@/components/mdx/drawio';
 import { Lang } from '@/components/mdx/lang';
 
+## Overview
+
 <Lang lang="en">
 **Group Normalize** resizes internal bitmasks to match current geometry size. This is useful if topology changes without updating groups.
 </Lang>
@@ -15,6 +17,42 @@ import { Lang } from '@/components/mdx/lang';
 </Lang>
 
 <Drawio file="content/docs/diagrams/group-normalize.drawio" height={460} title="Group Normalize Example" />
+
+## Inputs / Outputs
+
+<Lang lang="en">
+- **Input 0**: Geometry containing the groups.
+- **Output 0**: The same geometry, with normalized group storage for the selected domain.
+</Lang>
+<Lang lang="zh">
+- **输入 0**：包含组信息的几何体。
+- **输出 0**：同一份几何体，对指定域的组存储进行 normalize。
+</Lang>
+
+## Parameters
+
+| Parameter | Type | Default | Notes |
+| --- | --- | --- | --- |
+| Domain | Enum | Primitive | Point / Vertex / Primitive / Edge |
+| Drop Empty | Bool | false | Remove empty groups after normalization |
+
+## When To Use
+
+<Lang lang="en">
+Use it when you suspect groups became invalid after topology changes (e.g. adding/removing points/primitives via nodes or imports) and downstream nodes behave unexpectedly.
+</Lang>
+<Lang lang="zh">
+当你怀疑拓扑变化（例如增加/删除点或图元）导致组失效、下游节点行为异常时，可以用它做修复。
+</Lang>
+
+## Notes
+
+<Lang lang="en">
+Normalize adjusts storage size, it does not recompute selection logic. If you need the selection to follow new topology, rebuild the group (e.g. via Group Create) instead.
+</Lang>
+<Lang lang="zh">
+Normalize 只调整存储尺寸，不会重新计算选区逻辑。如果你希望选区跟随新的拓扑，应重新生成组（例如使用 Group Create）。
+</Lang>
 
 <Lang lang="en">
 Add parameter breakdown and examples.

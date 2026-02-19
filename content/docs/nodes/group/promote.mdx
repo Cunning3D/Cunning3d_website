@@ -1,0 +1,29 @@
+---
+title: Group Promote
+description: Convert a group from one domain to another.
+icon: Boxes
+---
+
+import { Drawio } from '@/components/mdx/drawio';
+import { Lang } from '@/components/mdx/lang';
+
+## Overview
+
+<Lang lang="en">
+**Group Promote** converts a group from one domain to another. For example, promoting a Primitive group to a Point group selects all points used by the selected primitives.
+</Lang>
+<Lang lang="zh">
+**Group Promote** 用于将组从一个域转换到另一个域。例如，将 Primitive 组提升到 Point 组，会选中所有被选中图元包含的点。
+</Lang>
+
+<Drawio file="content/docs/diagrams/group-promote.drawio" height={350} title="Group Promotion Modes" />
+
+<Lang lang="en">
+- **Convert**: Translate selection (e.g. Primitive -> Point selects all points of selected primitives).
+- **Boundary Only**: When promoting to Edges, select only the outline of the source group, ignoring internal shared edges.
+</Lang>
+<Lang lang="zh">
+- **Convert（转换）**：转换选区（例如 Primitive -> Point 会选中所有被选中图元包含的点）。
+- **Boundary Only（仅边界）**：当提升到 Edge 时，仅选择源组的轮廓，忽略内部共享边。
+</Lang>
+

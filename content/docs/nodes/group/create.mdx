@@ -1,0 +1,53 @@
+---
+title: Group Create
+description: Generate a group by filtering elements in a chosen domain.
+icon: Boxes
+---
+
+import { Drawio } from '@/components/mdx/drawio';
+import { Lang } from '@/components/mdx/lang';
+
+## Overview
+
+<Lang lang="en">
+**Group Create** is the primary tool for generating selections. It combines multiple filtering criteria (typically using AND logic) to define a group.
+</Lang>
+<Lang lang="zh">
+**Group Create** 是生成选集的主要工具。它会组合多种筛选条件（通常使用 AND 逻辑）来定义一个组。
+</Lang>
+
+## Group Domains (组域)
+
+<Lang lang="en">
+Groups exist on different geometry domains.
+</Lang>
+<Lang lang="zh">
+组存在于不同的几何域上。
+</Lang>
+
+<Drawio file="content/docs/diagrams/group-domains.drawio" height={300} title="Group Domains" />
+
+## Filters (筛选器)
+
+<Drawio file="content/docs/diagrams/group-filters.drawio" height={400} title="Group Create Filters" />
+
+<Lang lang="en">
+Common filter sources:
+</Lang>
+<Lang lang="zh">
+常见筛选来源：
+</Lang>
+
+<Lang lang="en">
+1. **Base Group**: Start from all elements, or a subset by pattern (e.g. `0-10`, `1 3 5`).
+2. **Bounding**: Keep elements inside a Box/Sphere, or inside a volume from the second input.
+3. **Normal**: Keep elements facing a direction within a spread angle.
+4. **Edge** (for Edge groups): Keep only boundary edges (edges shared by only one primitive).
+</Lang>
+<Lang lang="zh">
+1. **Base Group（基础组）**：从所有元素开始，或由模式定义的子集（如 `0-10`, `1 3 5`）。
+2. **Bounding（包围）**：保留位于盒/球内，或位于第二输入体积内的元素。
+3. **Normal（法线）**：保留朝向特定方向、且在扩散角范围内的元素。
+4. **Edge（边）**（针对边组）：仅保留边界边（仅被一个图元共享的边）。
+</Lang>
+

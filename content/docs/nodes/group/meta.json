@@ -1,0 +1,14 @@
+{
+  "title": "Group",
+  "description": "Selection sets on geometry.",
+  "icon": "Boxes",
+  "pages": [
+    "index",
+    "create",
+    "combine",
+    "promote",
+    "manage",
+    "normalize"
+  ]
+}
+

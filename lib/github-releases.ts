@@ -38,7 +38,12 @@ export async function fetchGitHubReleases(limit = 10): Promise<Release[]> {
       `https://api.github.com/repos/${githubRepo.owner}/${githubRepo.repo}/releases?per_page=${limit}`,
       { next: { revalidate: 3600 } } // 缓存 1 小时
     );
-    if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+    // If repo has no releases or repo is private/misconfigured, fall back to static releases.
+    // Avoid noisy build logs on Vercel.
+    if (!res.ok) {
+      if (res.status === 404) return staticReleases;
+      throw new Error(`GitHub API error: ${res.status}`);
+    }
     const data: GitHubRelease[] = await res.json();
 
     return data.map((r, i) => ({

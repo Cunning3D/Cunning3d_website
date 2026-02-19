@@ -4,9 +4,16 @@ description: Procedural modeling operators
 icon: Boxes
 ---
 
+import { Lang } from '@/components/mdx/lang';
+
 ## Overview
 
+<Lang lang="en">
 Cunning3D provides 50+ nodes for procedural geometry creation and manipulation.
+</Lang>
+<Lang lang="zh">
+Cunning3D 提供 50+ 节点，用于程序化几何创建与编辑。
+</Lang>
 
 ## Categories
 
@@ -40,7 +47,12 @@ Merge, Switch, Null, Delete, Blast
 
 ## Node Anatomy
 
+<Lang lang="en">
 Every node has:
+</Lang>
+<Lang lang="zh">
+每个节点通常包含：
+</Lang>
 
 | Part | Description |
 |------|-------------|
@@ -58,7 +70,12 @@ Every node has:
 
 ## Editor vs Runtime
 
+<Lang lang="en">
 Nodes are tagged as:
+</Lang>
+<Lang lang="zh">
+节点可能带有以下标签：
+</Lang>
 
 | Tag | Description |
 |-----|-------------|
@@ -66,7 +83,12 @@ Nodes are tagged as:
 | `editor` | Cunning3D editor only |
 
 <Callout type="warning">
+<Lang lang="en">
 CDA files using editor-only nodes will fail to load in runtime builds.
+</Lang>
+<Lang lang="zh">
+如果 CDA 文件包含 editor-only 节点，在 runtime 构建中会加载失败。
+</Lang>
 </Callout>
 
 ## Quick Reference

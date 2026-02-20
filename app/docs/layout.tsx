@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import 'fumadocs-ui/style.css';
 import { LocaleToggle } from '@/components/locale-toggle';
 import { DocsSectionTheme } from '@/components/docs/section-theme';
+import { getLocale } from 'next-intl/server';
 
 function getSection(urlOrPath: string | undefined): string {
   const p = (urlOrPath ?? '').replaceAll('\\', '/');
@@ -16,12 +17,37 @@ function getSection(urlOrPath: string | undefined): string {
   return 'core';
 }
 
-export default function Layout({ children }: { children: ReactNode }) {
+function localizeTitle(name: unknown, locale: string) {
+  if (typeof name !== 'string') return name;
+  // Convention used in meta titles: "English / 中文"
+  const sep = ' / ';
+  if (!name.includes(sep)) return name;
+  const [en, ...rest] = name.split(sep);
+  const zh = rest.join(sep);
+  return locale === 'zh' ? zh.trim() || en.trim() : en.trim() || name;
+}
+
+function localizePageTree(tree: any, locale: string): any {
+  if (!tree) return tree;
+  if (Array.isArray(tree)) return tree.map((n) => localizePageTree(n, locale));
+  if (typeof tree !== 'object') return tree;
+
+  const out: any = { ...tree };
+  // Fumadocs pageTree nodes typically use `name` for display.
+  if ('name' in out) out.name = localizeTitle(out.name, locale);
+  if ('children' in out && Array.isArray(out.children)) {
+    out.children = out.children.map((n: any) => localizePageTree(n, locale));
+  }
+  return out;
+}
+
+export default async function Layout({ children }: { children: ReactNode }) {
+  const locale = await getLocale();
   return (
     <RootProvider>
       <DocsSectionTheme>
         <DocsLayout
-          tree={source.pageTree}
+          tree={localizePageTree(source.pageTree, locale)}
           nav={{
             title: 'Cunning3D Docs',
             children: (

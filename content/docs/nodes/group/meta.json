@@ -1,6 +1,6 @@
 {
-  "title": "Group",
-  "description": "Selection sets on geometry.",
+  "title": "Group / 组",
+  "description": "Selection sets on geometry / 几何选集",
   "icon": "Boxes",
   "pages": [
     "index",
@@ -11,4 +11,3 @@
     "normalize"
   ]
 }
-

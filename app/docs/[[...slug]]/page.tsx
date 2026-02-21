@@ -3,6 +3,8 @@ import { DocsPage, DocsBody, DocsTitle, DocsDescription } from 'fumadocs-ui/page
 import { getMDXComponents } from '@/mdx-components';
 import { notFound } from 'next/navigation';
 import { VersionSwitcher } from '@/components/docs/version-switcher';
+import { getLocale } from 'next-intl/server';
+import { localizeDocDescription, localizeDocTitle } from '@/lib/docs-i18n';
 
 const VERSION_LIST = ['v1.2', 'v1.1', 'v1.0'];
 type Version = 'v1.2' | 'v1.1' | 'v1.0';
@@ -43,6 +45,11 @@ export default async function Page({ params }: PageProps) {
   const page = source.getPage(slug);
   if (!page) notFound();
 
+  const locale = (await getLocale()) as 'en' | 'zh';
+  const url = (page as any).url as string | undefined;
+  const title = localizeDocTitle(url, page.data.title, locale);
+  const description = localizeDocDescription(url, page.data.description, locale);
+
   const { body: MDX, toc } = await page.data.load();
   const nodeName = getNodeName(slug);
   const isNodeDoc = !!nodeName && nodeName !== 'index';
@@ -54,7 +61,7 @@ export default async function Page({ params }: PageProps) {
   return (
     <DocsPage toc={toc} tableOfContent={{ style: 'clerk' }}>
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <DocsTitle>{page.data.title}</DocsTitle>
+        <DocsTitle>{title}</DocsTitle>
         {isNodeDoc && (
           <div className="flex items-center gap-2 text-xs text-muted-foreground shrink-0">
             {since && <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-0.5">Since {since}</span>}
@@ -63,7 +70,7 @@ export default async function Page({ params }: PageProps) {
           </div>
         )}
       </div>
-      <DocsDescription>{page.data.description}</DocsDescription>
+      <DocsDescription>{description}</DocsDescription>
       <DocsBody>
         <MDX components={getMDXComponents()} />
       </DocsBody>
@@ -77,5 +84,10 @@ export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const page = source.getPage(slug);
   if (!page) notFound();
-  return { title: page.data.title, description: page.data.description };
+  const locale = (await getLocale()) as 'en' | 'zh';
+  const url = (page as any).url as string | undefined;
+  return {
+    title: localizeDocTitle(url, page.data.title, locale),
+    description: localizeDocDescription(url, page.data.description, locale),
+  };
 }

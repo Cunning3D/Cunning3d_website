@@ -6,6 +6,7 @@ import 'fumadocs-ui/style.css';
 import { LocaleToggle } from '@/components/locale-toggle';
 import { DocsSectionTheme } from '@/components/docs/section-theme';
 import { getLocale } from 'next-intl/server';
+import { localizeTreeLabel } from '@/lib/docs-i18n';
 
 function getSection(urlOrPath: string | undefined): string {
   const p = (urlOrPath ?? '').replaceAll('\\', '/');
@@ -17,16 +18,6 @@ function getSection(urlOrPath: string | undefined): string {
   return 'core';
 }
 
-function localizeTitle(name: unknown, locale: string) {
-  if (typeof name !== 'string') return name;
-  // Convention used in meta titles: "English / 中文"
-  const sep = ' / ';
-  if (!name.includes(sep)) return name;
-  const [en, ...rest] = name.split(sep);
-  const zh = rest.join(sep);
-  return locale === 'zh' ? zh.trim() || en.trim() : en.trim() || name;
-}
-
 function localizePageTree(tree: any, locale: string): any {
   if (!tree) return tree;
   if (Array.isArray(tree)) return tree.map((n) => localizePageTree(n, locale));
@@ -34,7 +25,7 @@ function localizePageTree(tree: any, locale: string): any {
 
   const out: any = { ...tree };
   // Fumadocs pageTree nodes typically use `name` for display.
-  if ('name' in out) out.name = localizeTitle(out.name, locale);
+  if ('name' in out) out.name = localizeTreeLabel(out.name, locale === 'zh' ? 'zh' : 'en');
   if ('children' in out && Array.isArray(out.children)) {
     out.children = out.children.map((n: any) => localizePageTree(n, locale));
   }

@@ -27,6 +27,11 @@ Font.register({
   ],
 });
 
+function softWrap(s: string): string {
+  // Add break opportunities for long emails/URLs to avoid layout overlap.
+  return String(s || '').replace(/([@./:_-])/g, '$1\u200b');
+}
+
 const styles = StyleSheet.create({
   page: {
     paddingTop: 40,
@@ -45,16 +50,25 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: 'row',
-    gap: 18,
     alignItems: 'flex-start',
-    justifyContent: 'space-between',
+  },
+  headerLeft: {
+    flexGrow: 1,
+    flexShrink: 1,
+    minWidth: 0,
+    paddingRight: 14,
+  },
+  headerRight: {
+    width: 190,
+    flexShrink: 0,
+    alignItems: 'flex-end',
   },
   name: { fontSize: 24, fontWeight: 700, letterSpacing: -0.2 },
   title: { marginTop: 4, fontSize: 11.5, color: '#475569' },
-  metaCol: { alignItems: 'flex-end', gap: 2 },
-  meta: { fontSize: 10, color: '#475569' },
-  linksRow: { flexDirection: 'row', gap: 10, marginTop: 10, flexWrap: 'wrap' },
-  link: { fontSize: 10, color: '#2563eb', textDecoration: 'none' },
+  metaCol: { alignItems: 'flex-end' },
+  meta: { fontSize: 10, color: '#475569', textAlign: 'right' },
+  linksRow: { flexDirection: 'row', marginTop: 10, flexWrap: 'wrap' },
+  link: { fontSize: 10, color: '#2563eb', textDecoration: 'none', marginRight: 10, marginBottom: 4 },
 
   section: { marginTop: 14 },
   sectionTitle: {
@@ -67,33 +81,35 @@ const styles = StyleSheet.create({
   },
   paragraph: { color: '#334155' },
 
-  highlightsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  highlightsGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   highlightCard: {
-    flexGrow: 1,
-    flexBasis: 160,
+    width: 160,
     borderWidth: 1,
     borderColor: '#e2e8f0',
     borderRadius: 10,
     padding: 10,
     backgroundColor: '#ffffff',
+    marginRight: 10,
+    marginBottom: 10,
   },
   highlightLabel: { fontSize: 9.5, color: '#64748b' },
   highlightValue: { marginTop: 3, fontSize: 14.5, fontWeight: 700, color: '#0f172a' },
   highlightDetail: { marginTop: 3, fontSize: 9.5, color: '#475569' },
 
   item: { paddingBottom: 12, marginBottom: 12, borderBottomWidth: 1, borderBottomColor: '#eef2f7' },
-  itemHeader: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
+  itemHeader: { flexDirection: 'row', alignItems: 'flex-start' },
+  itemHeaderLeft: { flexGrow: 1, flexShrink: 1, minWidth: 0, paddingRight: 12 },
   itemTitle: { fontSize: 11.5, fontWeight: 700, color: '#0f172a' },
   itemSubTitle: { marginTop: 2, fontSize: 10, color: '#475569' },
-  itemTime: { fontSize: 10, color: '#475569' },
+  itemTime: { width: 92, flexShrink: 0, fontSize: 10, color: '#475569', textAlign: 'right' },
   itemSummary: { marginTop: 6, fontSize: 10.5, color: '#334155' },
 
-  bullets: { marginTop: 6, gap: 3 },
-  bulletRow: { flexDirection: 'row', gap: 8 },
-  bulletDot: { width: 10, color: '#0f172a' },
+  bullets: { marginTop: 6 },
+  bulletRow: { flexDirection: 'row', marginBottom: 3 },
+  bulletDot: { width: 10, marginRight: 8, color: '#0f172a' },
   bulletText: { flex: 1, fontSize: 10.5, color: '#334155' },
 
-  tagsRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap', marginTop: 8 },
+  tagsRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 },
   tag: {
     fontSize: 9,
     color: '#334155',
@@ -103,14 +119,19 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 8,
     backgroundColor: '#f8fafc',
+    marginRight: 6,
+    marginBottom: 6,
   },
 
   skillsGroup: {
+    width: 245,
     borderWidth: 1,
     borderColor: '#e2e8f0',
     borderRadius: 10,
     padding: 10,
     backgroundColor: '#ffffff',
+    marginRight: 10,
+    marginBottom: 10,
   },
   skillsGroupTitle: { fontSize: 10.5, fontWeight: 700, marginBottom: 6, color: '#0f172a' },
   skillsList: { fontSize: 10.5, color: '#334155' },
@@ -172,13 +193,15 @@ export function createResumePdfDocument({
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <View>
+            <View style={styles.headerLeft}>
               <Text style={styles.name}>{profile.name}</Text>
               <Text style={styles.title}>{profile.title}</Text>
             </View>
-            <View style={styles.metaCol}>
+            <View style={styles.headerRight}>
+              <View style={styles.metaCol}>
               <Text style={styles.meta}>{profile.location}</Text>
-              <Text style={styles.meta}>{profile.email}</Text>
+              <Text style={[styles.meta, { marginTop: 2 }]}>{softWrap(profile.email)}</Text>
+              </View>
             </View>
           </View>
 
@@ -216,7 +239,7 @@ export function createResumePdfDocument({
             {config.experience.items.map((item) => (
               <View key={`${item.company}-${item.role}-${item.start}`} style={styles.item}>
                 <View style={styles.itemHeader}>
-                  <View style={{ flex: 1 }}>
+                  <View style={styles.itemHeaderLeft}>
                     <Text style={styles.itemTitle}>{item.role}</Text>
                     <Text style={styles.itemSubTitle}>
                       {item.company}
@@ -240,7 +263,7 @@ export function createResumePdfDocument({
             {config.projects.items.map((project) => (
               <View key={project.name} style={styles.item}>
                 <View style={styles.itemHeader}>
-                  <View style={{ flex: 1 }}>
+                  <View style={styles.itemHeaderLeft}>
                     <Text style={styles.itemTitle}>{project.name}</Text>
                     <Text style={styles.itemSummary}>{project.description}</Text>
                   </View>
@@ -279,7 +302,7 @@ export function createResumePdfDocument({
             {config.education.items.map((e) => (
               <View key={`${e.school}-${e.degree}`} style={styles.item}>
                 <View style={styles.itemHeader}>
-                  <View style={{ flex: 1 }}>
+                  <View style={styles.itemHeaderLeft}>
                     <Text style={styles.itemTitle}>{e.school}</Text>
                     <Text style={styles.itemSubTitle}>{e.degree}</Text>
                   </View>
@@ -294,7 +317,7 @@ export function createResumePdfDocument({
         ) : null}
 
         <Section title={config.contact.title}>
-          <Text style={styles.paragraph}>{profile.email}</Text>
+          <Text style={styles.paragraph}>{softWrap(profile.email)}</Text>
         </Section>
       </Page>
     </Document>

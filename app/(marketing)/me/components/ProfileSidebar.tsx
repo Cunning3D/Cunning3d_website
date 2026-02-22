@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { Download, Github, Linkedin, Mail, MapPin, Twitter, Globe } from "lucide-react"
 import { CopyButton } from "./CopyButton"
+import { SmoothScrollLink } from "./SmoothScrollLink"
 import type { MeProfile } from "@/config/me"
 
 export interface SidebarNavItem {
@@ -158,13 +159,13 @@ export function ProfileSidebar({
           </div>
           <nav className="grid gap-1">
             {navItems.map((item) => (
-              <a
+              <SmoothScrollLink
                 key={item.id}
                 href={`#${item.id}`}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md px-2 py-1 hover:bg-accent"
               >
                 {item.label}
-              </a>
+              </SmoothScrollLink>
             ))}
           </nav>
         </CardContent>

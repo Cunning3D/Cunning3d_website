@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { Github, Linkedin, Mail, MapPin, Twitter, Globe } from "lucide-react"
+import { Download, Github, Linkedin, Mail, MapPin, Twitter, Globe } from "lucide-react"
 import { CopyButton } from "./CopyButton"
 import type { MeProfile } from "@/config/me"
 
@@ -17,6 +17,8 @@ export function ProfileSidebar({
   tocTitle,
   navItems,
   copyEmailLabel,
+  downloadPdfLabel,
+  downloadPdfHref,
   sendEmailLabel,
   copiedTitle,
   copiedDescription,
@@ -25,6 +27,8 @@ export function ProfileSidebar({
   tocTitle: string
   navItems: SidebarNavItem[]
   copyEmailLabel: string
+  downloadPdfLabel: string
+  downloadPdfHref: string
   sendEmailLabel: string
   copiedTitle: string
   copiedDescription: string
@@ -72,6 +76,13 @@ export function ProfileSidebar({
               copiedTitle={copiedTitle}
               copiedDescription={copiedDescription}
             />
+            <a
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+              href={downloadPdfHref}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              {downloadPdfLabel}
+            </a>
             <a className={cn(buttonVariants({ size: "sm" }))} href={`mailto:${profile.email}`}>
               {sendEmailLabel}
             </a>
@@ -161,4 +172,3 @@ export function ProfileSidebar({
     </div>
   )
 }
-

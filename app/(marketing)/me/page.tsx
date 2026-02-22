@@ -9,6 +9,13 @@ import { SkillsSection } from "./sections/SkillsSection"
 import { EducationSection } from "./sections/EducationSection"
 import { ContactSection } from "./sections/ContactSection"
 
+function normalizeBasePath(p: unknown) {
+  const s = String(p || "").trim()
+  if (!s) return ""
+  const withLeadingSlash = s.startsWith("/") ? s : `/${s}`
+  return withLeadingSlash.endsWith("/") ? withLeadingSlash.slice(0, -1) : withLeadingSlash
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = (await getLocale()) as MeLocale;
   const config = mePageByLocale[locale] ?? mePageByLocale.zh;
@@ -21,6 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AboutMePage() {
   const locale = (await getLocale()) as MeLocale;
   const config = mePageByLocale[locale] ?? mePageByLocale.zh;
+  const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH)
+  const downloadPdfHref = `${basePath}/me/pdf`
 
   const navItems = [
     { id: "about", label: config.meta.title },
@@ -48,6 +57,8 @@ export default async function AboutMePage() {
               tocTitle={config.tocTitle}
               navItems={navItems}
               copyEmailLabel={config.contact.copyEmail}
+              downloadPdfLabel={config.contact.downloadPdf}
+              downloadPdfHref={downloadPdfHref}
               sendEmailLabel={config.contact.sendEmail}
               copiedTitle={config.contact.copiedTitle}
               copiedDescription={config.contact.copiedDescription}

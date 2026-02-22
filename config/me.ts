@@ -91,6 +91,7 @@ export interface MePageConfig {
     subtitle: string;
     sendEmail: string;
     copyEmail: string;
+    downloadPdf: string;
     copiedTitle: string;
     copiedDescription: string;
   };
@@ -200,6 +201,7 @@ export const mePageByLocale: Record<MeLocale, MePageConfig> = {
       subtitle: 'Prefer email. I typically reply within 24–48 hours.',
       sendEmail: 'Send email',
       copyEmail: 'Copy email',
+      downloadPdf: 'Download PDF',
       copiedTitle: 'Copied',
       copiedDescription: 'Email address copied to clipboard.',
     },
@@ -304,6 +306,7 @@ export const mePageByLocale: Record<MeLocale, MePageConfig> = {
       subtitle: '优先邮件联系，一般 24–48 小时内回复。',
       sendEmail: '发送邮件',
       copyEmail: '复制邮箱',
+      downloadPdf: '下载 PDF',
       copiedTitle: '已复制',
       copiedDescription: '邮箱地址已复制到剪贴板。',
     },

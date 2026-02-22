@@ -5,15 +5,54 @@
 
 export type DocLocale = 'en' | 'zh';
 
+const nodeRootSlugs = new Set([
+  'primitives',
+  'poly_bevel',
+  'polyextrude',
+  'boolean',
+  'resample',
+  'fuse',
+  'transform',
+  'connectivity',
+  'spline',
+  'attribute-promote',
+  'file',
+  'foreach',
+  'vdb',
+  'voxel-edit',
+  'nano-voxel-painter',
+  'nano-voxel-point-scatter',
+  'nano-to-mesh',
+  'nano-to-voxel',
+  'merge',
+]);
+
+const groupNodeSlugs = new Set(['create', 'combine', 'promote', 'manage', 'normalize']);
+
+export function isNodeNameDocUrl(url: string | undefined): boolean {
+  if (!url) return false;
+  const clean = url.split('#')[0].split('?')[0];
+  const m = clean.match(/^\/docs\/(?:(v\d+\.\d+)\/)?nodes\/([^/]+)(?:\/([^/]+))?\/?$/);
+  if (!m) return false;
+  const version = m[1];
+  const first = m[2];
+  const second = m[3];
+
+  // Versioned node docs are always node-name pages.
+  if (version) return true;
+
+  if (first === 'group') {
+    if (!second) return false; // group index is a category page
+    return groupNodeSlugs.has(second);
+  }
+
+  return nodeRootSlugs.has(first);
+}
+
 // Keyed by `page.url` from fumadocs loader (e.g. "/docs/nodes/group/create").
 const zhTitleByUrl: Record<string, string> = {
   '/docs/nodes': '节点库',
   '/docs/nodes/group': '组',
-  '/docs/nodes/group/create': '组创建',
-  '/docs/nodes/group/combine': '组布尔',
-  '/docs/nodes/group/promote': '组提升',
-  '/docs/nodes/group/manage': '组管理',
-  '/docs/nodes/group/normalize': '组归一化',
 };
 
 const zhDescriptionByUrl: Record<string, string> = {
@@ -30,16 +69,25 @@ const zhDescriptionByUrl: Record<string, string> = {
 const zhLabelByEn: Record<string, string> = {
   Nodes: '节点',
   'Node Library': '节点库',
+  Overview: '概览',
+  Categories: '分类',
+  'Node Anatomy': '节点结构',
+  'Common Parameters': '通用参数',
+  'Editor vs Runtime': '编辑器 vs 运行时',
+  'Quick Reference': '快速参考',
   Docs: '文档',
   CDA: 'CDA',
   CGraph: 'CGraph',
   Platforms: '平台',
   Dev: '开发',
   Modeling: '建模',
+  Generators: '生成器',
+  Transform: '变换',
   Attribute: '属性',
   IO: '输入输出',
   Flow: '流程',
   Group: '组',
+  Groups: '组',
   Volume: '体积',
   'AI Texture': 'AI 贴图',
   'AI Generation': 'AI 生成',
@@ -95,6 +143,7 @@ function autoZhText(s: string): string {
 
 export function localizeDocTitle(url: string | undefined, title: string, locale: DocLocale): string {
   if (locale !== 'zh') return title;
+  if (isNodeNameDocUrl(url)) return title;
   if (!url) return zhLabelByEn[title] ?? title;
   return zhTitleByUrl[url] ?? zhLabelByEn[title] ?? autoZhText(title);
 }

@@ -33,19 +33,46 @@ function formatSize(bytes: number): string {
 
 // 从 GitHub API 获取发布版本
 export async function fetchGitHubReleases(limit = 10): Promise<Release[]> {
-  try {
-    const res = await fetch(
-      `https://api.github.com/repos/${githubRepo.owner}/${githubRepo.repo}/releases?per_page=${limit}`,
-      { next: { revalidate: 3600 } } // 缓存 1 小时
-    );
-    // If repo has no releases or repo is private/misconfigured, fall back to static releases.
-    // Avoid noisy build logs on Vercel.
-    if (!res.ok) {
-      if (res.status === 404) return staticReleases;
-      throw new Error(`GitHub API error: ${res.status}`);
-    }
-    const data: GitHubRelease[] = await res.json();
+  const owner = String(githubRepo.owner || '').trim();
+  const repo = String(githubRepo.repo || '').trim();
+  if (!owner || !repo) return staticReleases;
 
+  let res: Response;
+  try {
+    res = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases?per_page=${limit}`, {
+      next: { revalidate: 3600 }, // 缓存 1 小时
+    });
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[GitHub Releases] API fetch failed, using static data:', e);
+    }
+    return staticReleases;
+  }
+
+  // If repo has no releases or repo is private/misconfigured, fall back to static releases.
+  // Avoid noisy build logs during static generation.
+  if (!res.ok) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[GitHub Releases] API returned non-OK, using static data:', {
+        status: res.status,
+        owner,
+        repo,
+      });
+    }
+    return staticReleases;
+  }
+
+  let data: GitHubRelease[];
+  try {
+    data = (await res.json()) as GitHubRelease[];
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[GitHub Releases] API returned invalid JSON, using static data:', e);
+    }
+    return staticReleases;
+  }
+
+  try {
     return data.map((r, i) => ({
       version: r.tag_name.replace(/^v/, ''),
       date: r.published_at.split('T')[0],
@@ -61,7 +88,9 @@ export async function fetchGitHubReleases(limit = 10): Promise<Release[]> {
       })),
     }));
   } catch (e) {
-    console.warn('[GitHub Releases] API fetch failed, using static data:', e);
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[GitHub Releases] API returned unexpected shape, using static data:', e);
+    }
     return staticReleases;
   }
 }

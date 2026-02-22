@@ -6,7 +6,7 @@ import 'fumadocs-ui/style.css';
 import { LocaleToggle } from '@/components/locale-toggle';
 import { DocsSectionTheme } from '@/components/docs/section-theme';
 import { getLocale } from 'next-intl/server';
-import { localizeTreeLabel } from '@/lib/docs-i18n';
+import { isNodeNameDocUrl, localizeTreeLabel } from '@/lib/docs-i18n';
 
 function getSection(urlOrPath: string | undefined): string {
   const p = (urlOrPath ?? '').replaceAll('\\', '/');
@@ -25,7 +25,12 @@ function localizePageTree(tree: any, locale: string): any {
 
   const out: any = { ...tree };
   // Fumadocs pageTree nodes typically use `name` for display.
-  if ('name' in out) out.name = localizeTreeLabel(out.name, locale === 'zh' ? 'zh' : 'en');
+  if ('name' in out) {
+    const url = typeof out.url === 'string' ? (out.url as string) : undefined;
+    if (!(locale === 'zh' && isNodeNameDocUrl(url))) {
+      out.name = localizeTreeLabel(out.name, locale === 'zh' ? 'zh' : 'en');
+    }
+  }
   if ('children' in out && Array.isArray(out.children)) {
     out.children = out.children.map((n: any) => localizePageTree(n, locale));
   }
@@ -35,7 +40,26 @@ function localizePageTree(tree: any, locale: string): any {
 export default async function Layout({ children }: { children: ReactNode }) {
   const locale = await getLocale();
   return (
-    <RootProvider>
+    <RootProvider
+      i18n={{
+        locale,
+        translations:
+          locale === 'zh'
+            ? {
+                search: '搜索',
+                searchNoResult: '未找到结果',
+                toc: '本页目录',
+                tocNoHeadings: '暂无目录',
+                lastUpdate: '更新于',
+                chooseLanguage: '选择语言',
+                nextPage: '下一页',
+                previousPage: '上一页',
+                chooseTheme: '主题',
+                editOnGithub: '在 GitHub 编辑',
+              }
+            : undefined,
+      }}
+    >
       <DocsSectionTheme>
         <DocsLayout
           tree={localizePageTree(source.pageTree, locale)}

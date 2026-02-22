@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { Github, Twitter, Linkedin, Mail, Download, ChevronDown } from "lucide-react"
+import { Github, Twitter, Linkedin, Mail, Download, ChevronDown, MapPin, Globe } from "lucide-react"
 import { useReducedMotion } from "@/lib/animations/hooks"
 import { cn } from "@/lib/utils"
 
@@ -13,12 +14,20 @@ interface HeroSectionProps {
     title: string
     location: string
     email: string
-    avatar: string
+    avatarSrc?: string
     bio: string
-    social: {
+    interests?: string[]
+    resume?: { href: string; fileName: string }
+    social?: {
       github?: string
       twitter?: string
       linkedin?: string
+      website?: string
+    }
+    ui: {
+      downloadResume: string
+      getInTouch: string
+      scrollToExplore: string
     }
   }
 }
@@ -69,14 +78,6 @@ export function HeroSection({ profile }: HeroSectionProps) {
     }
   }
 
-  const handleDownloadResume = () => {
-    // Create a dummy PDF download for now
-    const link = document.createElement("a")
-    link.href = "/resume.pdf"
-    link.download = "Alex_Chen_Resume.pdf"
-    link.click()
-  }
-
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       {/* Background Gradient */}
@@ -97,7 +98,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
           <motion.div variants={avatarVariants} className="mb-8">
             <div className="relative">
               <Avatar className="w-40 h-40 md:w-48 md:h-48 ring-4 ring-background shadow-2xl">
-                <AvatarImage src={profile.avatar} alt={profile.name} />
+                <AvatarImage src={profile.avatarSrc} alt={profile.name} />
                 <AvatarFallback className="text-5xl font-bold">
                   {profile.name.charAt(0)}
                 </AvatarFallback>
@@ -122,57 +123,101 @@ export function HeroSection({ profile }: HeroSectionProps) {
             {profile.title}
           </motion.p>
 
-          {/* Location */}
+          {/* Meta */}
           <motion.div
             variants={itemVariants}
-            className="flex items-center gap-2 text-muted-foreground mb-8"
+            className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-muted-foreground mb-6"
           >
-            <Mail className="w-4 h-4" />
-            <span>{profile.email}</span>
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              <span>{profile.location}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4" />
+              <span className="break-all">{profile.email}</span>
+            </div>
           </motion.div>
+
+          {/* Bio */}
+          <motion.p
+            variants={itemVariants}
+            className="text-base md:text-lg text-muted-foreground max-w-2xl mb-8 leading-relaxed"
+          >
+            {profile.bio}
+          </motion.p>
+
+          {/* Interests */}
+          {profile.interests?.length ? (
+            <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-2 mb-10">
+              {profile.interests.map((interest) => (
+                <Badge key={interest} variant="secondary" className="rounded-full">
+                  {interest}
+                </Badge>
+              ))}
+            </motion.div>
+          ) : (
+            <div className="mb-10" />
+          )}
 
           {/* Social Links */}
           <motion.div
             variants={itemVariants}
             className="flex items-center gap-4 mb-10"
           >
-            {profile.social.github && (
+            {profile.social?.github && (
               <a
-                href={profile.social.github}
+                href={profile.social?.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
                   "rounded-full w-12 h-12 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
                 )}
+                aria-label="GitHub"
               >
                 <Github className="w-5 h-5" />
               </a>
             )}
-            {profile.social.twitter && (
+            {profile.social?.twitter && (
               <a
-                href={profile.social.twitter}
+                href={profile.social?.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
                   "rounded-full w-12 h-12 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
                 )}
+                aria-label="Twitter"
               >
                 <Twitter className="w-5 h-5" />
               </a>
             )}
-            {profile.social.linkedin && (
+            {profile.social?.linkedin && (
               <a
-                href={profile.social.linkedin}
+                href={profile.social?.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
                   "rounded-full w-12 h-12 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
                 )}
+                aria-label="LinkedIn"
               >
                 <Linkedin className="w-5 h-5" />
+              </a>
+            )}
+            {profile.social?.website && (
+              <a
+                href={profile.social?.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                  "rounded-full w-12 h-12 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                )}
+                aria-label="Website"
+              >
+                <Globe className="w-5 h-5" />
               </a>
             )}
           </motion.div>
@@ -182,14 +227,19 @@ export function HeroSection({ profile }: HeroSectionProps) {
             variants={itemVariants}
             className="flex flex-col sm:flex-row gap-4"
           >
-            <Button
-              size="lg"
-              className="rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
-              onClick={handleDownloadResume}
-            >
-              <Download className="w-5 h-5 mr-2 group-hover:animate-bounce" />
-              Download Resume
-            </Button>
+            {profile.resume?.href ? (
+              <a
+                href={profile.resume.href}
+                download={profile.resume.fileName}
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
+                )}
+              >
+                <Download className="w-5 h-5 mr-2 group-hover:animate-bounce" />
+                {profile.ui.downloadResume}
+              </a>
+            ) : null}
             <Button
               variant="outline"
               size="lg"
@@ -197,7 +247,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
               onClick={handleScrollToContact}
             >
               <Mail className="w-5 h-5 mr-2" />
-              Get in Touch
+              {profile.ui.getInTouch}
             </Button>
           </motion.div>
         </div>
@@ -216,7 +266,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
           className="flex flex-col items-center text-muted-foreground cursor-pointer"
           onClick={handleScrollToContact}
         >
-          <span className="text-sm mb-2">Scroll to explore</span>
+          <span className="text-sm mb-2">{profile.ui.scrollToExplore}</span>
           <ChevronDown className="w-6 h-6" />
         </motion.div>
       </motion.div>

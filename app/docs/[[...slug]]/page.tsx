@@ -4,7 +4,7 @@ import { getMDXComponents } from '@/mdx-components';
 import { notFound } from 'next/navigation';
 import { VersionSwitcher } from '@/components/docs/version-switcher';
 import { getLocale } from 'next-intl/server';
-import { localizeDocDescription, localizeDocTitle } from '@/lib/docs-i18n';
+import { localizeDocDescription, localizeDocTitle, localizeTreeLabel } from '@/lib/docs-i18n';
 
 const VERSION_LIST = ['v1.2', 'v1.1', 'v1.0'];
 type Version = 'v1.2' | 'v1.1' | 'v1.0';
@@ -40,6 +40,16 @@ function getAvailableVersions(nodeName: string): string[] {
   return available.length > 0 ? available : [LATEST];
 }
 
+function localizeToc(toc: any, locale: 'en' | 'zh') {
+  if (!toc || locale !== 'zh') return toc;
+  if (!Array.isArray(toc)) return toc;
+  return toc.map((item) => {
+    if (!item || typeof item !== 'object') return item;
+    if (typeof item.title !== 'string') return item;
+    return { ...item, title: localizeTreeLabel(item.title, 'zh') as string };
+  });
+}
+
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
   const page = source.getPage(slug);
@@ -51,6 +61,7 @@ export default async function Page({ params }: PageProps) {
   const description = localizeDocDescription(url, page.data.description, locale);
 
   const { body: MDX, toc } = await page.data.load();
+  const localizedToc = localizeToc(toc, locale);
   const nodeName = getNodeName(slug);
   const isNodeDoc = !!nodeName && nodeName !== 'index';
   const currentVersion = detectVersion(slug);
@@ -59,7 +70,7 @@ export default async function Page({ params }: PageProps) {
   const since = (page.data as any).since;
 
   return (
-    <DocsPage toc={toc} tableOfContent={{ style: 'clerk' }}>
+    <DocsPage toc={localizedToc} tableOfContent={{ style: 'clerk' }}>
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <DocsTitle>{title}</DocsTitle>
         {isNodeDoc && (
@@ -72,7 +83,7 @@ export default async function Page({ params }: PageProps) {
       </div>
       <DocsDescription>{description}</DocsDescription>
       <DocsBody>
-        <MDX components={getMDXComponents()} />
+        <MDX components={getMDXComponents(undefined, { locale })} />
       </DocsBody>
     </DocsPage>
   );

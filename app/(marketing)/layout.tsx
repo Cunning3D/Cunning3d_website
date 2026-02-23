@@ -23,7 +23,6 @@ export default async function MarketingLayout({
     { title: t('roadmap'), href: "/roadmap" },
     { title: t('changelog'), href: "/changelog" },
     { title: t('blog'), href: "/blog" },
-    { title: t('me'), href: "/me" },
   ]
 
   return (

@@ -29,9 +29,10 @@ async function wasmPlayerReady() {
 export default async function ShowcaseViewerPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ cda?: string; title?: string }>;
+  searchParams?: Promise<{ id?: string; cda?: string; title?: string }>;
 }) {
   const sp = await searchParams;
+  const idRaw = typeof sp?.id === "string" ? sp.id : "";
   const cdaRaw = typeof sp?.cda === "string" ? sp.cda : "";
   const title =
     typeof sp?.title === "string" && sp.title.trim()
@@ -47,6 +48,27 @@ export default async function ShowcaseViewerPage({
     if (basePath && cdaRaw.startsWith(`${basePath}/`)) return cdaRaw;
     if (cdaRaw.startsWith("/")) return `${basePath}${cdaRaw}`;
     return cdaRaw;
+  })();
+
+  const itemId = (() => {
+    const s = idRaw.trim();
+    if (s) return s;
+    if (!cdaRaw) return "";
+
+    const pathLike = (() => {
+      if (/^https?:\/\//i.test(cdaRaw)) {
+        try {
+          return new URL(cdaRaw).pathname;
+        } catch {
+          return cdaRaw;
+        }
+      }
+      return cdaRaw;
+    })();
+
+    const file = pathLike.split("/").filter(Boolean).pop() || "";
+    const base = decodeURIComponent(file).replace(/\.cda$/i, "");
+    return base.replace(/[^a-zA-Z0-9_-]+/g, "-");
   })();
 
   const playerSrc = cda
@@ -71,7 +93,7 @@ export default async function ShowcaseViewerPage({
               Back
             </Link>
             <CopyCurrentUrlButton label="Copy link" />
-            {cda ? <ShowcaseLikeButton itemKey={cda} /> : null}
+            {itemId ? <ShowcaseLikeButton itemId={itemId} /> : null}
             {cda ? (
               <a
                 href={cda}

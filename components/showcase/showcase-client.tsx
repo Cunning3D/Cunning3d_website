@@ -1,6 +1,13 @@
 "use client";
 
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -93,6 +100,7 @@ function formatShortDate(iso: string) {
 
 function buildViewerHref(item: ShowcaseItem) {
   const params = new URLSearchParams();
+  params.set("id", item.id);
   params.set("cda", item.cdaUrl);
   params.set("title", item.title);
   return `/showcase/viewer?${params.toString()}`;
@@ -139,6 +147,7 @@ function writeQueryToLocation(next: ShowcaseQueryState, mode: "push" | "replace"
 export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
   const { likedKeys, toggleLike } = useShowcaseLikes();
   const [hydrated, setHydrated] = useState(false);
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
   const [query, setQuery] = useState<ShowcaseQueryState>({
     tag: "",
     q: "",
@@ -163,6 +172,72 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
+
+  const basePath = useMemo(() => {
+    const s = String(process.env.NEXT_PUBLIC_BASE_PATH || "").trim();
+    if (!s) return "";
+    const withLeadingSlash = s.startsWith("/") ? s : `/${s}`;
+    return withLeadingSlash.endsWith("/")
+      ? withLeadingSlash.slice(0, -1)
+      : withLeadingSlash;
+  }, []);
+
+  const withBasePath = useCallback(
+    (p: string) => `${basePath}${p.startsWith("/") ? p : `/${p}`}`,
+    [basePath]
+  );
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const ids = items.map((it) => it.id).filter(Boolean);
+    if (ids.length === 0) return;
+
+    const run = async () => {
+      try {
+        const url = new URL(withBasePath("/api/showcase/likes"), window.location.origin);
+        url.searchParams.set("ids", ids.join(","));
+        const res = await fetch(url.toString(), { cache: "no-store" });
+        if (!res.ok) return;
+        const json = (await res.json()) as { counts?: Record<string, number> };
+        if (json?.counts && typeof json.counts === "object") {
+          setLikeCounts(json.counts);
+        }
+      } catch {
+        // ignore
+      }
+    };
+
+    void run();
+  }, [hydrated, items, withBasePath]);
+
+  const toggleLikeGlobal = async (id: string) => {
+    if (!id) return;
+    const liked = likedKeys.has(id);
+    const delta = liked ? -1 : 1;
+
+    toggleLike(id);
+    setLikeCounts((prev) => {
+      const next = { ...prev };
+      const cur = Number.isFinite(next[id]) ? next[id] : 0;
+      const updated = Math.max(0, cur + delta);
+      next[id] = updated;
+      return next;
+    });
+
+    try {
+      const res = await fetch(withBasePath("/api/showcase/likes"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, delta }),
+      });
+      const json = (await res.json()) as { count?: number };
+      if (res.ok && typeof json.count === "number") {
+        setLikeCounts((prev) => ({ ...prev, [id]: Math.max(0, json.count || 0) }));
+      }
+    } catch {
+      // ignore
+    }
+  };
 
   const updateQuery = (
     patch: Partial<ShowcaseQueryState>,
@@ -530,7 +605,8 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
             <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <AnimatePresence mode="popLayout">
                 {pagedItems.map((item) => {
-                  const liked = likedKeys.has(item.cdaUrl);
+                  const liked = likedKeys.has(item.id);
+                  const count = likeCounts[item.id] ?? 0;
                   return (
                     <motion.div
                       key={item.id}
@@ -558,11 +634,11 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              toggleLike(item.cdaUrl);
+                              void toggleLikeGlobal(item.id);
                             }}
                             aria-label={liked ? "Unlike" : "Like"}
                             aria-pressed={liked}
-                            className={`absolute top-3 right-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full border backdrop-blur transition-colors ${
+                            className={`absolute top-3 right-3 z-20 inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3 backdrop-blur transition-colors ${
                               liked
                                 ? "bg-pink-500/90 border-pink-400/40 text-white"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/15"
@@ -572,6 +648,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                               className="w-4 h-4"
                               weight={liked ? "fill" : "light"}
                             />
+                            <span className="text-xs tabular-nums">{count}</span>
                           </button>
                           <div className="absolute left-3 bottom-3 right-3">
                             <div className="flex items-center justify-between gap-2">

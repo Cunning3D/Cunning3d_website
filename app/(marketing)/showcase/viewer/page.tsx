@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import Link from "next/link";
+import { CopyCurrentUrlButton } from "@/components/showcase/copy-current-url-button";
+import { WasmPlayerFrame } from "@/components/showcase/wasm-player-frame";
 
 function normalizeBasePath(p: unknown) {
   const s = String(p || "").trim();
@@ -67,12 +69,14 @@ export default async function ShowcaseViewerPage({
             >
               Back
             </Link>
+            <CopyCurrentUrlButton label="Copy link" />
             {cda ? (
               <a
                 href={cda}
+                download
                 className="inline-flex items-center rounded-md border px-3 py-2 text-sm hover:bg-accent"
               >
-                CDA
+                Download CDA
               </a>
             ) : null}
           </div>
@@ -85,14 +89,7 @@ export default async function ShowcaseViewerPage({
         {ready ? (
           <div className="container py-4">
             <div className="mx-auto w-full max-w-[1280px]">
-              <div className="relative w-full aspect-[16/9]">
-                <iframe
-                  title="Cunning Player"
-                  src={playerSrc}
-                  className="absolute inset-0 block w-full h-full border-0"
-                  allow="autoplay; fullscreen"
-                />
-              </div>
+              <WasmPlayerFrame src={playerSrc} title="Cunning Player" />
             </div>
           </div>
         ) : (
@@ -119,4 +116,3 @@ export default async function ShowcaseViewerPage({
     </div>
   );
 }
-

@@ -68,6 +68,17 @@ async function main() {
   const files = await listCdaFiles(examplesDir);
   const items = await Promise.all(
     files.map(async (file) => {
+      const cdaPath = path.join(examplesDir, file);
+      let bytes;
+      let updatedAt;
+      try {
+        const stat = await fs.stat(cdaPath);
+        bytes = stat.size;
+        updatedAt = stat.mtime ? stat.mtime.toISOString() : undefined;
+      } catch {
+        // ignore
+      }
+
       const id = idFromFilename(file);
       const title = titleFromFilename(file);
       const imageFile = await findExampleImageFile(title);
@@ -79,6 +90,8 @@ async function main() {
           ? `${basePath}/examples/${imageFile}`
           : `${basePath}/banner.png`,
         description: title,
+        bytes,
+        updatedAt,
         tags: ["Example"],
         featured: false,
         // Leave filenames unencoded; URLs get encoded when passed as query params in the UI.

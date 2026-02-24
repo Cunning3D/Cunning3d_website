@@ -187,6 +187,17 @@ export const mePageByLocale: Record<MeLocale, MePageConfig> = {
           ],
         },
         {
+          name: 'Unity Procedural Road System (Personal)',
+          description:
+            'A spline-based road & junction generation tool built in the Unity Editor for large scenes.',
+          highlights: [
+            'Lofted multi-lane roads with sidewalks/curbs/green belts and consistent UV tiling.',
+            'Junction generation with zebra crossings; block/parcel scanning from sidewalk outer edges.',
+            'Editor performance tooling for large scenes (LOD / multithreaded frustum culling).',
+          ],
+          tags: ['Unity', 'C#', 'Splines', 'Mesh Generation', 'Editor Tools'],
+        },
+        {
           name: 'PCG Road System',
           description: 'A procedural road generation & editing system designed for level production at scale.',
           highlights: [
@@ -329,6 +340,16 @@ export const mePageByLocale: Record<MeLocale, MePageConfig> = {
             { label: '官网', href: 'https://cunning3d.com' },
             { label: 'GitHub', href: 'https://github.com/Cunning3D/Cunning3D-Dev' },
           ],
+        },
+        {
+          name: 'Unity 程序化道路系统（个人作品）',
+          description: '基于 Unity Splines 的道路/路口生成工具，用于大规模场景的道路制作与编辑。',
+          highlights: [
+            '支持多车道参数化道路，并生成道路/人行道/路缘/绿化带等网格与 UV。',
+            '支持路口生成与斑马线，并基于人行道外沿扫描闭合区域生成地块占位符。',
+            '面向大场景编辑效率：LOD / 多线程视锥裁剪等辅助工具。',
+          ],
+          tags: ['Unity', 'C#', 'Spline', '网格生成', '编辑器工具'],
         },
         {
           name: 'PCG 道路系统',

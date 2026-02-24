@@ -102,6 +102,7 @@
     "sort": {
       "placeholder": "Sort",
       "featured": "Featured",
+      "popular": "Popular",
       "new": "Newest",
       "size": "Largest",
       "az": "A\u2013Z"
@@ -187,6 +188,7 @@
       "liked": "Liked",
       "unlike": "Unlike"
     },
+    "views": "Views",
     "cta": {
       "title": "Want to be featured?",
       "desc": "Share your Cunning3D creations and get featured in our showcase!",

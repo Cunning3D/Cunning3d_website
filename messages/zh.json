@@ -102,6 +102,7 @@
     "sort": {
       "placeholder": "排序",
       "featured": "精选",
+      "popular": "热门",
       "new": "最新",
       "size": "最大",
       "az": "A\u2013Z"
@@ -187,6 +188,7 @@
       "liked": "已赞",
       "unlike": "取消点赞"
     },
+    "views": "浏览",
     "cta": {
       "title": "想要展示你的作品？",
       "desc": "分享你的 Cunning3D 作品，有机会在这里展示！",

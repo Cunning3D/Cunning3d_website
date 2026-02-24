@@ -17,6 +17,7 @@ import {
   ArrowRight,
   Check,
   Copy,
+  Eye,
   Heart,
   MagnifyingGlass,
   Palette,
@@ -48,7 +49,7 @@ export interface ShowcaseItem {
   updatedAt?: string;
 }
 
-type ShowcaseSort = "featured" | "new" | "size" | "az";
+type ShowcaseSort = "featured" | "popular" | "new" | "size" | "az";
 const DEFAULT_SORT: ShowcaseSort = "featured";
 const PER_PAGE = 24;
 
@@ -66,6 +67,7 @@ function safeTrimmedString(v: unknown) {
 function parseSort(v: string): ShowcaseSort {
   switch (v) {
     case "featured":
+    case "popular":
     case "new":
     case "size":
     case "az":
@@ -151,6 +153,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
   const { likedKeys, toggleLike } = useShowcaseLikes();
   const [hydrated, setHydrated] = useState(false);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
   const [query, setQuery] = useState<ShowcaseQueryState>({
     tag: "",
     q: "",
@@ -194,23 +197,43 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
     if (!hydrated) return;
     const ids = items.map((it) => it.id).filter(Boolean);
     if (ids.length === 0) return;
+    let cancelled = false;
+
+    const fetchCounts = async (apiPath: string) => {
+      const out: Record<string, number> = {};
+      const chunkSize = 80;
+      for (let i = 0; i < ids.length; i += chunkSize) {
+        const chunk = ids.slice(i, i + chunkSize);
+        try {
+          const url = new URL(withBasePath(apiPath), window.location.origin);
+          url.searchParams.set("ids", chunk.join(","));
+          const res = await fetch(url.toString(), { cache: "no-store" });
+          if (!res.ok) continue;
+          const json = (await res.json()) as { counts?: Record<string, number> };
+          if (json?.counts && typeof json.counts === "object") {
+            Object.assign(out, json.counts);
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return out;
+    };
 
     const run = async () => {
-      try {
-        const url = new URL(withBasePath("/api/showcase/likes"), window.location.origin);
-        url.searchParams.set("ids", ids.join(","));
-        const res = await fetch(url.toString(), { cache: "no-store" });
-        if (!res.ok) return;
-        const json = (await res.json()) as { counts?: Record<string, number> };
-        if (json?.counts && typeof json.counts === "object") {
-          setLikeCounts(json.counts);
-        }
-      } catch {
-        // ignore
-      }
+      const [likes, views] = await Promise.all([
+        fetchCounts("/api/showcase/likes"),
+        fetchCounts("/api/showcase/views"),
+      ]);
+      if (cancelled) return;
+      setLikeCounts(likes);
+      setViewCounts(views);
     };
 
     void run();
+    return () => {
+      cancelled = true;
+    };
   }, [hydrated, items, withBasePath]);
 
   const toggleLikeGlobal = async (id: string) => {
@@ -306,11 +329,19 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
       it.updatedAt ? Date.parse(it.updatedAt) || 0 : 0;
     const sizeScore = (it: ShowcaseItem) => (Number.isFinite(it.bytes) ? (it.bytes as number) : 0);
     const featuredScore = (it: ShowcaseItem) => (it.featured ? 1 : 0);
+    const likeScore = (it: ShowcaseItem) => (Number.isFinite(likeCounts[it.id]) ? likeCounts[it.id]! : 0);
 
     out.sort((a, b) => {
       if (sort === "featured") {
         const f = featuredScore(b) - featuredScore(a);
         if (f !== 0) return f;
+        const t = updatedScore(b) - updatedScore(a);
+        if (t !== 0) return t;
+        return a.title.localeCompare(b.title);
+      }
+      if (sort === "popular") {
+        const l = likeScore(b) - likeScore(a);
+        if (l !== 0) return l;
         const t = updatedScore(b) - updatedScore(a);
         if (t !== 0) return t;
         return a.title.localeCompare(b.title);
@@ -330,7 +361,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
     });
 
     return out;
-  }, [filteredItems, query.sort]);
+  }, [filteredItems, query.sort, likeCounts]);
 
   const pageCount = Math.max(1, Math.ceil(sortedItems.length / PER_PAGE));
   const page = Math.min(Math.max(1, query.page), pageCount);
@@ -446,6 +477,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="featured">{t("sort.featured")}</SelectItem>
+                    <SelectItem value="popular">{t("sort.popular")}</SelectItem>
                     <SelectItem value="new">{t("sort.new")}</SelectItem>
                     <SelectItem value="size">{t("sort.size")}</SelectItem>
                     <SelectItem value="az">{t("sort.az")}</SelectItem>
@@ -617,6 +649,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                 {pagedItems.map((item) => {
                   const liked = likedKeys.has(item.id);
                   const count = likeCounts[item.id] ?? 0;
+                  const views = viewCounts[item.id] ?? 0;
                   return (
                     <motion.div
                       key={item.id}
@@ -660,6 +693,14 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                             />
                             <span className="text-xs tabular-nums">{count}</span>
                           </button>
+                          <div
+                            className="absolute top-3 left-3 z-20 inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 text-white backdrop-blur"
+                            aria-label={t("views")}
+                            title={t("views")}
+                          >
+                            <Eye className="w-4 h-4" weight="light" />
+                            <span className="text-xs tabular-nums">{views}</span>
+                          </div>
                           <div className="absolute left-3 bottom-3 right-3">
                             <div className="flex items-center justify-between gap-2">
                               <div className="text-white font-semibold truncate">

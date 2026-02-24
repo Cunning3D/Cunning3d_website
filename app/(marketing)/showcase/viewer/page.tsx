@@ -3,6 +3,7 @@ import path from "node:path";
 import Link from "next/link";
 import { CopyCurrentUrlButton } from "@/components/showcase/copy-current-url-button";
 import { ShowcaseLikeButton } from "@/components/showcase/showcase-like-button";
+import { ShowcaseViewCounter } from "@/components/showcase/showcase-view-counter";
 import { WasmPlayerFrame } from "@/components/showcase/wasm-player-frame";
 import { getTranslations } from "next-intl/server";
 
@@ -96,6 +97,7 @@ export default async function ShowcaseViewerPage({
               {t("actions.back")}
             </Link>
             <CopyCurrentUrlButton label={t("actions.copyLink")} copiedLabel={t("actions.copied")} />
+            {itemId ? <ShowcaseViewCounter itemId={itemId} /> : null}
             {itemId ? <ShowcaseLikeButton itemId={itemId} /> : null}
             {cda ? (
               <a

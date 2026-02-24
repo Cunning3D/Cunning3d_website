@@ -14,11 +14,46 @@ export const donateConfig = {
   },
   // 捐款等级（从低到高）
   tiers: [
-    { name: 'Supporter', amount: 5, icon: 'sprout', perks: ['Support Cunning3D development', 'Name in credits'] },
-    { name: 'Backer', amount: 15, icon: 'star', perks: ['Support Cunning3D development', 'Name in credits', 'Discord role'] },
-    { name: 'Patron', amount: 50, icon: 'gem', perks: ['Support Cunning3D development', 'Name in credits', 'Discord role', 'Priority support'] },
-    { name: 'Sponsor', amount: 150, icon: 'rocket', perks: ['All Patron perks', 'Logo on website', 'Direct communication'] },
-    { name: 'Partner', amount: 500, icon: 'crown', perks: ['All Sponsor perks', 'Custom integration support', 'Feature prioritization'] },
+    {
+      name: 'Supporter',
+      nameZh: '支持者',
+      amount: 5,
+      icon: 'sprout',
+      perks: ['Support Cunning3D development', 'Name in credits'],
+      perksZh: ['支持 Cunning3D 开发', '鸣谢名单署名'],
+    },
+    {
+      name: 'Backer',
+      nameZh: '资助者',
+      amount: 15,
+      icon: 'star',
+      perks: ['Support Cunning3D development', 'Name in credits', 'Discord role'],
+      perksZh: ['支持 Cunning3D 开发', '鸣谢名单署名', 'Discord 身份组'],
+    },
+    {
+      name: 'Patron',
+      nameZh: '赞助人',
+      amount: 50,
+      icon: 'gem',
+      perks: ['Support Cunning3D development', 'Name in credits', 'Discord role', 'Priority support'],
+      perksZh: ['支持 Cunning3D 开发', '鸣谢名单署名', 'Discord 身份组', '优先支持'],
+    },
+    {
+      name: 'Sponsor',
+      nameZh: '赞助商',
+      amount: 150,
+      icon: 'rocket',
+      perks: ['All Patron perks', 'Logo on website', 'Direct communication'],
+      perksZh: ['包含 Patron 全部权益', '官网展示 Logo', '直接沟通通道'],
+    },
+    {
+      name: 'Partner',
+      nameZh: '合作伙伴',
+      amount: 500,
+      icon: 'crown',
+      perks: ['All Sponsor perks', 'Custom integration support', 'Feature prioritization'],
+      perksZh: ['包含 Sponsor 全部权益', '定制集成支持', '功能优先排期'],
+    },
   ],
   // 统计数据（会被自动同步脚本更新）
   metrics: {

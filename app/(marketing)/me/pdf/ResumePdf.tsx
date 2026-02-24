@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    flexWrap: 'wrap',
   },
   headerLeft: {
     flexGrow: 1,
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     paddingRight: 14,
   },
   headerRight: {
-    width: 190,
+    width: 170,
     flexShrink: 0,
     alignItems: 'flex-end',
   },
@@ -97,11 +98,11 @@ const styles = StyleSheet.create({
   highlightDetail: { marginTop: 3, fontSize: 9.5, color: '#475569' },
 
   item: { paddingBottom: 12, marginBottom: 12, borderBottomWidth: 1, borderBottomColor: '#eef2f7' },
-  itemHeader: { flexDirection: 'row', alignItems: 'flex-start' },
+  itemHeader: { flexDirection: 'row', alignItems: 'flex-start', flexWrap: 'wrap' },
   itemHeaderLeft: { flexGrow: 1, flexShrink: 1, minWidth: 0, paddingRight: 12 },
   itemTitle: { fontSize: 11.5, fontWeight: 700, color: '#0f172a' },
   itemSubTitle: { marginTop: 2, fontSize: 10, color: '#475569' },
-  itemTime: { width: 92, flexShrink: 0, fontSize: 10, color: '#475569', textAlign: 'right' },
+  itemTime: { minWidth: 92, marginLeft: 'auto', flexShrink: 0, fontSize: 10, color: '#475569', textAlign: 'right' },
   itemSummary: { marginTop: 6, fontSize: 10.5, color: '#334155' },
 
   bullets: { marginTop: 6 },

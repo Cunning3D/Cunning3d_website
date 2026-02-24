@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { donateConfig, donors } from "@/config/donate"
+import { useLocale, useTranslations } from "next-intl"
 import type { IconWeight } from "@phosphor-icons/react"
 import {
   Heart,
@@ -33,6 +34,11 @@ const tierIconMap: Record<string, React.ComponentType<{ className?: string; weig
 }
 
 export default function DonatePage() {
+  const t = useTranslations("donate")
+  const locale = useLocale()
+  const nf = new Intl.NumberFormat(locale)
+  const formatNumber = (n: number) => nf.format(Number.isFinite(n) ? n : 0)
+
   const [isMonthly, setIsMonthly] = useState(true)
   const [selected, setSelected] = useState(25)
   const [copied, setCopied] = useState<string | null>(null)
@@ -50,6 +56,10 @@ export default function DonatePage() {
   }
   const paymentLink = getPaymentLink()
 
+  const supportersCountLabel =
+    metrics.members > 0 ? formatNumber(metrics.members) : t("hero.fallbackCount")
+  const heroDesc = t("hero.desc", { count: supportersCountLabel })
+
   // 按等级分组捐款者
   const donorsByTier = donateConfig.tiers.slice().reverse().map(tier => ({
     tier,
@@ -61,6 +71,16 @@ export default function DonatePage() {
     setCopied(type)
     setTimeout(() => setCopied(null), 2000)
   }
+
+  const getTierName = (tier: (typeof donateConfig.tiers)[number]) =>
+    locale === "zh" ? tier.nameZh ?? tier.name : tier.name
+
+  const currentTierName =
+    getTierName(currentTier)
+  const currentTierPerks =
+    locale === "zh"
+      ? currentTier.perksZh ?? currentTier.perks
+      : currentTier.perks
 
   return (
     <>
@@ -87,36 +107,35 @@ export default function DonatePage() {
               >
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm text-sm mb-8">
                   <Heart className="w-4 h-4 text-rose-400" weight="light" />
-                  <span className="text-slate-300">Powered by community</span>
+                  <span className="text-slate-300">{t("badge")}</span>
                 </div>
 
                 <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6">
-                  Support the
+                  {t("hero.headlinePrefix")}
                   <span className="block mt-2 bg-gradient-to-r from-indigo-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent">
-                    future of 3D
+                    {t("hero.headlineHighlight")}
                   </span>
                 </h1>
 
                 <p className="text-lg text-slate-400 max-w-lg leading-relaxed">
-                  Your contribution helps us build the next generation of procedural modeling tools.
-                  Join {metrics.members > 0 ? metrics.members : 'hundreds of'} supporters making this vision real.
+                  {heroDesc}
                 </p>
 
                 {/* Quick stats */}
                 <div className="flex gap-8 mt-10">
                   <div>
-                    <div className="text-3xl font-bold text-white">${metrics.monthlyDollars > 0 ? metrics.monthlyDollars : '0'}</div>
-                    <div className="text-sm text-slate-500">monthly</div>
+                    <div className="text-3xl font-bold text-white">${formatNumber(metrics.monthlyDollars)}</div>
+                    <div className="text-sm text-slate-500">{t("hero.monthlyLabel")}</div>
                   </div>
                   <div className="w-px bg-slate-800" />
                   <div>
-                    <div className="text-3xl font-bold text-white">{metrics.members > 0 ? metrics.members : '0'}</div>
-                    <div className="text-sm text-slate-500">supporters</div>
+                    <div className="text-3xl font-bold text-white">{formatNumber(metrics.members)}</div>
+                    <div className="text-sm text-slate-500">{t("hero.supportersLabel")}</div>
                   </div>
                   <div className="w-px bg-slate-800" />
                   <div>
                     <div className="text-3xl font-bold text-white">100%</div>
-                    <div className="text-sm text-slate-500">open source</div>
+                    <div className="text-sm text-slate-500">{t("hero.openSourceLabel")}</div>
                   </div>
                 </div>
               </motion.div>
@@ -147,13 +166,13 @@ export default function DonatePage() {
                     onClick={() => setIsMonthly(true)}
                     className={`relative z-10 flex-1 py-2.5 text-sm font-medium transition-colors ${isMonthly ? 'text-white' : 'text-slate-400'}`}
                   >
-                    Monthly
+                    {t("monthly")}
                   </button>
                   <button
                     onClick={() => setIsMonthly(false)}
                     className={`relative z-10 flex-1 py-2.5 text-sm font-medium transition-colors ${!isMonthly ? 'text-white' : 'text-slate-400'}`}
                   >
-                    One-time
+                    {t("oneTime")}
                   </button>
                 </div>
 
@@ -188,12 +207,12 @@ export default function DonatePage() {
                       <CurrentTierIcon className="w-6 h-6 text-white" weight="light" />
                     </div>
                     <div>
-                      <div className="text-sm text-slate-400">You&apos;ll become</div>
-                      <div className="text-lg font-semibold text-white">{currentTier.name}</div>
+                      <div className="text-sm text-slate-400">{t("youllBecome")}</div>
+                      <div className="text-lg font-semibold text-white">{currentTierName}</div>
                     </div>
                   </div>
                   <ul className="space-y-2">
-                    {currentTier.perks.map((perk, i) => (
+                    {currentTierPerks.map((perk, i) => (
                       <li key={i} className="flex items-center gap-3 text-sm text-slate-300">
                         <div className="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center">
                           <Check className="w-3 h-3 text-indigo-400" weight="light" />
@@ -213,7 +232,7 @@ export default function DonatePage() {
                     className="group flex items-center justify-center gap-2 w-full bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white font-semibold py-4 rounded-xl transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
                   >
                     <Coffee className="w-5 h-5" weight="light" />
-                    Donate ${selected} {isMonthly ? '/ month' : ''}
+                    {t("donateBtn", { amount: formatNumber(selected) })}{isMonthly ? t("perMonth") : ""}
                     <ArrowSquareOut className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" weight="light" />
                   </a>
                 ) : (
@@ -221,14 +240,14 @@ export default function DonatePage() {
                     disabled
                     className="w-full bg-slate-800 text-slate-500 font-semibold py-4 rounded-xl cursor-not-allowed"
                   >
-                    Coming Soon
+                    {t("comingSoon")}
                   </button>
                 )}
 
                 {/* Crypto options */}
                 {(platforms.crypto.eth || platforms.crypto.btc || platforms.crypto.usdt) && (
                   <div className="mt-6 pt-6 border-t border-slate-800">
-                    <p className="text-xs text-slate-500 mb-3 text-center">Or donate with crypto</p>
+                    <p className="text-xs text-slate-500 mb-3 text-center">{t("crypto")}</p>
                     <div className="flex gap-2 justify-center">
                       {platforms.crypto.eth && (
                         <button
@@ -271,10 +290,10 @@ export default function DonatePage() {
         <div className="container">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: CurrencyDollar, value: `$${metrics.oneTimeDollars.toLocaleString()}`, label: 'One-time donations', color: 'from-violet-500 to-purple-600' },
-              { icon: TrendUp, value: `$${metrics.monthlyDollars.toLocaleString()}`, label: 'Monthly recurring', color: 'from-blue-500 to-indigo-600' },
-              { icon: Users, value: metrics.members.toString(), label: 'Total supporters', color: 'from-emerald-500 to-teal-600' },
-              { icon: Trophy, value: metrics.sponsors.toString(), label: 'Corporate sponsors', color: 'from-amber-500 to-orange-600' },
+              { icon: CurrencyDollar, value: `$${formatNumber(metrics.oneTimeDollars)}`, label: t('stats.oneTime'), color: 'from-violet-500 to-purple-600' },
+              { icon: TrendUp, value: `$${formatNumber(metrics.monthlyDollars)}`, label: t('stats.monthlyRecurring'), color: 'from-blue-500 to-indigo-600' },
+              { icon: Users, value: formatNumber(metrics.members), label: t('stats.totalSupporters'), color: 'from-emerald-500 to-teal-600' },
+              { icon: Trophy, value: formatNumber(metrics.sponsors), label: t('stats.corporateSponsors'), color: 'from-amber-500 to-orange-600' },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -308,10 +327,10 @@ export default function DonatePage() {
               viewport={{ once: true }}
             >
               <h2 className="font-heading text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-                Our Supporters
+                {t("wall.title")}
               </h2>
               <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-                Cunning3D is made possible by these amazing people and organizations.
+                {t("wall.desc")}
               </p>
             </motion.div>
           </div>
@@ -327,10 +346,10 @@ export default function DonatePage() {
                 <Heart className="w-10 h-10 text-indigo-500" weight="light" />
               </div>
               <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-2">
-                Be the first
+                {t("wall.emptyTitle")}
               </h3>
               <p className="text-slate-500 max-w-md mx-auto">
-                Your name will appear here and in our application credits. Support the future of procedural modeling.
+                {t("wall.emptyDesc")}
               </p>
             </motion.div>
           ) : (
@@ -354,8 +373,12 @@ export default function DonatePage() {
                       )
                     })()}
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">{tier.name}</h3>
-                      <p className="text-sm text-slate-500">${tier.amount}/month</p>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                        {getTierName(tier)}
+                      </h3>
+                      <p className="text-sm text-slate-500">
+                        {t("wall.perMonth", { amount: `$${formatNumber(tier.amount)}` })}
+                      </p>
                     </div>
                     <div className="flex-1 h-px bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-800" />
                   </div>
@@ -390,7 +413,7 @@ export default function DonatePage() {
                               </div>
                               <div className="flex items-center gap-1 text-xs text-slate-400">
                                 <ArrowSquareOut className="w-3 h-3" weight="light" />
-                                <span>Visit</span>
+                                <span>{t("wall.visit")}</span>
                               </div>
                             </div>
                           </a>
@@ -424,11 +447,13 @@ export default function DonatePage() {
             className="mt-20 text-center"
           >
             <p className="text-slate-400 text-sm">
-              Stats sync automatically from payment platforms.
-              <Link href="mailto:support@cunning3d.com" className="text-indigo-500 hover:text-indigo-600 ml-1">
-                Contact us
-              </Link>
-              {' '}for questions.
+              {t.rich("wall.note", {
+                contact: (chunks) => (
+                  <Link href="mailto:support@cunning3d.com" className="text-indigo-500 hover:text-indigo-600">
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </p>
           </motion.div>
         </div>
@@ -439,7 +464,7 @@ export default function DonatePage() {
         <div className="container max-w-4xl">
           <div className="text-center mb-16">
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Why support Cunning3D?
+              {t("why.title")}
             </h2>
           </div>
 
@@ -447,18 +472,18 @@ export default function DonatePage() {
             {[
               {
                 icon: Wallet,
-                title: 'Sustainable Development',
-                description: 'Your support allows us to dedicate more time to core development and maintenance.',
+                title: t("why.items.sustainableTitle"),
+                description: t("why.items.sustainableDesc"),
               },
               {
                 icon: Users,
-                title: 'Community First',
-                description: 'Supporters help shape the roadmap through direct feedback and feature requests.',
+                title: t("why.items.communityTitle"),
+                description: t("why.items.communityDesc"),
               },
               {
                 icon: Trophy,
-                title: 'Recognition',
-                description: 'Get your name in the credits and on this wall of supporters.',
+                title: t("why.items.recognitionTitle"),
+                description: t("why.items.recognitionDesc"),
               },
             ].map((item, i) => (
               <motion.div

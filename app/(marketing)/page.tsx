@@ -168,13 +168,13 @@ export default async function IndexPage() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm text-sm mb-6">
               <Heart className="w-4 h-4 text-rose-400" weight="light" />
-              <span className="text-slate-300">Community powered</span>
+              <span className="text-slate-300">{t('supporters.badge')}</span>
             </div>
             <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
               {t('supporters.title')}
             </h2>
             <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-              Cunning3D is made possible by these amazing people and organizations.
+              {t('supporters.desc')}
             </p>
           </div>
 
@@ -186,10 +186,14 @@ export default async function IndexPage() {
               <div className="relative h-full p-8 rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-cyan-500/30 backdrop-blur-sm">
                 <div className="flex items-center gap-3 mb-4">
                   <Crown className="w-6 h-6 text-cyan-400" weight="light" />
-                  <span className="text-sm font-medium text-cyan-400 uppercase tracking-wider">Corporate Titanium</span>
+                  <span className="text-sm font-medium text-cyan-400 uppercase tracking-wider">
+                    {t('supporters.tiers.corporateTitanium')}
+                  </span>
                 </div>
                 <div className="text-3xl font-black tracking-tight text-white mb-2">ACME STUDIOS</div>
-                <p className="text-slate-500 text-sm">$6,000 / month</p>
+                <p className="text-slate-500 text-sm">
+                  {t('supporters.tiers.perMonth', { amount: '$6,000' })}
+                </p>
               </div>
             </div>
 
@@ -199,7 +203,9 @@ export default async function IndexPage() {
               <div className="relative h-full p-6 rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-purple-500/30 backdrop-blur-sm">
                 <div className="flex items-center gap-3 mb-4">
                   <Lightning className="w-5 h-5 text-purple-400" weight="light" />
-                  <span className="text-xs font-medium text-purple-400 uppercase tracking-wider">Corporate Platinum</span>
+                  <span className="text-xs font-medium text-purple-400 uppercase tracking-wider">
+                    {t('supporters.tiers.corporatePlatinum')}
+                  </span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-xl font-bold text-white">
@@ -211,7 +217,9 @@ export default async function IndexPage() {
                     <span>EverGreen Tech</span>
                   </div>
                 </div>
-                <p className="text-slate-500 text-sm mt-4">$4,000 / month</p>
+                <p className="text-slate-500 text-sm mt-4">
+                  {t('supporters.tiers.perMonth', { amount: '$4,000' })}
+                </p>
               </div>
             </div>
 
@@ -221,7 +229,9 @@ export default async function IndexPage() {
               <div className="relative h-full p-6 rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-amber-500/30 backdrop-blur-sm">
                 <div className="flex items-center gap-3 mb-4">
                   <Trophy className="w-5 h-5 text-amber-400" weight="light" />
-                  <span className="text-xs font-medium text-amber-400 uppercase tracking-wider">Corporate Bronze</span>
+                  <span className="text-xs font-medium text-amber-400 uppercase tracking-wider">
+                    {t('supporters.tiers.corporateBronze')}
+                  </span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-lg font-semibold text-slate-200">
@@ -233,7 +243,9 @@ export default async function IndexPage() {
                     <span>VoltStudio</span>
                   </div>
                 </div>
-                <p className="text-slate-500 text-sm mt-4">$500 / month</p>
+                <p className="text-slate-500 text-sm mt-4">
+                  {t('supporters.tiers.perMonth', { amount: '$500' })}
+                </p>
               </div>
             </div>
           </div>
@@ -244,8 +256,10 @@ export default async function IndexPage() {
             <div className="relative">
               <div className="flex items-center gap-2 mb-4">
                 <Diamond className="w-5 h-5 text-cyan-300" weight="light" />
-                <span className="text-sm font-semibold text-cyan-300">Diamond</span>
-                <span className="text-xs text-slate-500">$250/mo</span>
+                <span className="text-sm font-semibold text-cyan-300">{t('supporters.tiers.diamond')}</span>
+                <span className="text-xs text-slate-500">
+                  {t('supporters.tiers.perMo', { amount: '$250' })}
+                </span>
               </div>
               <div className="space-y-2">
                 {['Chris Zhang', 'Alex Renderer', 'RustCraft', 'NodeMaster'].map((name) => (
@@ -263,8 +277,10 @@ export default async function IndexPage() {
             <div className="relative">
               <div className="flex items-center gap-2 mb-4">
                 <Hexagon className="w-5 h-5 text-slate-300" weight="light" />
-                <span className="text-sm font-semibold text-slate-300">Titanium</span>
-                <span className="text-xs text-slate-500">$100/mo</span>
+                <span className="text-sm font-semibold text-slate-300">{t('supporters.tiers.titanium')}</span>
+                <span className="text-xs text-slate-500">
+                  {t('supporters.tiers.perMo', { amount: '$100' })}
+                </span>
               </div>
               <div className="space-y-2">
                 {['ModelMaker', 'ProceduralPro', 'VoxelVince', 'MeshMaster'].map((name) => (
@@ -282,8 +298,10 @@ export default async function IndexPage() {
             <div className="relative">
               <div className="flex items-center gap-2 mb-4">
                 <Star className="w-5 h-5 text-slate-400" weight="light" />
-                <span className="text-sm font-semibold text-slate-400">Platinum</span>
-                <span className="text-xs text-slate-500">$50/mo</span>
+                <span className="text-sm font-semibold text-slate-400">{t('supporters.tiers.platinum')}</span>
+                <span className="text-xs text-slate-500">
+                  {t('supporters.tiers.perMo', { amount: '$50' })}
+                </span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {['GeometryGuru', 'PolyPete', 'ShaderSam', 'NodeNinja', 'BevelBoss', 'ExtrudeMaster', 'UVUnwrapper', 'TopologyTom', 'HalfEdgeHero', 'AttributeAce'].map((name) => (
@@ -298,8 +316,10 @@ export default async function IndexPage() {
             <div className="relative">
               <div className="flex items-center gap-2 mb-4">
                 <Medal className="w-5 h-5 text-amber-600" weight="light" />
-                <span className="text-sm font-semibold text-amber-600">Gold</span>
-                <span className="text-xs text-slate-500">$25/mo</span>
+                <span className="text-sm font-semibold text-amber-600">{t('supporters.tiers.gold')}</span>
+                <span className="text-xs text-slate-500">
+                  {t('supporters.tiers.perMo', { amount: '$25' })}
+                </span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {['vertex_lover', 'poly_pusher', 'rust_modeler', 'bevy_fan', 'node_wizard', 'mesh_maker', 'geo_genius', 'curve_crafter', 'surface_sculptor', 'primitive_pro', 'boolean_boss', 'vdb_victor'].map((name) => (
@@ -318,7 +338,7 @@ export default async function IndexPage() {
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold hover:from-indigo-600 hover:to-violet-600 transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
             >
               <Heart className="w-5 h-5" weight="light" />
-              Become a Supporter
+              {t('supporters.become')}
             </Link>
           </div>
         </div>

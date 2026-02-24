@@ -20,9 +20,9 @@ export interface Release {
 
 // GitHub 仓库信息（用于 API 调用）
 export const githubRepo = {
-  // Defaults should point at this website repo so the marketing pages work out-of-the-box.
+  // Defaults point at the main app repo (where Releases are published).
   owner: process.env.NEXT_PUBLIC_GITHUB_OWNER || 'Cunning3D',
-  repo: process.env.NEXT_PUBLIC_GITHUB_REPO || 'Cunning3d_website',
+  repo: process.env.NEXT_PUBLIC_GITHUB_REPO || 'Cunning3D-Main',
 };
 
 // 静态版本列表（备用，当 API 不可用时使用）

@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { Download, Github, Linkedin, Mail, MapPin, Twitter, Globe } from "lucide-react"
 import { CopyButton } from "./CopyButton"
-import { SmoothScrollLink } from "./SmoothScrollLink"
+import { TocNav } from "./TocNav"
 import type { MeProfile } from "@/config/me"
 
 export interface SidebarNavItem {
@@ -157,17 +157,7 @@ export function ProfileSidebar({
           <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
             {tocTitle}
           </div>
-          <nav className="grid gap-1">
-            {navItems.map((item) => (
-              <SmoothScrollLink
-                key={item.id}
-                href={`#${item.id}`}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md px-2 py-1 hover:bg-accent"
-              >
-                {item.label}
-              </SmoothScrollLink>
-            ))}
-          </nav>
+          <TocNav items={navItems} />
         </CardContent>
       </Card>
     </div>

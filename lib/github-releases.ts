@@ -39,7 +39,15 @@ export async function fetchGitHubReleases(limit = 10): Promise<Release[]> {
 
   let res: Response;
   try {
+    const token = String(process.env.GITHUB_ACCESS_TOKEN || process.env.GITHUB_TOKEN || '').trim();
+    const headers: HeadersInit = {
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
     res = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases?per_page=${limit}`, {
+      headers,
       next: { revalidate: 3600 }, // 缓存 1 小时
     });
   } catch (e) {

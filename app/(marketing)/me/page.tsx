@@ -29,7 +29,7 @@ export default async function AboutMePage() {
   const locale = (await getLocale()) as MeLocale;
   const config = mePageByLocale[locale] ?? mePageByLocale.zh;
   const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH)
-  const downloadPdfHref = `${basePath}/me/pdf`
+  const downloadPdfHref = `${basePath}/me/pdf?locale=${locale}`
 
   const navItems = [
     { id: "about", label: config.meta.title },

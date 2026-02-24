@@ -33,7 +33,21 @@
       "progress": "开发进度"
     },
     "supporters": {
-      "title": "Cunning3D 支持者"
+      "title": "Cunning3D 支持者",
+      "badge": "由社区驱动",
+      "desc": "Cunning3D 的诞生离不开这些优秀的个人与组织。",
+      "become": "成为支持者",
+      "tiers": {
+        "corporateTitanium": "企业 · 钛金",
+        "corporatePlatinum": "企业 · 铂金",
+        "corporateBronze": "企业 · 青铜",
+        "diamond": "钻石",
+        "titanium": "钛金",
+        "platinum": "铂金",
+        "gold": "黄金",
+        "perMonth": "{amount}/月",
+        "perMo": "{amount}/月"
+      }
     }
   },
   "features": {
@@ -239,15 +253,77 @@
   "donate": {
     "title": "支持 Cunning3D 的未来",
     "subtitle": "加入开发基金，支持 Cunning3D 核心程序化建模功能的开发。",
+    "badge": "由社区驱动",
+    "hero": {
+      "headlinePrefix": "支持",
+      "headlineHighlight": "3D 的未来",
+      "desc": "你的支持将帮助我们打造下一代程序化建模工具。加入{count}位支持者，一起把愿景变成现实。",
+      "fallbackCount": "数百",
+      "monthlyLabel": "每月",
+      "supportersLabel": "支持者",
+      "openSourceLabel": "开源",
+      "impactLabel": "影响"
+    },
     "monthly": "每月",
     "oneTime": "一次性",
+    "youllBecome": "你将成为",
     "become": "成为 {tier} 会员！",
     "donateBtn": "捐赠 ${amount}",
+    "perMonth": "/月",
     "comingSoon": "即将推出",
     "crypto": "或使用加密货币捐赠：",
     "copyAddress": "点击复制地址",
+    "stats": {
+      "oneTime": "一次性捐赠",
+      "monthlyRecurring": "每月持续支持",
+      "totalSupporters": "支持者总数",
+      "corporateSponsors": "企业赞助"
+    },
+    "wall": {
+      "title": "支持者墙",
+      "desc": "Cunning3D 的诞生离不开这些优秀的个人与组织。",
+      "emptyTitle": "成为第一位支持者",
+      "emptyDesc": "你的名字将显示在这里以及应用内鸣谢名单中。支持程序化建模的未来。",
+      "visit": "访问",
+      "perMonth": "{amount}/月",
+      "note": "统计会从支付平台自动同步。如有问题请<contact>联系我们</contact>。",
+      "syncNote": "统计会从支付平台自动同步。",
+      "contact": "联系我们",
+      "forQuestions": "如有问题。"
+    },
+    "why": {
+      "title": "为什么支持 Cunning3D？",
+      "items": {
+        "sustainableTitle": "可持续发展",
+        "sustainableDesc": "你的支持让我们能投入更多时间做核心开发与维护。",
+        "communityTitle": "社区优先",
+        "communityDesc": "支持者通过反馈与功能建议一起塑造路线图。",
+        "recognitionTitle": "鸣谢",
+        "recognitionDesc": "你的名字将出现在鸣谢名单与支持者墙上。"
+      }
+    },
     "questions": "有问题？",
     "contact": "联系我们"
+  },
+  "pricing": {
+    "metaTitle": "定价",
+    "title": "支持 Cunning3D",
+    "subtitle": "帮助我们打造最好的节点式程序化 3D 工作流。",
+    "cardTitle": "你的支持将用于",
+    "funds": {
+      "docsExamples": "文档与示例",
+      "engineNodes": "引擎与节点开发",
+      "performanceGpu": "性能与 GPU 功能",
+      "toolingCi": "工具链与 CI",
+      "communityFeedback": "社区与反馈闭环",
+      "releaseDistribution": "发布与分发"
+    },
+    "thankYou": "感谢",
+    "donate": "捐赠",
+    "preferGithub": "更喜欢 GitHub？赞助项目，让我们更快迭代。"
+  },
+  "footer": {
+    "text": "由<cunning>Cunning3D</cunning>构建。部署于<vercel>Vercel</vercel>。插画来自<popsy>Popsy</popsy>。源码托管在<github>GitHub</github>。"
   },
   "mePage": {
     "name": "你的名字",

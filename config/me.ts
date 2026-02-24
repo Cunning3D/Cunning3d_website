@@ -173,6 +173,20 @@ export const mePageByLocale: Record<MeLocale, MePageConfig> = {
       title: 'Selected Projects',
       items: [
         {
+          name: 'Cunning3D',
+          description:
+            'A node-based procedural modeling DCC built around a reusable kernel (Rust + Bevy).',
+          highlights: [
+            'A complete, runnable system with a growing library of CDA examples.',
+            'Tooling-first design: reliable workflows, iteration speed, and production-minded architecture.',
+          ],
+          tags: ['Rust', 'Bevy', 'DCC', 'Procedural Modeling', 'PCG'],
+          links: [
+            { label: 'Website', href: 'https://cunning3d.com' },
+            { label: 'GitHub', href: 'https://github.com/Cunning3D/Cunning3D-Dev' },
+          ],
+        },
+        {
           name: 'PCG Road System',
           description: 'A procedural road generation & editing system designed for level production at scale.',
           highlights: [
@@ -306,6 +320,16 @@ export const mePageByLocale: Record<MeLocale, MePageConfig> = {
     projects: {
       title: '代表项目',
       items: [
+        {
+          name: 'Cunning3D',
+          description: '基于 Rust + Bevy 的节点式程序化建模软件（DCC），围绕可复用内核构建。',
+          highlights: ['完整可运行的软件系统，并沉淀了大量 CDA 示例案例。', '以工具链与工作流为中心，强调可维护与可落地。'],
+          tags: ['Rust', 'Bevy', 'DCC', '程序化建模', 'PCG'],
+          links: [
+            { label: '官网', href: 'https://cunning3d.com' },
+            { label: 'GitHub', href: 'https://github.com/Cunning3D/Cunning3D-Dev' },
+          ],
+        },
         {
           name: 'PCG 道路系统',
           description: '面向关卡生产的道路生成与编辑系统，强调稳定性、可复用与可维护。',

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { clearGitHubSessionCookie, getBasePath } from "@/lib/showcase/github-oauth";
+import { clearGitHubSessionCookie, getBasePath, normalizeNextPath } from "@/lib/showcase/github-oauth";
 
 export async function POST(req: NextRequest) {
   const basePath = getBasePath();
-  const res = NextResponse.redirect(
-    new URL(`${basePath}/showcase/submit`, req.nextUrl.origin)
-  );
+  const defaultRedirectPath = `${basePath}/showcase/submit`;
+  const nextPath = normalizeNextPath(req.nextUrl.searchParams.get("next"), basePath);
+  const res = NextResponse.redirect(new URL(nextPath || defaultRedirectPath, req.nextUrl.origin));
   clearGitHubSessionCookie(res);
   return res;
 }
@@ -13,4 +13,3 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   return POST(req);
 }
-

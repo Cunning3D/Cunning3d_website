@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   clearGitHubSessionCookie,
   clearOAuthStateCookie,
+  clearOAuthNextCookie,
   getBasePath,
   getGitHubOAuthClientId,
   getGitHubOAuthClientSecret,
   getGitHubOAuthRedirectUri,
   isGitHubOAuthConfigured,
+  normalizeNextPath,
+  readOAuthNextCookie,
   readOAuthStateCookie,
   setGitHubSessionCookie,
 } from "@/lib/showcase/github-oauth";
@@ -25,7 +28,9 @@ type GitHubTokenResponse =
 
 export async function GET(req: NextRequest) {
   const basePath = getBasePath();
-  const redirectTo = new URL(`${basePath}/showcase/submit`, req.nextUrl.origin);
+  const defaultRedirectPath = `${basePath}/showcase/submit`;
+  const nextFromCookie = normalizeNextPath(readOAuthNextCookie(req), basePath);
+  const redirectTo = new URL(nextFromCookie || defaultRedirectPath, req.nextUrl.origin);
 
   if (!isGitHubOAuthConfigured()) {
     return NextResponse.redirect(redirectTo);
@@ -40,6 +45,7 @@ export async function GET(req: NextRequest) {
   if (error || !code || !state || !expectedState || state !== expectedState) {
     const res = NextResponse.redirect(redirectTo);
     clearOAuthStateCookie(res);
+    clearOAuthNextCookie(res);
     clearGitHubSessionCookie(res);
     return res;
   }
@@ -62,18 +68,17 @@ export async function GET(req: NextRequest) {
   if (!tokenRes.ok || !("access_token" in tokenJson)) {
     const res = NextResponse.redirect(redirectTo);
     clearOAuthStateCookie(res);
+    clearOAuthNextCookie(res);
     clearGitHubSessionCookie(res);
     return res;
   }
 
-  const res = NextResponse.redirect(
-    new URL(`${redirectTo.toString()}?connected=1`, redirectTo)
-  );
+  const res = NextResponse.redirect(redirectTo);
   clearOAuthStateCookie(res);
+  clearOAuthNextCookie(res);
   setGitHubSessionCookie(res, {
     accessToken: tokenJson.access_token,
     createdAt: new Date().toISOString(),
   });
   return res;
 }
-

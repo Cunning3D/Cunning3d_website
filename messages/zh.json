@@ -9,6 +9,8 @@
     "me": "关于我",
     "donate": "捐赠",
     "login": "登录",
+    "account": "账号",
+    "logout": "退出",
     "menu": "菜单",
     "close": "关闭"
   },
@@ -326,6 +328,20 @@
   },
   "footer": {
     "text": "由<cunning>Cunning3D</cunning>构建。部署于<vercel>Vercel</vercel>。插画来自<popsy>Popsy</popsy>。源码托管在<github>GitHub</github>。"
+  },
+  "account": {
+    "breadcrumb": "账号",
+    "title": "你的账号",
+    "subtitle": "极客模式：GitHub 登录，无需密码。",
+    "loading": "加载中\u2026",
+    "menuAria": "账号菜单",
+    "notSignedInTitle": "尚未登录",
+    "notSignedInDesc": "使用 GitHub 登录即可提交案例，并管理你的信息。",
+    "submitShowcase": "提交到案例",
+    "viewGithub": "查看 GitHub",
+    "myWorks": "我的作品",
+    "loadingWorks": "正在加载作品\u2026",
+    "noWorks": "还没有作品。先提交一个 CDA，就会在这里展示。"
   },
   "mePage": {
     "name": "你的名字",

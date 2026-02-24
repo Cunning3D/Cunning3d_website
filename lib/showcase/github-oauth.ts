@@ -3,6 +3,7 @@ import type { NextRequest, NextResponse } from "next/server";
 
 const SESSION_COOKIE = "c3d_github_session";
 const STATE_COOKIE = "c3d_github_oauth_state";
+const NEXT_COOKIE = "c3d_github_oauth_next";
 
 function normalizeBasePath(p: unknown) {
   const s = String(p || "").trim();
@@ -15,6 +16,23 @@ function normalizeBasePath(p: unknown) {
 
 export function getBasePath() {
   return normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH);
+}
+
+export function normalizeNextPath(next: string | null | undefined, basePath: string) {
+  const raw = String(next || "").trim();
+  if (!raw) return null;
+
+  // Only allow same-origin relative paths (avoid open redirects).
+  if (!raw.startsWith("/")) return null;
+  if (raw.startsWith("//")) return null;
+  if (raw.includes("\\") || raw.includes("\u0000")) return null;
+  // Disallow schemes like "https:" just in case.
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(raw)) return null;
+
+  const bp = String(basePath || "").trim();
+  if (!bp) return raw;
+  if (raw === bp || raw.startsWith(`${bp}/`)) return raw;
+  return `${bp}${raw === "/" ? "" : raw}`;
 }
 
 export function isGitHubOAuthConfigured() {
@@ -109,12 +127,38 @@ export function setOAuthStateCookie(res: NextResponse, state: string) {
   });
 }
 
+export function setOAuthNextCookie(res: NextResponse, nextPath: string) {
+  const s = String(nextPath || "").trim();
+  if (!s) return;
+  res.cookies.set(NEXT_COOKIE, s, {
+    httpOnly: true,
+    secure: cookieSecureFlag(),
+    sameSite: "lax",
+    path: "/",
+    maxAge: 10 * 60,
+  });
+}
+
 export function readOAuthStateCookie(req: NextRequest) {
   return req.cookies.get(STATE_COOKIE)?.value || "";
 }
 
+export function readOAuthNextCookie(req: NextRequest) {
+  return req.cookies.get(NEXT_COOKIE)?.value || "";
+}
+
 export function clearOAuthStateCookie(res: NextResponse) {
   res.cookies.set(STATE_COOKIE, "", {
+    httpOnly: true,
+    secure: cookieSecureFlag(),
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
+}
+
+export function clearOAuthNextCookie(res: NextResponse) {
+  res.cookies.set(NEXT_COOKIE, "", {
     httpOnly: true,
     secure: cookieSecureFlag(),
     sameSite: "lax",
@@ -166,4 +210,3 @@ export function readGitHubSession(req: NextRequest) {
     return null;
   }
 }
-

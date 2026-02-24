@@ -6,6 +6,7 @@ import { MainNav } from "@/components/main-nav"
 import { SiteFooter } from "@/components/site-footer"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LocaleToggle } from "@/components/locale-toggle"
+import { SiteUserMenu } from "@/components/site-user-menu"
 
 interface MarketingLayoutProps {
   children: React.ReactNode
@@ -37,6 +38,7 @@ export default async function MarketingLayout({
             >
               <Heart className="w-4 h-4" weight="light" /> {t('donate')}
             </Link>
+            <SiteUserMenu />
             <LocaleToggle />
             <ThemeToggle />
           </nav>

@@ -9,6 +9,8 @@
     "me": "About Me",
     "donate": "Donate",
     "login": "Login",
+    "account": "Account",
+    "logout": "Sign out",
     "menu": "Menu",
     "close": "Close"
   },
@@ -326,6 +328,20 @@
   },
   "footer": {
     "text": "Built by <cunning>Cunning3D</cunning>. Hosted on <vercel>Vercel</vercel>. Illustrations by <popsy>Popsy</popsy>. The source code is available on <github>GitHub</github>."
+  },
+  "account": {
+    "breadcrumb": "Account",
+    "title": "Your account",
+    "subtitle": "Geek mode: GitHub login, no passwords.",
+    "loading": "Loading\u2026",
+    "menuAria": "Account menu",
+    "notSignedInTitle": "Not signed in",
+    "notSignedInDesc": "Sign in with GitHub to submit to the Showcase and manage your profile.",
+    "submitShowcase": "Submit to Showcase",
+    "viewGithub": "View GitHub",
+    "myWorks": "My works",
+    "loadingWorks": "Loading works\u2026",
+    "noWorks": "No works yet. Submit your first CDA to get listed here."
   },
   "mePage": {
     "name": "Your Name",

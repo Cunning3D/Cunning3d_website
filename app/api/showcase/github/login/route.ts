@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   createOAuthState,
+  getBasePath,
   getGitHubOAuthClientId,
   getGitHubOAuthRedirectUri,
   getGitHubOAuthScope,
   isGitHubOAuthConfigured,
+  normalizeNextPath,
+  setOAuthNextCookie,
   setOAuthStateCookie,
 } from "@/lib/showcase/github-oauth";
 
@@ -15,6 +18,9 @@ export async function GET(req: NextRequest) {
       { status: 501 }
     );
   }
+
+  const basePath = getBasePath();
+  const nextPath = normalizeNextPath(req.nextUrl.searchParams.get("next"), basePath);
 
   const state = createOAuthState();
   const params = new URLSearchParams();
@@ -28,6 +34,6 @@ export async function GET(req: NextRequest) {
     `https://github.com/login/oauth/authorize?${params.toString()}`
   );
   setOAuthStateCookie(res, state);
+  if (nextPath) setOAuthNextCookie(res, nextPath);
   return res;
 }
-

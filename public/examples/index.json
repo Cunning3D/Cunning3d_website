@@ -4,7 +4,7 @@
       "id": "Simple-Cube",
       "title": "Simple Cube",
       "author": "Cunning3D",
-      "image": "/banner.png",
+      "image": "/examples/Simple Cube.png",
       "description": "Simple Cube",
       "tags": [
         "Example"
@@ -16,7 +16,7 @@
       "id": "Voxel-Editor",
       "title": "Voxel Editor",
       "author": "Cunning3D",
-      "image": "/banner.png",
+      "image": "/examples/Voxel Editor.png",
       "description": "Voxel Editor",
       "tags": [
         "Example"

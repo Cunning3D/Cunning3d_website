@@ -28,6 +28,8 @@ function titleFromFilename(name) {
   return name.replace(/\.cda$/i, "");
 }
 
+const IMAGE_EXTENSIONS = [".webp", ".png", ".jpg", ".jpeg", ".avif", ".gif"];
+
 async function exists(p) {
   try {
     await fs.access(p);
@@ -49,27 +51,41 @@ async function listCdaFiles(dir) {
   return out;
 }
 
+async function findExampleImageFile(baseName) {
+  for (const ext of IMAGE_EXTENSIONS) {
+    const candidate = `${baseName}${ext}`;
+    const p = path.join(examplesDir, candidate);
+    if (await exists(p)) return candidate;
+  }
+  return null;
+}
+
 async function main() {
   if (!(await exists(examplesDir))) {
     await fs.mkdir(examplesDir, { recursive: true });
   }
 
   const files = await listCdaFiles(examplesDir);
-  const items = files.map((file) => {
-    const id = idFromFilename(file);
-    const title = titleFromFilename(file);
-    return {
-      id,
-      title,
-      author: "Cunning3D",
-      image: `${basePath}/banner.png`,
-      description: title,
-      tags: ["Example"],
-      featured: false,
-      // Leave filenames unencoded; URLs get encoded when passed as query params in the UI.
-      cdaUrl: `${basePath}/examples/${file}`,
-    };
-  });
+  const items = await Promise.all(
+    files.map(async (file) => {
+      const id = idFromFilename(file);
+      const title = titleFromFilename(file);
+      const imageFile = await findExampleImageFile(title);
+      return {
+        id,
+        title,
+        author: "Cunning3D",
+        image: imageFile
+          ? `${basePath}/examples/${imageFile}`
+          : `${basePath}/banner.png`,
+        description: title,
+        tags: ["Example"],
+        featured: false,
+        // Leave filenames unencoded; URLs get encoded when passed as query params in the UI.
+        cdaUrl: `${basePath}/examples/${file}`,
+      };
+    })
+  );
 
   await fs.writeFile(outFile, JSON.stringify({ items }, null, 2) + "\n", "utf8");
   console.log(`[generate-examples-index] wrote ${items.length} item(s) to ${outFile}`);

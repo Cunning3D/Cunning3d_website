@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import Link from "next/link";
 import { CopyCurrentUrlButton } from "@/components/showcase/copy-current-url-button";
+import { ShowcaseLikeButton } from "@/components/showcase/showcase-like-button";
 import { WasmPlayerFrame } from "@/components/showcase/wasm-player-frame";
 
 function normalizeBasePath(p: unknown) {
@@ -70,6 +71,7 @@ export default async function ShowcaseViewerPage({
               Back
             </Link>
             <CopyCurrentUrlButton label="Copy link" />
+            {cda ? <ShowcaseLikeButton itemKey={cda} /> : null}
             {cda ? (
               <a
                 href={cda}

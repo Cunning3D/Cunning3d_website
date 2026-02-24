@@ -9,6 +9,7 @@ import {
   ArrowRight,
   Check,
   Copy,
+  Heart,
   MagnifyingGlass,
   Palette,
   Star,
@@ -24,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useShowcaseLikes } from "@/components/showcase/use-showcase-likes";
 
 export interface ShowcaseItem {
   id: string;
@@ -135,6 +137,7 @@ function writeQueryToLocation(next: ShowcaseQueryState, mode: "push" | "replace"
 }
 
 export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
+  const { likedKeys, toggleLike } = useShowcaseLikes();
   const [hydrated, setHydrated] = useState(false);
   const [query, setQuery] = useState<ShowcaseQueryState>({
     tag: "",
@@ -526,71 +529,98 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
           <div className="container">
             <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <AnimatePresence mode="popLayout">
-                {pagedItems.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    layout
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 12 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Link
-                      href={buildViewerHref(item)}
-                      className="group relative rounded-xl overflow-hidden border bg-white dark:bg-slate-900 hover:shadow-xl transition-shadow block h-full"
+                {pagedItems.map((item) => {
+                  const liked = likedKeys.has(item.cdaUrl);
+                  return (
+                    <motion.div
+                      key={item.id}
+                      layout
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 12 }}
+                      transition={{ duration: 0.2 }}
                     >
-                      <div className="aspect-video relative overflow-hidden bg-slate-200 dark:bg-slate-800">
-                        <Image
-                          src={item.image}
-                          alt={item.title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-                        <div className="absolute left-3 bottom-3 right-3">
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="text-white font-semibold truncate">
-                              {item.title}
+                      <Link
+                        href={buildViewerHref(item)}
+                        className="group relative rounded-xl overflow-hidden border bg-white dark:bg-slate-900 hover:shadow-xl transition-shadow block h-full"
+                      >
+                        <div className="aspect-video relative overflow-hidden bg-slate-200 dark:bg-slate-800">
+                          <Image
+                            src={item.image}
+                            alt={item.title}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleLike(item.cdaUrl);
+                            }}
+                            aria-label={liked ? "Unlike" : "Like"}
+                            aria-pressed={liked}
+                            className={`absolute top-3 right-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full border backdrop-blur transition-colors ${
+                              liked
+                                ? "bg-pink-500/90 border-pink-400/40 text-white"
+                                : "bg-white/10 border-white/20 text-white hover:bg-white/15"
+                            }`}
+                          >
+                            <Heart
+                              className="w-4 h-4"
+                              weight={liked ? "fill" : "light"}
+                            />
+                          </button>
+                          <div className="absolute left-3 bottom-3 right-3">
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="text-white font-semibold truncate">
+                                {item.title}
+                              </div>
+                              {item.featured ? (
+                                <Star
+                                  className="w-5 h-5 text-amber-400"
+                                  weight="fill"
+                                />
+                              ) : null}
                             </div>
-                            {item.featured ? (
-                              <Star
-                                className="w-5 h-5 text-amber-400"
-                                weight="fill"
-                              />
-                            ) : null}
-                          </div>
-                          <div className="text-xs text-white/70 truncate">
-                            by {item.author}
+                            <div className="text-xs text-white/70 truncate">
+                              by {item.author}
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="p-4">
-                        <div className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">
-                          {item.description}
+                        <div className="p-4">
+                          <div className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">
+                            {item.description}
+                          </div>
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {item.tags.slice(0, 3).map((tag) => (
+                              <Badge
+                                key={tag}
+                                variant="secondary"
+                                className="text-[10px] px-2 py-0.5"
+                              >
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                            <span>
+                              {item.bytes ? formatBytes(item.bytes) : ""}
+                            </span>
+                            <span>
+                              {item.updatedAt
+                                ? formatShortDate(item.updatedAt)
+                                : ""}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {item.tags.slice(0, 3).map((tag) => (
-                            <Badge
-                              key={tag}
-                              variant="secondary"
-                              className="text-[10px] px-2 py-0.5"
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                          <span>{item.bytes ? formatBytes(item.bytes) : ""}</span>
-                          <span>
-                            {item.updatedAt ? formatShortDate(item.updatedAt) : ""}
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </AnimatePresence>
             </motion.div>
 

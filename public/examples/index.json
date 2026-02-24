@@ -1,3 +1,28 @@
 {
-  "items": []
+  "items": [
+    {
+      "id": "Simple-Cube",
+      "title": "Simple Cube",
+      "author": "Cunning3D",
+      "image": "/banner.png",
+      "description": "Simple Cube",
+      "tags": [
+        "Example"
+      ],
+      "featured": false,
+      "cdaUrl": "/examples/Simple Cube.cda"
+    },
+    {
+      "id": "Voxel-Editor",
+      "title": "Voxel Editor",
+      "author": "Cunning3D",
+      "image": "/banner.png",
+      "description": "Voxel Editor",
+      "tags": [
+        "Example"
+      ],
+      "featured": false,
+      "cdaUrl": "/examples/Voxel Editor.cda"
+    }
+  ]
 }

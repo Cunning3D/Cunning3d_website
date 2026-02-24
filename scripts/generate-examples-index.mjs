@@ -24,6 +24,10 @@ function idFromFilename(name) {
   return name.replace(/\.cda$/i, "").replace(/[^a-zA-Z0-9_-]+/g, "-");
 }
 
+function titleFromFilename(name) {
+  return name.replace(/\.cda$/i, "");
+}
+
 async function exists(p) {
   try {
     await fs.access(p);
@@ -53,15 +57,17 @@ async function main() {
   const files = await listCdaFiles(examplesDir);
   const items = files.map((file) => {
     const id = idFromFilename(file);
+    const title = titleFromFilename(file);
     return {
       id,
-      title: id,
+      title,
       author: "Cunning3D",
       image: `${basePath}/banner.png`,
-      description: file,
+      description: title,
       tags: ["Example"],
       featured: false,
-      cdaUrl: `${basePath}/examples/${encodeURIComponent(file)}`,
+      // Leave filenames unencoded; URLs get encoded when passed as query params in the UI.
+      cdaUrl: `${basePath}/examples/${file}`,
     };
   });
 

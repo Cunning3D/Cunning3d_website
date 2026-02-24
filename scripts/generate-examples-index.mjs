@@ -39,6 +39,19 @@ async function exists(p) {
   }
 }
 
+function safeString(v) {
+  return typeof v === "string" ? v.trim() : "";
+}
+
+function safeStringArray(v) {
+  if (!Array.isArray(v)) return [];
+  return v.map(safeString).filter(Boolean).slice(0, 12);
+}
+
+function safeBoolean(v) {
+  return typeof v === "boolean" ? v : undefined;
+}
+
 async function listCdaFiles(dir) {
   const out = [];
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -58,6 +71,28 @@ async function findExampleImageFile(baseName) {
     if (await exists(p)) return candidate;
   }
   return null;
+}
+
+async function readExampleMetadata(baseName) {
+  const p = path.join(examplesDir, `${baseName}.json`);
+  // Avoid colliding with the generated index file.
+  if (baseName.toLowerCase() === "index") return null;
+
+  try {
+    const txt = await fs.readFile(p, "utf8");
+    const json = JSON.parse(txt) ?? {};
+    return {
+      title: safeString(json.title),
+      author: safeString(json.author),
+      authorLink: safeString(json.authorLink),
+      description: safeString(json.description),
+      tags: safeStringArray(json.tags),
+      featured: safeBoolean(json.featured),
+      image: safeString(json.image),
+    };
+  } catch {
+    return null;
+  }
 }
 
 async function main() {
@@ -80,20 +115,28 @@ async function main() {
       }
 
       const id = idFromFilename(file);
-      const title = titleFromFilename(file);
-      const imageFile = await findExampleImageFile(title);
+      const baseName = titleFromFilename(file);
+      const metadata = await readExampleMetadata(baseName);
+      const title = metadata?.title || baseName;
+      const imageFile = await findExampleImageFile(baseName);
       return {
         id,
         title,
-        author: "Cunning3D",
-        image: imageFile
-          ? `${basePath}/examples/${imageFile}`
-          : `${basePath}/banner.png`,
-        description: title,
+        author: metadata?.author || "Cunning3D",
+        authorLink: metadata?.authorLink || undefined,
+        image: (() => {
+          if (metadata?.image) {
+            if (/^https?:\/\//i.test(metadata.image)) return metadata.image;
+            if (metadata.image.startsWith("/")) return `${basePath}${metadata.image}`;
+            return `${basePath}/examples/${metadata.image}`;
+          }
+          return imageFile ? `${basePath}/examples/${imageFile}` : `${basePath}/banner.png`;
+        })(),
+        description: metadata?.description || title,
         bytes,
         updatedAt,
-        tags: ["Example"],
-        featured: false,
+        tags: metadata?.tags?.length ? metadata.tags : ["Example"],
+        featured: metadata?.featured ?? false,
         // Leave filenames unencoded; URLs get encoded when passed as query params in the UI.
         cdaUrl: `${basePath}/examples/${file}`,
       };

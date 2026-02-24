@@ -313,6 +313,21 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
             Real, interactive examples powered by the Cunning Player (WASM).
           </p>
 
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            <Link
+              href="/showcase/submit"
+              className="inline-flex items-center rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
+            >
+              Submit
+            </Link>
+            <Link
+              href="/showcase/new"
+              className="inline-flex items-center rounded-md border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/15 transition-colors"
+            >
+              New (WASM soon)
+            </Link>
+          </div>
+
           <div className="mt-8 flex flex-col gap-3 max-w-3xl">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">

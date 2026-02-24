@@ -8,7 +8,9 @@
     "blog": "Blog",
     "me": "About Me",
     "donate": "Donate",
-    "login": "Login"
+    "login": "Login",
+    "menu": "Menu",
+    "close": "Close"
   },
   "home": {
     "hero": {
@@ -61,21 +63,116 @@
     "title": "Download Cunning3D",
     "subtitle": "Get the latest version of Cunning3D for your platform. Free and open source.",
     "latest": "Latest Release",
+    "latestBadge": "Latest",
     "all": "All Releases",
     "source": "Build from Source",
     "requirements": "System Requirements",
+    "releaseNotes": "Release Notes",
     "coming": "Coming Soon",
     "noReleases": "No releases available yet. Check back soon or build from source!",
+    "prereleaseBadge": "Pre-release",
     "clone": "Clone the repository",
     "build": "Build with Cargo",
-    "seeDoc": "See the {link} for detailed build instructions."
+    "sourceDesc": "Want to build Cunning3D yourself? Clone the repository and follow the build instructions.",
+    "seeDoc": "See the <link>documentation</link> for detailed build instructions."
   },
   "showcase": {
     "title": "Showcase",
-    "subtitle": "Amazing creations made with Cunning3D. Get inspired by what the community is building.",
+    "subtitle": "Real, interactive examples powered by the Cunning Player (WASM).",
     "featured": "Featured Works",
     "all": "All",
     "noWorks": "No works found for this filter.",
+    "search": {
+      "placeholder": "Search title, tags, author\u2026"
+    },
+    "sort": {
+      "placeholder": "Sort",
+      "featured": "Featured",
+      "new": "Newest",
+      "size": "Largest",
+      "az": "A\u2013Z"
+    },
+    "results": {
+      "noResults": "No results",
+      "showing": "Showing {start}\u2013{end} of {total}",
+      "loading": "(loading\u2026)"
+    },
+    "actions": {
+      "submit": "Submit",
+      "new": "New",
+      "newSoon": "New (WASM soon)",
+      "copyLink": "Copy link",
+      "copied": "Copied",
+      "downloadCda": "Download CDA",
+      "back": "Back",
+      "backToShowcase": "Back to Showcase",
+      "clear": "Clear",
+      "clearSearch": "Clear search"
+    },
+    "pagination": {
+      "prev": "Prev",
+      "next": "Next",
+      "page": "Page {page} / {pageCount}"
+    },
+    "empty": {
+      "title": "No examples synced yet",
+      "desc": "Put .cda files into public/examples/ and run pnpm prebuild (or let GitHub Actions sync them) to generate public/examples/index.json."
+    },
+    "viewer": {
+      "breadcrumb": "Interactive Showcase",
+      "titleFallback": "Cunning Player",
+      "wasmNotSyncedTitle": "WASM player not synced yet",
+      "wasmNotSyncedDesc": "Expected files under /public/wasm/cunning_player/: index.html, cunning_player.js, cunning_player_bg.wasm.",
+      "wasmNotSyncedHint": "Run pnpm predev (or pnpm build) in Cunning3d_website to copy the player web output into public/.",
+      "loading": "Loading player\u2026"
+    },
+    "submitPage": {
+      "breadcrumb": "Community",
+      "title": "Submit to Showcase",
+      "desc": "Upload a .cda (and an optional cover image) to create a GitHub Pull Request. After review, it will appear on the public Showcase."
+    },
+    "submit": {
+      "githubLoginTitle": "GitHub login (recommended)",
+      "githubLoginDesc": "Creates a PR to <code>{repo}</code>.",
+      "signOut": "Sign out",
+      "checking": "Checking\u2026",
+      "signInGithub": "Sign in with GitHub",
+      "oauthNotConfigured": "GitHub OAuth is not configured on this deployment yet. Ask the site owner to set GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_CLIENT_SECRET, GITHUB_OAUTH_COOKIE_SECRET.",
+      "submitFailed": "Submit failed",
+      "uploadTitle": "Upload",
+      "uploadDesc": "Provide a .cda and (optionally) a cover image. Keep it small\u2014PRs are reviewed manually.",
+      "fields": {
+        "title": "Title",
+        "tags": "Tags",
+        "description": "Description",
+        "cdaFile": "CDA file",
+        "coverImage": "Cover image (optional)"
+      },
+      "placeholders": {
+        "title": "My Procedural City",
+        "tags": "Community, PCG, Roads",
+        "description": "What does this CDA demonstrate?"
+      },
+      "prCreated": "PR created:",
+      "creatingPr": "Creating PR\u2026",
+      "createPr": "Create PR",
+      "back": "Back",
+      "signInHint": "Sign in with GitHub first to prevent anonymous spam.",
+      "manualPrTitle": "Manual PR",
+      "manualPrDesc": "If automatic upload is unavailable, you can still contribute by opening a PR that adds your .cda (and a same-name cover image) into public/examples/."
+    },
+    "newPage": {
+      "breadcrumb": "Showcase",
+      "title": "New (Coming soon)",
+      "desc": "We're building a Cunning3D WASM editor so you can create and share .cda directly in the browser\u2014similar to Shadertoy.",
+      "backToShowcase": "Back to Showcase",
+      "submitCda": "Submit a CDA"
+    },
+    "like": {
+      "like": "Like",
+      "liked": "Liked",
+      "unlike": "Unlike"
+    },
     "cta": {
       "title": "Want to be featured?",
       "desc": "Share your Cunning3D creations and get featured in our showcase!",
@@ -86,17 +183,37 @@
   "roadmap": {
     "title": "Roadmap",
     "subtitle": "See what we're building and what's coming next. This roadmap is updated regularly based on community feedback.",
+    "updated": "Updated {date}",
     "status": {
       "done": "Done",
       "inProgress": "In Progress",
       "planned": "Planned",
       "future": "Future"
     },
+    "stats": {
+      "done": "Completed",
+      "inProgress": "In Progress",
+      "planned": "Planned",
+      "progress": "Progress",
+      "overallProgress": "Overall Progress"
+    },
+    "filter": {
+      "label": "Filter:",
+      "all": "All ({count})"
+    },
+    "phase": {
+      "items": "{count} items"
+    },
+    "empty": {
+      "title": "No items found",
+      "desc": "Try selecting a different filter"
+    },
     "cta": {
       "title": "Have a feature request?",
       "desc": "Join our community and help shape the future of Cunning3D.",
       "issue": "Open an Issue",
-      "discord": "Join Discord"
+      "discord": "Join Discord",
+      "trust": "Join {count}+ developers building with Cunning3D"
     }
   },
   "changelog": {
@@ -104,6 +221,7 @@
     "subtitle": "Version history and release notes. Automatically synced from GitHub Releases.",
     "latest": "Latest",
     "prerelease": "Pre-release",
+    "noReleaseNotes": "No release notes available.",
     "noReleases": "No releases yet",
     "noReleasesDesc": "Check back soon or follow us on GitHub for updates.",
     "cta": {
@@ -112,6 +230,11 @@
       "star": "Star on GitHub",
       "download": "Download Latest"
     }
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Latest news and updates from Cunning3D.",
+    "viewArticle": "View Article"
   },
   "donate": {
     "title": "Support the future of Cunning3D",

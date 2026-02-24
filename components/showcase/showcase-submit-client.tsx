@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,11 +45,12 @@ export function ShowcaseSubmitClient({
   oauthEnabled: boolean;
   submissionsRepo: string;
 }) {
+  const t = useTranslations("showcase");
   const [me, setMe] = useState<GitHubMe>(null);
   const [loadingMe, setLoadingMe] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [tagsInput, setTagsInput] = useState("Community, Example");
+  const [tagsInput, setTagsInput] = useState(t("submit.placeholders.tags"));
   const [cdaFile, setCdaFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -108,12 +110,12 @@ export function ShowcaseSubmitClient({
       });
       const json = (await res.json()) as { prUrl?: string; error?: string };
       if (!res.ok) {
-        setError(json.error || "Submit failed");
+        setError(json.error || t("submit.submitFailed"));
         return;
       }
       if (json.prUrl) setPrUrl(json.prUrl);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Submit failed");
+      setError(e instanceof Error ? e.message : t("submit.submitFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -125,10 +127,13 @@ export function ShowcaseSubmitClient({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="font-heading text-lg font-semibold">
-              GitHub login (recommended)
+              {t("submit.githubLoginTitle")}
             </div>
             <div className="text-sm text-slate-600 dark:text-slate-400">
-              Creates a PR to <code>{submissionsRepo}</code>.
+              {t.rich("submit.githubLoginDesc", {
+                repo: submissionsRepo,
+                code: (chunks) => <code>{chunks}</code>,
+              })}
             </div>
           </div>
 
@@ -153,7 +158,7 @@ export function ShowcaseSubmitClient({
                   method="post"
                 >
                   <Button type="submit" variant="outline" size="sm">
-                    Sign out
+                    {t("submit.signOut")}
                   </Button>
                 </form>
               </>
@@ -171,7 +176,7 @@ export function ShowcaseSubmitClient({
                 }`}
                 aria-disabled={!oauthEnabled}
               >
-                {loadingMe ? "Checking…" : "Sign in with GitHub"}
+                {loadingMe ? t("submit.checking") : t("submit.signInGithub")}
               </a>
             )}
           </div>
@@ -179,37 +184,33 @@ export function ShowcaseSubmitClient({
 
         {!oauthEnabled ? (
           <div className="mt-4 text-sm text-amber-700 dark:text-amber-400">
-            GitHub OAuth is not configured on this deployment yet. Ask the site
-            owner to set <code>GITHUB_OAUTH_CLIENT_ID</code>,{" "}
-            <code>GITHUB_OAUTH_CLIENT_SECRET</code>,{" "}
-            <code>GITHUB_OAUTH_COOKIE_SECRET</code>.
+            {t("submit.oauthNotConfigured")}
           </div>
         ) : null}
       </div>
 
       <div className="rounded-xl border bg-white dark:bg-slate-950 p-5">
-        <div className="font-heading text-lg font-semibold mb-1">Upload</div>
+        <div className="font-heading text-lg font-semibold mb-1">{t("submit.uploadTitle")}</div>
         <div className="text-sm text-slate-600 dark:text-slate-400 mb-5">
-          Provide a <code>.cda</code> and (optionally) a cover image. Keep it
-          small—PRs are reviewed manually.
+          {t("submit.uploadDesc")}
         </div>
 
         <div className="grid gap-4">
           <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-2">
-              <div className="text-sm font-medium">Title</div>
+              <div className="text-sm font-medium">{t("submit.fields.title")}</div>
               <Input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="My Procedural City"
+                placeholder={t("submit.placeholders.title")}
               />
             </div>
             <div className="space-y-2">
-              <div className="text-sm font-medium">Tags</div>
+              <div className="text-sm font-medium">{t("submit.fields.tags")}</div>
               <Input
                 value={tagsInput}
                 onChange={(e) => setTagsInput(e.target.value)}
-                placeholder="Community, PCG, Roads"
+                placeholder={t("submit.placeholders.tags")}
               />
               <div className="flex flex-wrap gap-1.5">
                 {tags.map((t) => (
@@ -222,17 +223,17 @@ export function ShowcaseSubmitClient({
           </div>
 
           <div className="space-y-2">
-            <div className="text-sm font-medium">Description</div>
+            <div className="text-sm font-medium">{t("submit.fields.description")}</div>
             <Input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What does this CDA demonstrate?"
+              placeholder={t("submit.placeholders.description")}
             />
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-2">
-              <div className="text-sm font-medium">CDA file</div>
+              <div className="text-sm font-medium">{t("submit.fields.cdaFile")}</div>
               <Input
                 type="file"
                 accept=".cda"
@@ -240,7 +241,7 @@ export function ShowcaseSubmitClient({
               />
             </div>
             <div className="space-y-2">
-              <div className="text-sm font-medium">Cover image (optional)</div>
+              <div className="text-sm font-medium">{t("submit.fields.coverImage")}</div>
               <Input
                 type="file"
                 accept="image/*"
@@ -255,7 +256,7 @@ export function ShowcaseSubmitClient({
 
           {prUrl ? (
             <div className="text-sm">
-              PR created:{" "}
+              {t("submit.prCreated")}{" "}
               <a href={prUrl} className="underline underline-offset-4">
                 {prUrl}
               </a>
@@ -264,30 +265,28 @@ export function ShowcaseSubmitClient({
 
           <div className="flex flex-wrap items-center gap-2">
             <Button onClick={onSubmit} disabled={!canSubmit}>
-              {submitting ? "Creating PR…" : "Create PR"}
+              {submitting ? t("submit.creatingPr") : t("submit.createPr")}
             </Button>
             <Link
               href="/showcase"
               className="inline-flex items-center rounded-md border px-4 py-2 text-sm hover:bg-accent"
             >
-              Back
+              {t("submit.back")}
             </Link>
           </div>
 
           {!me ? (
             <div className="text-xs text-slate-500 dark:text-slate-400">
-              Sign in with GitHub first to prevent anonymous spam.
+              {t("submit.signInHint")}
             </div>
           ) : null}
         </div>
       </div>
 
       <div className="rounded-xl border bg-slate-50 dark:bg-slate-900 p-5">
-        <div className="font-heading text-lg font-semibold mb-1">Manual PR</div>
+        <div className="font-heading text-lg font-semibold mb-1">{t("submit.manualPrTitle")}</div>
         <div className="text-sm text-slate-600 dark:text-slate-400">
-          If automatic upload is unavailable, you can still contribute by
-          opening a PR that adds your <code>.cda</code> (and a same-name cover
-          image) into <code>public/examples/</code>.
+          {t("submit.manualPrDesc")}
         </div>
       </div>
     </div>

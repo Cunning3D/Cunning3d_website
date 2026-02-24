@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import {
   Heart,
   Crown,
@@ -101,6 +101,8 @@ async function getGitHubStars(): Promise<string | null> {
 }
 
 export default async function IndexPage() {
+  const locale = await getLocale()
+  const isZh = locale === "zh"
   const t = await getTranslations('home')
   const tFeatures = await getTranslations('features')
 
@@ -347,6 +349,10 @@ export default async function IndexPage() {
               <div className={`grid gap-4 ${category.features.length <= 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
                 {category.features.map((f) => {
                   const FeatureIcon = featureIconMap[f.icon] || Hexagon
+                  const title = isZh ? f.titleZh || f.title : f.title
+                  const description = isZh
+                    ? f.descriptionZh || f.description
+                    : f.description
                   return (
                     <div
                       key={f.title}
@@ -356,8 +362,8 @@ export default async function IndexPage() {
                       }
                     >
                       <FeatureIcon className={`w-8 h-8 mb-3 ${isAI ? 'text-violet-400' : 'text-blue-500'}`} weight="light" />
-                      <h3 className={`font-bold mb-1 ${isAI ? 'text-white' : ''}`}>{f.title}</h3>
-                      <p className={`text-sm ${isAI ? 'text-slate-400' : 'text-muted-foreground'}`}>{f.description}</p>
+                      <h3 className={`font-bold mb-1 ${isAI ? 'text-white' : ''}`}>{title}</h3>
+                      <p className={`text-sm ${isAI ? 'text-slate-400' : 'text-muted-foreground'}`}>{description}</p>
                     </div>
                   )
                 })}

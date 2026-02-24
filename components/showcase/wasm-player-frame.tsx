@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CircleNotch } from "@phosphor-icons/react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 export function WasmPlayerFrame({
@@ -13,6 +14,7 @@ export function WasmPlayerFrame({
   title: string;
   className?: string;
 }) {
+  const t = useTranslations("showcase");
   const [loaded, setLoaded] = useState(false);
 
   return (
@@ -21,7 +23,7 @@ export function WasmPlayerFrame({
         <div className="absolute inset-0 grid place-items-center bg-black/40">
           <div className="flex items-center gap-2 text-sm text-white/80">
             <CircleNotch className="w-5 h-5 animate-spin" weight="light" />
-            Loading player…
+            {t("viewer.loading")}
           </div>
         </div>
       ) : null}
@@ -39,4 +41,3 @@ export function WasmPlayerFrame({
     </div>
   );
 }
-

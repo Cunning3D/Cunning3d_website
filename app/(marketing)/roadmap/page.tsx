@@ -1,9 +1,13 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import RoadmapClient from './client'
 
-export const metadata: Metadata = {
-  title: 'Roadmap',
-  description: 'Cunning3D development roadmap and planned features.',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('roadmap')
+  return {
+    title: t('title'),
+    description: t('subtitle'),
+  }
 }
 
 export default function RoadmapPage() {

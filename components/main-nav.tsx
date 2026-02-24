@@ -3,6 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { useSelectedLayoutSegment } from "next/navigation"
+import { useTranslations } from "next-intl"
 
 import { MainNavItem } from "types"
 import { siteConfig } from "@/config/site"
@@ -18,6 +19,7 @@ interface MainNavProps {
 export function MainNav({ items, children }: MainNavProps) {
   const segment = useSelectedLayoutSegment()
   const [showMobileMenu, setShowMobileMenu] = React.useState<boolean>(false)
+  const tNav = useTranslations("nav")
 
   return (
     <div className="flex gap-6 md:gap-10">
@@ -51,7 +53,9 @@ export function MainNav({ items, children }: MainNavProps) {
         onClick={() => setShowMobileMenu(!showMobileMenu)}
       >
         {showMobileMenu ? <Icons.close /> : <Icons.logo />}
-        <span className="font-bold">Menu</span>
+        <span className="font-bold">
+          {showMobileMenu ? tNav("close") : tNav("menu")}
+        </span>
       </button>
       {showMobileMenu && items && (
         <MobileNav items={items}>{children}</MobileNav>

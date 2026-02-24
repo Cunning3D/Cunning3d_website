@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CopyCurrentUrlButton } from "@/components/showcase/copy-current-url-button";
 import { ShowcaseLikeButton } from "@/components/showcase/showcase-like-button";
 import { WasmPlayerFrame } from "@/components/showcase/wasm-player-frame";
+import { getTranslations } from "next-intl/server";
 
 function normalizeBasePath(p: unknown) {
   const s = String(p || "").trim();
@@ -31,13 +32,15 @@ export default async function ShowcaseViewerPage({
 }: {
   searchParams?: Promise<{ id?: string; cda?: string; title?: string }>;
 }) {
+  const t = await getTranslations("showcase");
   const sp = await searchParams;
   const idRaw = typeof sp?.id === "string" ? sp.id : "";
   const cdaRaw = typeof sp?.cda === "string" ? sp.cda : "";
+  const titleFallback = t("viewer.titleFallback");
   const title =
     typeof sp?.title === "string" && sp.title.trim()
       ? sp.title.trim()
-      : "Cunning Player";
+      : titleFallback;
 
   const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH);
   const playerBase = `${basePath}/wasm/cunning_player/index.html`;
@@ -82,7 +85,7 @@ export default async function ShowcaseViewerPage({
       <div className="container py-4">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-xs text-muted-foreground">Interactive Showcase</div>
+            <div className="text-xs text-muted-foreground">{t("viewer.breadcrumb")}</div>
             <div className="font-heading text-lg font-semibold truncate">{title}</div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -90,9 +93,9 @@ export default async function ShowcaseViewerPage({
               href="/showcase"
               className="inline-flex items-center rounded-md border px-3 py-2 text-sm hover:bg-accent"
             >
-              Back
+              {t("actions.back")}
             </Link>
-            <CopyCurrentUrlButton label="Copy link" />
+            <CopyCurrentUrlButton label={t("actions.copyLink")} copiedLabel={t("actions.copied")} />
             {itemId ? <ShowcaseLikeButton itemId={itemId} /> : null}
             {cda ? (
               <a
@@ -100,7 +103,7 @@ export default async function ShowcaseViewerPage({
                 download
                 className="inline-flex items-center rounded-md border px-3 py-2 text-sm hover:bg-accent"
               >
-                Download CDA
+                {t("actions.downloadCda")}
               </a>
             ) : null}
           </div>
@@ -113,25 +116,20 @@ export default async function ShowcaseViewerPage({
         {ready ? (
           <div className="container py-4">
             <div className="mx-auto w-full max-w-[1280px]">
-              <WasmPlayerFrame src={playerSrc} title="Cunning Player" />
+              <WasmPlayerFrame src={playerSrc} title={titleFallback} />
             </div>
           </div>
         ) : (
           <div className="container py-10 text-white">
             <div className="max-w-2xl">
               <div className="font-heading text-2xl font-semibold mb-2">
-                WASM player not synced yet
+                {t("viewer.wasmNotSyncedTitle")}
               </div>
               <div className="text-sm text-white/70 mb-4">
-                Expected files under <code>/public/wasm/cunning_player/</code>:
-                <code className="ml-2">index.html</code>,
-                <code className="ml-2">cunning_player.js</code>,
-                <code className="ml-2">cunning_player_bg.wasm</code>.
+                {t("viewer.wasmNotSyncedDesc")}
               </div>
               <div className="text-sm text-white/70">
-                Run <code>pnpm predev</code> (or <code>pnpm build</code>) in{" "}
-                <code>Cunning3d_website</code> to copy the player web output into{" "}
-                <code>public/</code>.
+                {t("viewer.wasmNotSyncedHint")}
               </div>
             </div>
           </div>

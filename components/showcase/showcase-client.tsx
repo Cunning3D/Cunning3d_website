@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import {
   ArrowLeft,
   ArrowRight,
@@ -145,6 +146,8 @@ function writeQueryToLocation(next: ShowcaseQueryState, mode: "push" | "replace"
 }
 
 export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
+  const t = useTranslations("showcase");
+  const tCommon = useTranslations("common");
   const { likedKeys, toggleLike } = useShowcaseLikes();
   const [hydrated, setHydrated] = useState(false);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
@@ -385,10 +388,10 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
         <div className="container">
           <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-4 flex items-center gap-3">
             <Palette className="w-10 h-10 md:w-12 md:h-12" weight="light" />
-            Showcase
+            {t("title")}
           </h1>
           <p className="text-slate-300 text-lg max-w-2xl">
-            Real, interactive examples powered by the Cunning Player (WASM).
+            {t("subtitle")}
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-2">
@@ -396,13 +399,13 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
               href="/showcase/submit"
               className="inline-flex items-center rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
             >
-              Submit
+              {t("actions.submit")}
             </Link>
             <Link
               href="/showcase/new"
               className="inline-flex items-center rounded-md border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/15 transition-colors"
             >
-              New (WASM soon)
+              {t("actions.newSoon")}
             </Link>
           </div>
 
@@ -416,7 +419,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                 <Input
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search title, tags, author…"
+                  placeholder={t("search.placeholder")}
                   className="pl-10 bg-white/10 border-white/10 text-white placeholder:text-slate-400 focus-visible:ring-blue-400/40"
                 />
                 {searchInput ? (
@@ -424,7 +427,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                     type="button"
                     onClick={() => setSearchInput("")}
                     className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-300 hover:text-white hover:bg-white/10"
-                    aria-label="Clear search"
+                    aria-label={t("actions.clearSearch")}
                   >
                     <X className="w-4 h-4" weight="light" />
                   </button>
@@ -439,13 +442,13 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                   }
                 >
                   <SelectTrigger className="bg-white/10 border-white/10 text-white">
-                    <SelectValue placeholder="Sort" />
+                    <SelectValue placeholder={t("sort.placeholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="featured">Featured</SelectItem>
-                    <SelectItem value="new">Newest</SelectItem>
-                    <SelectItem value="size">Largest</SelectItem>
-                    <SelectItem value="az">A–Z</SelectItem>
+                    <SelectItem value="featured">{t("sort.featured")}</SelectItem>
+                    <SelectItem value="new">{t("sort.new")}</SelectItem>
+                    <SelectItem value="size">{t("sort.size")}</SelectItem>
+                    <SelectItem value="az">{t("sort.az")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -458,7 +461,8 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                 className="border-white/20 bg-white/10 text-white hover:bg-white/15"
                 onClick={() => updateQuery({ tag: "", page: 1 }, "push")}
               >
-                All <span className="ml-2 text-xs opacity-70">{items.length}</span>
+                {t("all")}{" "}
+                <span className="ml-2 text-xs opacity-70">{items.length}</span>
               </Button>
               {allTags.map(({ tag, count }) => (
                 <Button
@@ -482,17 +486,23 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
               <div className="flex items-center gap-2">
                 <span>
                   {sortedItems.length === 0
-                    ? "No results"
-                    : `Showing ${pageStart + 1}–${pageEnd} of ${sortedItems.length}`}
+                    ? t("results.noResults")
+                    : t("results.showing", {
+                        start: pageStart + 1,
+                        end: pageEnd,
+                        total: sortedItems.length,
+                      })}
                 </span>
-                {!hydrated ? <span className="opacity-70">(loading…)</span> : null}
+                {!hydrated ? (
+                  <span className="opacity-70">{t("results.loading")}</span>
+                ) : null}
                 {hasActiveFilters ? (
                   <button
                     type="button"
                     onClick={onClearAll}
                     className="ml-2 text-slate-200 hover:text-white underline underline-offset-4"
                   >
-                    Clear
+                    {t("actions.clear")}
                   </button>
                 ) : null}
               </div>
@@ -514,12 +524,12 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                   {linkCopied ? (
                     <>
                       <Check className="w-4 h-4" weight="bold" />
-                      Copied
+                      {t("actions.copied")}
                     </>
                   ) : (
                     <>
                       <Copy className="w-4 h-4" weight="light" />
-                      Copy link
+                      {t("actions.copyLink")}
                     </>
                   )}
                 </button>
@@ -533,11 +543,9 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
         <section className="py-12 bg-white dark:bg-slate-950">
           <div className="container">
             <div className="rounded-xl border bg-slate-50 dark:bg-slate-900 p-6">
-              <div className="font-heading text-xl mb-2">No examples synced yet</div>
+              <div className="font-heading text-xl mb-2">{t("empty.title")}</div>
               <div className="text-sm text-slate-600 dark:text-slate-400">
-                Put <code>.cda</code> files into <code>public/examples/</code> and run{" "}
-                <code>pnpm prebuild</code> (or let GitHub Actions sync them) to
-                generate <code>public/examples/index.json</code>.
+                {t("empty.desc")}
               </div>
             </div>
           </div>
@@ -550,7 +558,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
           <div className="container">
             <h2 className="font-heading text-2xl mb-6 flex items-center gap-2">
               <Star className="w-6 h-6 text-amber-500" weight="light" />
-              Featured
+              {t("featured")}
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featuredItems.map((item) => (
@@ -570,7 +578,9 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                   </div>
                   <div className="p-4 flex flex-col flex-1">
                     <h3 className="font-bold text-lg mb-1">{item.title}</h3>
-                    <p className="text-sm text-slate-500 mb-2">by {item.author}</p>
+                    <p className="text-sm text-slate-500 mb-2">
+                      {tCommon("by")} {item.author}
+                    </p>
                     <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-4 flex-1">
                       {item.description}
                     </p>
@@ -635,15 +645,15 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                               e.preventDefault();
                               e.stopPropagation();
                               void toggleLikeGlobal(item.id);
-                            }}
-                            aria-label={liked ? "Unlike" : "Like"}
+                          }}
+                            aria-label={liked ? t("like.unlike") : t("like.like")}
                             aria-pressed={liked}
                             className={`absolute top-3 right-3 z-20 inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3 backdrop-blur transition-colors ${
                               liked
                                 ? "bg-pink-500/90 border-pink-400/40 text-white"
-                                : "bg-white/10 border-white/20 text-white hover:bg-white/15"
-                            }`}
-                          >
+                              : "bg-white/10 border-white/20 text-white hover:bg-white/15"
+                          }`}
+                        >
                             <Heart
                               className="w-4 h-4"
                               weight={liked ? "fill" : "light"}
@@ -662,11 +672,11 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                                 />
                               ) : null}
                             </div>
-                            <div className="text-xs text-white/70 truncate">
-                              by {item.author}
-                            </div>
+                          <div className="text-xs text-white/70 truncate">
+                              {tCommon("by")} {item.author}
                           </div>
                         </div>
+                      </div>
 
                         <div className="p-4">
                           <div className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">
@@ -703,7 +713,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
 
             {sortedItems.length === 0 && (
               <div className="text-center py-12 text-slate-500">
-                No works found. Try adjusting your filters.
+                {t("noWorks")}
               </div>
             )}
 
@@ -716,10 +726,10 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                   disabled={page <= 1}
                 >
                   <ArrowLeft className="w-4 h-4 mr-1" weight="light" />
-                  Prev
+                  {t("pagination.prev")}
                 </Button>
                 <div className="text-xs text-slate-500 dark:text-slate-400 px-3">
-                  Page {page} / {pageCount}
+                  {t("pagination.page", { page, pageCount })}
                 </div>
                 <Button
                   variant="outline"
@@ -727,7 +737,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                   onClick={() => updateQuery({ page: page + 1 }, "push")}
                   disabled={page >= pageCount}
                 >
-                  Next
+                  {t("pagination.next")}
                   <ArrowRight className="w-4 h-4 ml-1" weight="light" />
                 </Button>
               </div>

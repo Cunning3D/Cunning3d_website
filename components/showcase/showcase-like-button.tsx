@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Heart } from "@phosphor-icons/react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useShowcaseLikes } from "@/components/showcase/use-showcase-likes";
 
@@ -19,6 +20,7 @@ const withBasePath = (p: string) =>
   `${BASE_PATH}${p.startsWith("/") ? p : `/${p}`}`;
 
 export function ShowcaseLikeButton({ itemId }: { itemId: string }) {
+  const t = useTranslations("showcase");
   const { likedKeys, toggleLike } = useShowcaseLikes();
   const liked = itemId ? likedKeys.has(itemId) : false;
   const [count, setCount] = useState<number | null>(null);
@@ -85,7 +87,7 @@ export function ShowcaseLikeButton({ itemId }: { itemId: string }) {
       aria-pressed={liked}
     >
       <Heart className="w-4 h-4 mr-2" weight={liked ? "fill" : "light"} />
-      {liked ? "Liked" : "Like"}
+      {liked ? t("like.liked") : t("like.like")}
       {typeof count === "number" ? (
         <span className="ml-2 tabular-nums text-muted-foreground">{count}</span>
       ) : null}

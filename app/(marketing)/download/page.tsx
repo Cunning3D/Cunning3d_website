@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { fetchGitHubReleases, getLatestRelease } from "@/lib/github-releases"
 import { githubRepo } from "@/config/releases"
+import { getTranslations } from "next-intl/server"
 import type { IconWeight } from "@phosphor-icons/react"
 import {
   Desktop,
@@ -30,6 +31,8 @@ const platformNames: Record<string, string> = {
 }
 
 export default async function DownloadPage() {
+  const t = await getTranslations("download")
+  const tCommon = await getTranslations("common")
   const [latestRelease, allReleases] = await Promise.all([
     getLatestRelease(),
     fetchGitHubReleases(10),
@@ -43,10 +46,10 @@ export default async function DownloadPage() {
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-16 text-white">
         <div className="container">
           <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-            Download Cunning3D
+            {t("title")}
           </h1>
           <p className="text-slate-300 text-lg max-w-2xl">
-            Get the latest version of Cunning3D for your platform. Free and open source.
+            {t("subtitle")}
           </p>
         </div>
       </section>
@@ -57,7 +60,7 @@ export default async function DownloadPage() {
           {latestRelease && hasReleases ? (
             <>
               <div className="flex items-center gap-4 mb-8">
-                <h2 className="font-heading text-3xl">Latest Release</h2>
+                <h2 className="font-heading text-3xl">{t("latest")}</h2>
                 <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                   v{latestRelease.version}
                 </span>
@@ -86,7 +89,7 @@ export default async function DownloadPage() {
 
               {latestRelease.changelog && (
                 <details className="border rounded-lg p-4">
-                  <summary className="cursor-pointer font-medium">Release Notes</summary>
+                  <summary className="cursor-pointer font-medium">{t("releaseNotes")}</summary>
                   <div className="mt-4 prose prose-sm max-w-none text-slate-600">
                     <pre className="whitespace-pre-wrap text-sm">{latestRelease.changelog}</pre>
                   </div>
@@ -96,9 +99,9 @@ export default async function DownloadPage() {
           ) : (
             <div className="text-center py-16">
               <Rocket className="w-16 h-16 mx-auto mb-4 text-slate-300" weight="light" />
-              <h2 className="font-heading text-2xl mb-2">Coming Soon</h2>
+              <h2 className="font-heading text-2xl mb-2">{t("coming")}</h2>
               <p className="text-slate-500 mb-6">
-                No releases available yet. Check back soon or build from source!
+                {t("noReleases")}
               </p>
               <a
                 href={`https://github.com/${githubRepo.owner}/${githubRepo.repo}`}
@@ -109,7 +112,7 @@ export default async function DownloadPage() {
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                 </svg>
-                View on GitHub
+                {tCommon("viewGithub")}
               </a>
             </div>
           )}
@@ -120,17 +123,17 @@ export default async function DownloadPage() {
       {allReleases.length > 1 && (
         <section className="py-12 bg-slate-50 dark:bg-slate-900">
           <div className="container">
-            <h2 className="font-heading text-2xl mb-6">All Releases</h2>
+            <h2 className="font-heading text-2xl mb-6">{t("all")}</h2>
             <div className="space-y-4">
               {allReleases.map((release) => (
                 <div key={release.tag} className="bg-white dark:bg-slate-800 border rounded-lg p-4">
                   <div className="flex items-center gap-4 mb-2">
                     <span className="font-mono font-bold">v{release.version}</span>
                     {release.isLatest && (
-                      <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs">Latest</span>
+                      <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs">{t("latestBadge")}</span>
                     )}
                     {release.isPrerelease && (
-                      <span className="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-xs">Pre-release</span>
+                      <span className="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-xs">{t("prereleaseBadge")}</span>
                     )}
                     <span className="text-slate-500 text-sm">{release.date}</span>
                   </div>
@@ -159,18 +162,24 @@ export default async function DownloadPage() {
       {/* Build from Source */}
       <section className="py-12 bg-white dark:bg-slate-950">
         <div className="container">
-          <h2 className="font-heading text-2xl mb-4">Build from Source</h2>
+          <h2 className="font-heading text-2xl mb-4">{t("source")}</h2>
           <p className="text-slate-600 mb-6">
-            Want to build Cunning3D yourself? Clone the repository and follow the build instructions.
+            {t("sourceDesc")}
           </p>
           <div className="bg-slate-900 text-slate-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-            <div className="text-slate-500"># Clone the repository</div>
+            <div className="text-slate-500"># {t("clone")}</div>
             <div>git clone https://github.com/{githubRepo.owner}/{githubRepo.repo}.git</div>
-            <div className="mt-2 text-slate-500"># Build with Cargo</div>
+            <div className="mt-2 text-slate-500"># {t("build")}</div>
             <div>cd {githubRepo.repo} && cargo build --release</div>
           </div>
           <p className="text-sm text-slate-500 mt-4">
-            See the <Link href="/docs" className="text-blue-600 hover:underline">documentation</Link> for detailed build instructions.
+            {t.rich("seeDoc", {
+              link: (chunks) => (
+                <Link href="/docs" className="text-blue-600 hover:underline">
+                  {chunks}
+                </Link>
+              ),
+            })}
           </p>
         </div>
       </section>
@@ -178,7 +187,7 @@ export default async function DownloadPage() {
       {/* System Requirements */}
       <section className="py-12 bg-slate-50 dark:bg-slate-900">
         <div className="container">
-          <h2 className="font-heading text-2xl mb-6">System Requirements</h2>
+          <h2 className="font-heading text-2xl mb-6">{t("requirements")}</h2>
           <div className="grid gap-6 md:grid-cols-3">
             <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border">
               <h3 className="font-bold mb-3 flex items-center gap-2">

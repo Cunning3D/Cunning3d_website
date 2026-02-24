@@ -8,7 +8,9 @@
     "blog": "博客",
     "me": "关于我",
     "donate": "捐赠",
-    "login": "登录"
+    "login": "登录",
+    "menu": "菜单",
+    "close": "关闭"
   },
   "home": {
     "hero": {
@@ -61,21 +63,116 @@
     "title": "下载 Cunning3D",
     "subtitle": "获取适合你平台的最新版本。免费且开源。",
     "latest": "最新版本",
+    "latestBadge": "最新",
     "all": "所有版本",
     "source": "从源码构建",
     "requirements": "系统要求",
+    "releaseNotes": "发布说明",
     "coming": "即将推出",
     "noReleases": "暂无可用版本。请稍后再来或从源码构建！",
+    "prereleaseBadge": "预发布",
     "clone": "克隆仓库",
     "build": "使用 Cargo 构建",
-    "seeDoc": "查看{link}获取详细构建说明。"
+    "sourceDesc": "想自己构建 Cunning3D？克隆仓库并按构建说明操作。",
+    "seeDoc": "查看<link>文档</link>获取详细构建说明。"
   },
   "showcase": {
     "title": "案例展示",
-    "subtitle": "使用 Cunning3D 创作的精彩作品。看看社区在创造什么！",
+    "subtitle": "由 Cunning Player (WASM) 驱动的真实可交互示例。",
     "featured": "精选作品",
     "all": "全部",
     "noWorks": "该筛选条件下暂无作品。",
+    "search": {
+      "placeholder": "搜索标题 / 标签 / 作者\u2026"
+    },
+    "sort": {
+      "placeholder": "排序",
+      "featured": "精选",
+      "new": "最新",
+      "size": "最大",
+      "az": "A\u2013Z"
+    },
+    "results": {
+      "noResults": "没有结果",
+      "showing": "显示 {start}\u2013{end} / 共 {total}",
+      "loading": "(加载中\u2026)"
+    },
+    "actions": {
+      "submit": "提交",
+      "new": "新建",
+      "newSoon": "新建（WASM 即将推出）",
+      "copyLink": "复制链接",
+      "copied": "已复制",
+      "downloadCda": "下载 CDA",
+      "back": "返回",
+      "backToShowcase": "返回案例",
+      "clear": "清除",
+      "clearSearch": "清除搜索"
+    },
+    "pagination": {
+      "prev": "上一页",
+      "next": "下一页",
+      "page": "第 {page} 页 / 共 {pageCount} 页"
+    },
+    "empty": {
+      "title": "还没有同步示例",
+      "desc": "把 .cda 文件放到 public/examples/，运行 pnpm prebuild（或让 GitHub Actions 同步）生成 public/examples/index.json。"
+    },
+    "viewer": {
+      "breadcrumb": "交互案例",
+      "titleFallback": "Cunning Player",
+      "wasmNotSyncedTitle": "WASM 播放器尚未同步",
+      "wasmNotSyncedDesc": "预期文件位于 /public/wasm/cunning_player/：index.html、cunning_player.js、cunning_player_bg.wasm。",
+      "wasmNotSyncedHint": "在 Cunning3d_website 运行 pnpm predev（或 pnpm build），把播放器的 Web 输出复制到 public/。",
+      "loading": "播放器加载中\u2026"
+    },
+    "submitPage": {
+      "breadcrumb": "社区",
+      "title": "提交到案例",
+      "desc": "上传一个 .cda（可选封面图）来创建 GitHub Pull Request。审核通过后会出现在公开的案例页面。"
+    },
+    "submit": {
+      "githubLoginTitle": "GitHub 登录（推荐）",
+      "githubLoginDesc": "将向<code>{repo}</code>创建一个 PR。",
+      "signOut": "退出登录",
+      "checking": "检查中\u2026",
+      "signInGithub": "使用 GitHub 登录",
+      "oauthNotConfigured": "当前部署未配置 GitHub OAuth。请站点管理员设置 GITHUB_OAUTH_CLIENT_ID、GITHUB_OAUTH_CLIENT_SECRET、GITHUB_OAUTH_COOKIE_SECRET。",
+      "submitFailed": "提交失败",
+      "uploadTitle": "上传",
+      "uploadDesc": "提供一个 .cda（可选封面图）。请尽量保持文件较小\u2014PR 需要人工审核。",
+      "fields": {
+        "title": "标题",
+        "tags": "标签",
+        "description": "描述",
+        "cdaFile": "CDA 文件",
+        "coverImage": "封面图（可选）"
+      },
+      "placeholders": {
+        "title": "我的程序化城市",
+        "tags": "社区, PCG, Roads",
+        "description": "这个 CDA 展示了什么？"
+      },
+      "prCreated": "PR 已创建：",
+      "creatingPr": "正在创建 PR\u2026",
+      "createPr": "创建 PR",
+      "back": "返回",
+      "signInHint": "为防止匿名刷屏，请先使用 GitHub 登录。",
+      "manualPrTitle": "手动 PR",
+      "manualPrDesc": "如果自动上传不可用，你仍然可以通过提交 PR 的方式贡献：把你的 .cda（以及同名封面图）放到 public/examples/。"
+    },
+    "newPage": {
+      "breadcrumb": "案例",
+      "title": "新建（即将推出）",
+      "desc": "我们正在构建 Cunning3D 的 WASM 编辑器，让你可以直接在浏览器里创建并分享 .cda\u2014\u2014类似 Shadertoy。",
+      "backToShowcase": "返回案例",
+      "submitCda": "提交 CDA"
+    },
+    "like": {
+      "like": "点赞",
+      "liked": "已赞",
+      "unlike": "取消点赞"
+    },
     "cta": {
       "title": "想要展示你的作品？",
       "desc": "分享你的 Cunning3D 作品，有机会在这里展示！",
@@ -86,17 +183,37 @@
   "roadmap": {
     "title": "开发路线图",
     "subtitle": "了解我们正在构建的功能和未来计划。路线图会根据社区反馈定期更新。",
+    "updated": "更新于 {date}",
     "status": {
       "done": "已完成",
       "inProgress": "进行中",
       "planned": "已规划",
       "future": "未来计划"
     },
+    "stats": {
+      "done": "已完成",
+      "inProgress": "进行中",
+      "planned": "已规划",
+      "progress": "进度",
+      "overallProgress": "总体进度"
+    },
+    "filter": {
+      "label": "筛选：",
+      "all": "全部（{count}）"
+    },
+    "phase": {
+      "items": "{count} 项"
+    },
+    "empty": {
+      "title": "没有找到内容",
+      "desc": "试试选择其他筛选条件"
+    },
     "cta": {
       "title": "有功能建议？",
       "desc": "加入我们的社区，一起塑造 Cunning3D 的未来。",
       "issue": "提交 Issue",
-      "discord": "加入 Discord"
+      "discord": "加入 Discord",
+      "trust": "加入 {count}+ 位开发者，一起共建 Cunning3D"
     }
   },
   "changelog": {
@@ -104,6 +221,7 @@
     "subtitle": "版本历史和发布说明。自动从 GitHub Releases 同步。",
     "latest": "最新",
     "prerelease": "预发布",
+    "noReleaseNotes": "暂无发布说明。",
     "noReleases": "暂无版本",
     "noReleasesDesc": "请稍后再来或关注 GitHub 获取更新。",
     "cta": {
@@ -112,6 +230,11 @@
       "star": "在 GitHub 加星",
       "download": "下载最新版"
     }
+  },
+  "blog": {
+    "title": "博客",
+    "subtitle": "Cunning3D 的最新消息与更新。",
+    "viewArticle": "查看文章"
   },
   "donate": {
     "title": "支持 Cunning3D 的未来",

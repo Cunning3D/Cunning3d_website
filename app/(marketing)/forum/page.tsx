@@ -7,6 +7,7 @@ import { MessageCircle, Plus, RefreshCw, ThumbsUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
@@ -18,7 +19,7 @@ import {
 type ForumThread = {
   number: number;
   title: string;
-  author: string;
+  author: { login: string; avatarUrl: string; htmlUrl: string };
   createdAt: string;
   comments: number;
   likes: number;
@@ -101,7 +102,7 @@ export default function ForumPage() {
     const q = query.trim().toLowerCase();
     if (!q) return threads;
     return threads.filter((th) => {
-      const hay = `${th.title} ${th.author}`.toLowerCase();
+      const hay = `${th.title} ${th.author?.login || ""}`.toLowerCase();
       return hay.includes(q);
     });
   }, [threads, query]);
@@ -302,17 +303,37 @@ export default function ForumPage() {
                   className="rounded-xl border bg-white dark:bg-slate-900 p-4 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <Link
-                        href={`/forum/${th.number}`}
-                        className="font-semibold hover:underline truncate block"
-                      >
-                        {th.title}
-                      </Link>
-                      <div className="mt-1 text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
-                        <span>
-                          {t("by")} {th.author}
-                        </span>
+                    <div className="min-w-0 flex items-start gap-3">
+                      <Avatar className="h-9 w-9 mt-0.5">
+                        <AvatarImage src={th.author?.avatarUrl} alt={th.author?.login || "user"} />
+                        <AvatarFallback className="text-xs font-semibold">
+                          {(th.author?.login || "?").charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+
+                      <div className="min-w-0">
+                        <Link
+                          href={`/forum/${th.number}`}
+                          className="font-semibold hover:underline truncate block"
+                        >
+                          {th.title}
+                        </Link>
+                        <div className="mt-1 text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
+                          <span>
+                            {t("by")}{" "}
+                            {th.author?.htmlUrl ? (
+                              <a
+                                href={th.author.htmlUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="hover:underline"
+                              >
+                                @{th.author.login}
+                              </a>
+                            ) : (
+                              `@${th.author?.login || "unknown"}`
+                            )}
+                          </span>
                         <span>{formatShortDate(th.createdAt)}</span>
                         <span>
                           {t("replies", { count: th.comments })}
@@ -337,6 +358,7 @@ export default function ForumPage() {
                             {t("closed")}
                           </span>
                         ) : null}
+                        </div>
                       </div>
                     </div>
                     {th.url ? (

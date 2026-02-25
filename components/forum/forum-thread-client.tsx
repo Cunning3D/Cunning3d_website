@@ -8,6 +8,7 @@ import { Github, Send, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ForumMarkdown } from "@/components/forum/forum-markdown";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type GitHubMe =
   | {
@@ -299,18 +300,26 @@ export function ForumThreadClient({ number }: { number: number }) {
             <>
               <div className="rounded-xl border bg-white dark:bg-slate-900 p-6">
                 <h1 className="font-heading text-2xl font-bold">{thread.title}</h1>
-                <div className="mt-2 text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
-                  <span>
-                    {t("by")}{" "}
-                    <a
-                      href={thread.author.htmlUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="hover:underline"
-                    >
-                      @{thread.author.login}
-                    </a>
-                  </span>
+                <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
+                  <div className="inline-flex items-center gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={thread.author.avatarUrl} alt={thread.author.login} />
+                      <AvatarFallback className="text-[10px] font-semibold">
+                        {thread.author.login.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span>
+                      {t("by")}{" "}
+                      <a
+                        href={thread.author.htmlUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:underline"
+                      >
+                        @{thread.author.login}
+                      </a>
+                    </span>
+                  </div>
                   <span>{formatShortDate(thread.createdAt)}</span>
                   <span>{t("replies", { count: thread.comments })}</span>
                   <button
@@ -357,16 +366,22 @@ export function ForumThreadClient({ number }: { number: number }) {
                         className="rounded-xl border bg-white dark:bg-slate-900 p-4"
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <div className="text-xs text-muted-foreground">
+                          <div className="min-w-0 flex items-center gap-2 text-xs text-muted-foreground">
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={c.author.avatarUrl} alt={c.author.login} />
+                              <AvatarFallback className="text-[10px] font-semibold">
+                                {c.author.login.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
                             <a
                               href={c.author.htmlUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="hover:underline"
+                              className="hover:underline truncate"
                             >
                               @{c.author.login}
-                            </a>{" "}
-                            · {formatShortDate(c.createdAt)}
+                            </a>
+                            <span>· {formatShortDate(c.createdAt)}</span>
                           </div>
                           {c.url ? (
                             <a

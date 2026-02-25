@@ -4,7 +4,7 @@ import { FORUM_ISSUE_MARKER, getForumRepo, getGitHubReadToken, ghHeaders, stripF
 type GitHubSearchIssueItem = {
   number?: unknown;
   title?: unknown;
-  user?: { login?: unknown } | null;
+  user?: { login?: unknown; avatar_url?: unknown; html_url?: unknown } | null;
   created_at?: unknown;
   comments?: unknown;
   reactions?: unknown;
@@ -74,14 +74,19 @@ export async function GET(req: NextRequest) {
       const number = typeof it.number === "number" ? Math.floor(it.number) : NaN;
       const title = typeof it.title === "string" ? it.title : "";
       if (!Number.isFinite(number) || !title) return null;
+      const login =
+        typeof it.user?.login === "string" && it.user.login ? it.user.login : "unknown";
       return {
         number,
         title: stripForumPrefix(title),
         titleRaw: title,
-        author:
-          typeof it.user?.login === "string" && it.user.login
-            ? it.user.login
-            : "unknown",
+        author: {
+          login,
+          avatarUrl:
+            typeof it.user?.avatar_url === "string" ? it.user.avatar_url : "",
+          htmlUrl:
+            typeof it.user?.html_url === "string" ? it.user.html_url : "",
+        },
         createdAt: typeof it.created_at === "string" ? it.created_at : "",
         comments: typeof it.comments === "number" ? Math.max(0, it.comments) : 0,
         likes: reactionsPlusOne(it.reactions),

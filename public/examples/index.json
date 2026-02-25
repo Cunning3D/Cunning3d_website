@@ -3,7 +3,7 @@
     {
       "id": "Simple-Cube",
       "title": "Simple Cube",
-      "author": "刘双庆",
+      "author": "Anonymous",
       "image": "/examples/Simple Cube.png",
       "description": "A tiny CDA example for testing the Cunning Player.",
       "bytes": 11465,
@@ -18,7 +18,7 @@
     {
       "id": "Voxel-Editor",
       "title": "Voxel Editor",
-      "author": "刘双庆",
+      "author": "Anonymous",
       "image": "/examples/Voxel Editor.png",
       "description": "Voxel editing workflow example (CDA).",
       "bytes": 12702,

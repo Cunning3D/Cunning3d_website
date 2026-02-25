@@ -1,15 +1,66 @@
+import donationSnapshot from "@/data/donations.json";
+
 // Cunning3D 捐款配置 - 支付链接和等级定义
+
+function env(key: string) {
+  return String(process.env[key] || "").trim();
+}
+
+// 捐款者数据类型
+export interface Donor {
+  /** Unique id for dedupe (e.g. "kofi:<transaction_id>"). */
+  id?: string;
+  name: string;
+  tier: string;
+  amount: number;
+  link?: string;
+  logo?: string;
+  date?: string;
+  currency?: string;
+  isSubscription?: boolean;
+  platform?: "kofi" | "payoneer" | "github" | "crypto" | "other";
+}
+
+type DonationMetrics = {
+  monthlyDollars: number;
+  oneTimeDollars: number;
+  members: number;
+  sponsors: number;
+};
+
+type DonationSnapshot = {
+  updatedAt?: string;
+  metrics?: Partial<DonationMetrics>;
+  donors?: Donor[];
+};
+
+function toNumber(v: unknown) {
+  const n = typeof v === "number" ? v : Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+const snapshot = donationSnapshot as unknown as DonationSnapshot;
+
+export const donors: Donor[] = Array.isArray(snapshot.donors) ? snapshot.donors : [];
+
+const metrics: DonationMetrics = {
+  monthlyDollars: Math.max(0, toNumber(snapshot.metrics?.monthlyDollars)),
+  oneTimeDollars: Math.max(0, toNumber(snapshot.metrics?.oneTimeDollars)),
+  members: Math.max(0, toNumber(snapshot.metrics?.members)),
+  sponsors: Math.max(0, toNumber(snapshot.metrics?.sponsors)),
+};
+
 export const donateConfig = {
-  // 支付平台链接（注册后填入你的链接）
+  // 支付平台链接（建议在 Vercel 通过环境变量配置）
   platforms: {
-    kofi: '', // 例如: https://ko-fi.com/cunning3d
-    payoneer: '', // Payoneer Request Payment 链接
-    paypal: '', // PayPal.me 链接
-    github: '', // GitHub Sponsors 链接（如果有）
+    kofi: env("NEXT_PUBLIC_DONATE_KOFI"),
+    payoneer: env("NEXT_PUBLIC_DONATE_PAYONEER"),
+    paypal: env("NEXT_PUBLIC_DONATE_PAYPAL"),
+    github: env("NEXT_PUBLIC_DONATE_GITHUB"),
     crypto: {
-      eth: '', // 你的 ETH 钱包地址
-      btc: '', // 你的 BTC 钱包地址
-      usdt: '', // 你的 USDT 钱包地址 (ERC20)
+      eth: env("NEXT_PUBLIC_DONATE_CRYPTO_ETH"),
+      btc: env("NEXT_PUBLIC_DONATE_CRYPTO_BTC"),
+      usdt: env("NEXT_PUBLIC_DONATE_CRYPTO_USDT"),
     },
   },
   // 捐款等级（从低到高）
@@ -55,28 +106,7 @@ export const donateConfig = {
       perksZh: ['包含 Sponsor 全部权益', '定制集成支持', '功能优先排期'],
     },
   ],
-  // 统计数据（会被自动同步脚本更新）
-  metrics: {
-    monthlyDollars: 0,
-    oneTimeDollars: 0,
-    members: 0,
-    sponsors: 0,
-  },
+  // 统计数据（来自 data/donations.json）
+  metrics,
+  updatedAt: typeof snapshot.updatedAt === "string" ? snapshot.updatedAt : undefined,
 };
-
-// 捐款者数据类型
-export interface Donor {
-  name: string;
-  tier: string;
-  amount: number;
-  link?: string;
-  logo?: string;
-  date?: string;
-  platform?: 'kofi' | 'payoneer' | 'github' | 'crypto' | 'other';
-}
-
-// 捐款者列表（会被自动同步脚本更新）
-export const donors: Donor[] = [
-  // 示例数据，实际数据由 sync 脚本生成
-  // { name: 'ACME Studios', tier: 'Partner', amount: 500, link: 'https://acme.com', logo: '/donors/acme.png' },
-];

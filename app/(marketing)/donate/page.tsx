@@ -50,15 +50,17 @@ export default function DonatePage() {
 
   const getPaymentLink = () => {
     if (platforms.kofi) return platforms.kofi
+    if (platforms.github) return platforms.github
     if (platforms.paypal) return platforms.paypal
     if (platforms.payoneer) return platforms.payoneer
     return null
   }
   const paymentLink = getPaymentLink()
 
-  const supportersCountLabel =
-    metrics.members > 0 ? formatNumber(metrics.members) : t("hero.fallbackCount")
-  const heroDesc = t("hero.desc", { count: supportersCountLabel })
+  const heroDesc =
+    metrics.members > 0
+      ? t("hero.descWithCount", { count: formatNumber(metrics.members) })
+      : t("hero.desc")
 
   // 按等级分组捐款者
   const donorsByTier = donateConfig.tiers.slice().reverse().map(tier => ({

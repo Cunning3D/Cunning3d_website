@@ -330,8 +330,8 @@
     "hero": {
       "headlinePrefix": "Support the",
       "headlineHighlight": "future of 3D",
-      "desc": "Your contribution helps us build the next generation of procedural modeling tools. Join {count} supporters making this vision real.",
-      "fallbackCount": "hundreds of",
+      "desc": "Your contribution helps us build the next generation of procedural modeling tools.",
+      "descWithCount": "Your contribution helps us build the next generation of procedural modeling tools. Join {count} supporters making this vision real.",
       "monthlyLabel": "monthly",
       "supportersLabel": "supporters",
       "openSourceLabel": "open source",
@@ -359,8 +359,8 @@
       "emptyDesc": "Your name will appear here and in our application credits. Support the future of procedural modeling.",
       "visit": "Visit",
       "perMonth": "{amount} / month",
-      "note": "Stats sync automatically from payment platforms. <contact>Contact us</contact> for questions.",
-      "syncNote": "Stats sync automatically from payment platforms.",
+      "note": "Supporter wall is updated periodically (privacy-first). <contact>Contact us</contact> for questions.",
+      "syncNote": "Supporter wall is updated periodically (privacy-first).",
       "contact": "Contact us",
       "forQuestions": "for questions."
     },

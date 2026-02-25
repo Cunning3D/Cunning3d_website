@@ -330,8 +330,8 @@
     "hero": {
       "headlinePrefix": "支持",
       "headlineHighlight": "3D 的未来",
-      "desc": "你的支持将帮助我们打造下一代程序化建模工具。加入{count}位支持者，一起把愿景变成现实。",
-      "fallbackCount": "数百",
+      "desc": "你的支持将帮助我们打造下一代程序化建模工具。",
+      "descWithCount": "你的支持将帮助我们打造下一代程序化建模工具。加入{count}位支持者，一起把愿景变成现实。",
       "monthlyLabel": "每月",
       "supportersLabel": "支持者",
       "openSourceLabel": "开源",
@@ -359,8 +359,8 @@
       "emptyDesc": "你的名字将显示在这里以及应用内鸣谢名单中。支持程序化建模的未来。",
       "visit": "访问",
       "perMonth": "{amount}/月",
-      "note": "统计会从支付平台自动同步。如有问题请<contact>联系我们</contact>。",
-      "syncNote": "统计会从支付平台自动同步。",
+      "note": "支持者墙会定期更新（优先保护隐私）。如有问题请<contact>联系我们</contact>。",
+      "syncNote": "支持者墙会定期更新（优先保护隐私）。",
       "contact": "联系我们",
       "forQuestions": "如有问题。"
     },

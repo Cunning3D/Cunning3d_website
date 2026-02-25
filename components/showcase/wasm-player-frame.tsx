@@ -17,14 +17,14 @@ export function WasmPlayerFrame({
   const t = useTranslations("showcase");
   const [loaded, setLoaded] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(8);
   const hideOverlayTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     // Reset when switching to a new CDA / src.
     setLoaded(false);
     setOverlayVisible(true);
-    setProgress(0);
+    setProgress(8);
     if (hideOverlayTimeoutRef.current) {
       window.clearTimeout(hideOverlayTimeoutRef.current);
       hideOverlayTimeoutRef.current = null;

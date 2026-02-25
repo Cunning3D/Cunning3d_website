@@ -40,14 +40,34 @@ function getAvailableVersions(nodeName: string): string[] {
   return available.length > 0 ? available : [LATEST];
 }
 
+function localizeTocTitle(title: string, locale: 'en' | 'zh') {
+  if (locale !== 'zh') return title;
+  const zh = localizeTreeLabel(title, 'zh');
+  if (typeof zh !== 'string') return title;
+  const zhTrimmed = zh.trim();
+  if (!zhTrimmed || zhTrimmed === title) return title;
+  return `${title} / ${zhTrimmed}`;
+}
+
+function localizeTocNode(node: any, locale: 'en' | 'zh'): any {
+  if (!node || typeof node !== 'object') return node;
+  const out: any = { ...node };
+  if (typeof out.title === 'string') {
+    out.title = localizeTocTitle(out.title, locale);
+  }
+  if (Array.isArray(out.children)) {
+    out.children = out.children.map((n: any) => localizeTocNode(n, locale));
+  }
+  if (Array.isArray(out.items)) {
+    out.items = out.items.map((n: any) => localizeTocNode(n, locale));
+  }
+  return out;
+}
+
 function localizeToc(toc: any, locale: 'en' | 'zh') {
   if (!toc || locale !== 'zh') return toc;
   if (!Array.isArray(toc)) return toc;
-  return toc.map((item) => {
-    if (!item || typeof item !== 'object') return item;
-    if (typeof item.title !== 'string') return item;
-    return { ...item, title: localizeTreeLabel(item.title, 'zh') as string };
-  });
+  return toc.map((node) => localizeTocNode(node, locale));
 }
 
 export default async function Page({ params }: PageProps) {

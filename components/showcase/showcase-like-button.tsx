@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Heart } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { useShowcaseLikes } from "@/components/showcase/use-showcase-likes";
 
 function normalizeBasePath(p: unknown) {
   const s = String(p || "").trim();
@@ -21,8 +20,7 @@ const withBasePath = (p: string) =>
 
 export function ShowcaseLikeButton({ itemId }: { itemId: string }) {
   const t = useTranslations("showcase");
-  const { likedKeys, toggleLike } = useShowcaseLikes();
-  const liked = itemId ? likedKeys.has(itemId) : false;
+  const [liked, setLiked] = useState(false);
   const [count, setCount] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -38,9 +36,17 @@ export function ShowcaseLikeButton({ itemId }: { itemId: string }) {
         url.searchParams.set("ids", safeId);
         const res = await fetch(url.toString(), { cache: "no-store" });
         if (!res.ok) return;
-        const json = (await res.json()) as { counts?: Record<string, number> };
+        const json = (await res.json()) as {
+          counts?: Record<string, number>;
+          viewerLiked?: Record<string, boolean> | null;
+        };
         const next = json?.counts?.[safeId];
         if (!cancelled) setCount(typeof next === "number" ? next : 0);
+        const likedNext =
+          json?.viewerLiked && typeof json.viewerLiked === "object"
+            ? json.viewerLiked[safeId]
+            : undefined;
+        if (!cancelled && typeof likedNext === "boolean") setLiked(likedNext);
       } catch {
         // ignore
       }
@@ -59,23 +65,30 @@ export function ShowcaseLikeButton({ itemId }: { itemId: string }) {
       size="sm"
       onClick={async () => {
         if (!safeId) return;
-        const delta = liked ? -1 : 1;
-        toggleLike(safeId);
-        setCount((prev) => {
-          const cur = typeof prev === "number" ? prev : 0;
-          return Math.max(0, cur + delta);
-        });
-
         setSaving(true);
         try {
           const res = await fetch(withBasePath("/api/showcase/likes"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: safeId, delta }),
+            body: JSON.stringify({ id: safeId, action: "toggle" }),
           });
-          const json = (await res.json()) as { count?: number };
-          if (res.ok && typeof json.count === "number") {
-            setCount(Math.max(0, json.count));
+
+          if (res.status === 401) {
+            const next = `${window.location.pathname}${window.location.search}`;
+            window.location.href = withBasePath(
+              `/api/showcase/github/login?next=${encodeURIComponent(next)}`
+            );
+            return;
+          }
+
+          const json = (await res.json()) as { count?: number; liked?: boolean };
+          if (res.ok) {
+            if (typeof json.count === "number" && Number.isFinite(json.count)) {
+              setCount(Math.max(0, Math.floor(json.count)));
+            }
+            if (typeof json.liked === "boolean") {
+              setLiked(json.liked);
+            }
           }
         } catch {
           // ignore

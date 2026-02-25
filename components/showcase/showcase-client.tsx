@@ -34,7 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useShowcaseLikes } from "@/components/showcase/use-showcase-likes";
 
 export interface ShowcaseItem {
   id: string;
@@ -150,7 +149,10 @@ function writeQueryToLocation(next: ShowcaseQueryState, mode: "push" | "replace"
 export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
   const t = useTranslations("showcase");
   const tCommon = useTranslations("common");
-  const { likedKeys, toggleLike } = useShowcaseLikes();
+  const [likedKeys, setLikedKeys] = useState<Set<string>>(() => new Set());
+  const [savingLikeIds, setSavingLikeIds] = useState<Set<string>>(
+    () => new Set()
+  );
   const [hydrated, setHydrated] = useState(false);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
   const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
@@ -220,14 +222,54 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
       return out;
     };
 
+    const fetchLikes = async () => {
+      const outCounts: Record<string, number> = {};
+      const outLiked: Record<string, boolean> = {};
+      const chunkSize = 80;
+
+      for (let i = 0; i < ids.length; i += chunkSize) {
+        const chunk = ids.slice(i, i + chunkSize);
+        try {
+          const url = new URL(
+            withBasePath("/api/showcase/likes"),
+            window.location.origin
+          );
+          url.searchParams.set("ids", chunk.join(","));
+          const res = await fetch(url.toString(), { cache: "no-store" });
+          if (!res.ok) continue;
+          const json = (await res.json()) as {
+            counts?: Record<string, number>;
+            viewerLiked?: Record<string, boolean> | null;
+          };
+          if (json?.counts && typeof json.counts === "object") {
+            Object.assign(outCounts, json.counts);
+          }
+          if (json?.viewerLiked && typeof json.viewerLiked === "object") {
+            Object.assign(outLiked, json.viewerLiked);
+          }
+        } catch {
+          // ignore
+        }
+      }
+
+      return { counts: outCounts, viewerLiked: outLiked };
+    };
+
     const run = async () => {
       const [likes, views] = await Promise.all([
-        fetchCounts("/api/showcase/likes"),
+        fetchLikes(),
         fetchCounts("/api/showcase/views"),
       ]);
       if (cancelled) return;
-      setLikeCounts(likes);
+      setLikeCounts(likes.counts);
       setViewCounts(views);
+      setLikedKeys(
+        new Set(
+          Object.entries(likes.viewerLiked)
+            .filter(([, v]) => v === true)
+            .map(([k]) => k)
+        )
+      );
     };
 
     void run();
@@ -238,30 +280,53 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
 
   const toggleLikeGlobal = async (id: string) => {
     if (!id) return;
-    const liked = likedKeys.has(id);
-    const delta = liked ? -1 : 1;
 
-    toggleLike(id);
-    setLikeCounts((prev) => {
-      const next = { ...prev };
-      const cur = Number.isFinite(next[id]) ? next[id] : 0;
-      const updated = Math.max(0, cur + delta);
-      next[id] = updated;
-      return next;
-    });
+    // Prevent double-click spam while a request is in flight.
+    if (savingLikeIds.has(id)) return;
+    setSavingLikeIds((prev) => new Set(prev).add(id));
 
     try {
       const res = await fetch(withBasePath("/api/showcase/likes"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, delta }),
+        body: JSON.stringify({ id, action: "toggle" }),
       });
-      const json = (await res.json()) as { count?: number };
-      if (res.ok && typeof json.count === "number") {
-        setLikeCounts((prev) => ({ ...prev, [id]: Math.max(0, json.count || 0) }));
+
+      if (res.status === 401) {
+        const next = `${window.location.pathname}${window.location.search}`;
+        window.location.href = withBasePath(
+          `/api/showcase/github/login?next=${encodeURIComponent(next)}`
+        );
+        return;
+      }
+
+      const json = (await res.json()) as { count?: number; liked?: boolean };
+      if (res.ok) {
+        if (typeof json.count === "number" && Number.isFinite(json.count)) {
+          const nextCount = Math.max(0, Math.floor(json.count));
+          setLikeCounts((prev) => ({
+            ...prev,
+            [id]: nextCount,
+          }));
+        }
+        if (typeof json.liked === "boolean") {
+          const nextLiked = json.liked;
+          setLikedKeys((prev) => {
+            const next = new Set(prev);
+            if (nextLiked) next.add(id);
+            else next.delete(id);
+            return next;
+          });
+        }
       }
     } catch {
       // ignore
+    } finally {
+      setSavingLikeIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
   };
 
@@ -650,6 +715,7 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                   const liked = likedKeys.has(item.id);
                   const count = likeCounts[item.id] ?? 0;
                   const views = viewCounts[item.id] ?? 0;
+                  const saving = savingLikeIds.has(item.id);
                   return (
                     <motion.div
                       key={item.id}
@@ -679,14 +745,15 @@ export function ShowcaseClient({ items }: { items: ShowcaseItem[] }) {
                               e.stopPropagation();
                               void toggleLikeGlobal(item.id);
                           }}
+                            disabled={saving}
                             aria-label={liked ? t("like.unlike") : t("like.like")}
                             aria-pressed={liked}
                             className={`absolute top-3 right-3 z-20 inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3 backdrop-blur transition-colors ${
                               liked
                                 ? "bg-pink-500/90 border-pink-400/40 text-white"
                               : "bg-white/10 border-white/20 text-white hover:bg-white/15"
-                          }`}
-                        >
+                          } disabled:opacity-60 disabled:pointer-events-none`}
+                          >
                             <Heart
                               className="w-4 h-4"
                               weight={liked ? "fill" : "light"}

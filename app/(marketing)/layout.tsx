@@ -20,6 +20,7 @@ export default async function MarketingLayout({
   const navItems = [
     { title: t('features'), href: "/#features" },
     { title: t('showcase'), href: "/showcase" },
+    { title: t('forum'), href: "/forum" },
     { title: t('docs'), href: "/docs" },
     { title: t('roadmap'), href: "/roadmap" },
     { title: t('changelog'), href: "/changelog" },

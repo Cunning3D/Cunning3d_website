@@ -2,6 +2,7 @@
   "nav": {
     "features": "Features",
     "showcase": "Showcase",
+    "forum": "Forum",
     "docs": "Docs",
     "roadmap": "Roadmap",
     "changelog": "Changelog",
@@ -197,6 +198,51 @@
       "discord": "Share on Discord",
       "download": "Download & Create"
     }
+  },
+  "forum": {
+    "title": "Forum",
+    "subtitle": "A lightweight community forum backed by GitHub Issues.",
+    "newPost": "New Post",
+    "refresh": "Refresh",
+    "searchPlaceholder": "Search title / author…",
+    "loading": "Loading…",
+    "empty": "No posts yet.",
+    "errorTitle": "Error",
+    "loadFailed": "Failed to load",
+    "notFound": "Thread not found.",
+    "by": "by",
+    "replies": "{count} replies",
+    "repliesTitle": "Replies ({count})",
+    "noReplies": "No replies yet.",
+    "closed": "Closed",
+    "openInGithub": "Open in GitHub",
+    "back": "Back",
+    "checking": "Checking…",
+    "signInGithub": "Sign in with GitHub",
+    "signInToPost": "Sign in to create a post.",
+    "signInToReply": "Sign in to reply.",
+    "postingAs": "Posting as",
+    "post": "Post",
+    "posting": "Posting…",
+    "postFailed": "Post failed",
+    "replyTitle": "Reply",
+    "reply": "Reply",
+    "replying": "Replying…",
+    "replyFailed": "Reply failed",
+    "newTitle": "New Post",
+    "newDesc": "Create a new thread (saved as a GitHub Issue).",
+    "fields": {
+      "title": "Title",
+      "body": "Body"
+    },
+    "placeholders": {
+      "title": "What's on your mind?",
+      "body": "Write something… (Markdown supported on GitHub)",
+      "reply": "Write a reply…"
+    },
+    "markdownHint": "Tip: GitHub renders Markdown on the issue page.",
+    "newPostHint": "No servers, no database—just GitHub.",
+    "replyHint": "Be respectful and keep it constructive."
   },
   "roadmap": {
     "title": "Roadmap",

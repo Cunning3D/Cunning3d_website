@@ -2,6 +2,7 @@
   "nav": {
     "features": "功能",
     "showcase": "案例",
+    "forum": "论坛",
     "docs": "文档",
     "roadmap": "路线图",
     "changelog": "更新日志",
@@ -197,6 +198,51 @@
       "discord": "分享到 Discord",
       "download": "下载并创作"
     }
+  },
+  "forum": {
+    "title": "论坛",
+    "subtitle": "一个由 GitHub Issues 驱动的轻量社区论坛。",
+    "newPost": "发帖",
+    "refresh": "刷新",
+    "searchPlaceholder": "搜索标题 / 作者…",
+    "loading": "加载中…",
+    "empty": "还没有帖子。",
+    "errorTitle": "错误",
+    "loadFailed": "加载失败",
+    "notFound": "未找到该帖子。",
+    "by": "作者",
+    "replies": "{count} 条回复",
+    "repliesTitle": "回复（{count}）",
+    "noReplies": "还没有回复。",
+    "closed": "已关闭",
+    "openInGithub": "在 GitHub 打开",
+    "back": "返回",
+    "checking": "检查中…",
+    "signInGithub": "使用 GitHub 登录",
+    "signInToPost": "登录后才能发帖。",
+    "signInToReply": "登录后才能回复。",
+    "postingAs": "当前账号",
+    "post": "发布",
+    "posting": "发布中…",
+    "postFailed": "发布失败",
+    "replyTitle": "回复",
+    "reply": "回复",
+    "replying": "回复中…",
+    "replyFailed": "回复失败",
+    "newTitle": "新帖子",
+    "newDesc": "创建一个新主题（会保存为 GitHub Issue）。",
+    "fields": {
+      "title": "标题",
+      "body": "内容"
+    },
+    "placeholders": {
+      "title": "想分享点什么？",
+      "body": "写点内容…（在 GitHub 页面支持 Markdown）",
+      "reply": "写下你的回复…"
+    },
+    "markdownHint": "提示：GitHub 会在 Issue 页面渲染 Markdown。",
+    "newPostHint": "不需要服务器和数据库——只用 GitHub。",
+    "replyHint": "友善交流，尽量提供可复现信息。"
   },
   "roadmap": {
     "title": "开发路线图",

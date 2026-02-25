@@ -17,6 +17,19 @@ type GitHubMe =
     }
   | null;
 
+type ShowcaseSubmission = {
+  number: number;
+  title: string;
+  url: string;
+  state: "open" | "closed";
+  merged: boolean;
+  draft: boolean;
+  createdAt: string;
+  updatedAt: string;
+  baseRef: string;
+  headRef: string;
+};
+
 function parseTags(value: string) {
   return value
     .split(",")
@@ -48,6 +61,9 @@ export function ShowcaseSubmitClient({
   const t = useTranslations("showcase");
   const [me, setMe] = useState<GitHubMe>(null);
   const [loadingMe, setLoadingMe] = useState(false);
+  const [loadingSubmissions, setLoadingSubmissions] = useState(false);
+  const [submissions, setSubmissions] = useState<ShowcaseSubmission[]>([]);
+  const [submissionsError, setSubmissionsError] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tagsInput, setTagsInput] = useState(t("submit.placeholders.tags"));
@@ -89,7 +105,61 @@ export function ShowcaseSubmitClient({
     };
   }, []);
 
+  useEffect(() => {
+    if (!me?.login) {
+      setSubmissions([]);
+      setSubmissionsError(null);
+      return;
+    }
+
+    let cancelled = false;
+    const run = async () => {
+      setLoadingSubmissions(true);
+      setSubmissionsError(null);
+      try {
+        const res = await fetch(withBasePath("/api/showcase/submissions"), {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          const json = (await res.json().catch(() => ({}))) as { error?: unknown };
+          const msg =
+            typeof json?.error === "string"
+              ? json.error
+              : t("submit.submissionsFailed");
+          if (!cancelled) setSubmissionsError(msg);
+          return;
+        }
+
+        const json = (await res.json()) as { items?: ShowcaseSubmission[] };
+        const items = Array.isArray(json.items) ? json.items : [];
+        if (!cancelled) setSubmissions(items);
+      } catch (e) {
+        if (!cancelled) {
+          setSubmissionsError(e instanceof Error ? e.message : t("submit.submissionsFailed"));
+        }
+      } finally {
+        if (!cancelled) setLoadingSubmissions(false);
+      }
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [me?.login, t]);
+
   const canSubmit = Boolean(me && cdaFile && !submitting);
+
+  const formatShortDate = (iso: string) => {
+    const ts = Date.parse(iso);
+    if (!Number.isFinite(ts)) return "";
+    const d = new Date(ts);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
 
   const onSubmit = async () => {
     if (!me || !cdaFile) return;
@@ -281,6 +351,91 @@ export function ShowcaseSubmitClient({
             </div>
           ) : null}
         </div>
+      </div>
+
+      <div className="rounded-xl border bg-slate-50 dark:bg-slate-900 p-5">
+        <div className="font-heading text-lg font-semibold mb-1">
+          {t("submit.submissionsTitle")}
+        </div>
+        <div className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+          {t("submit.submissionsDesc")}
+        </div>
+
+        {!me ? (
+          <div className="text-sm text-muted-foreground">
+            {t("submit.submissionsSignInHint")}
+          </div>
+        ) : loadingSubmissions ? (
+          <div className="text-sm text-muted-foreground">
+            {t("submit.submissionsLoading")}
+          </div>
+        ) : submissionsError ? (
+          <div className="text-sm text-red-600 dark:text-red-400">
+            {submissionsError}
+          </div>
+        ) : submissions.length === 0 ? (
+          <div className="text-sm text-muted-foreground">
+            {t("submit.submissionsEmpty")}
+          </div>
+        ) : (
+          <div className="grid gap-2">
+            {submissions.map((pr) => {
+              const status = pr.merged
+                ? "merged"
+                : pr.state === "open"
+                ? "open"
+                : "closed";
+
+              const statusLabel =
+                status === "merged"
+                  ? t("submit.submissionsStatus.merged")
+                  : status === "open"
+                  ? t("submit.submissionsStatus.open")
+                  : t("submit.submissionsStatus.closed");
+
+              return (
+                <a
+                  key={pr.number}
+                  href={pr.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between gap-3 rounded-lg border bg-white dark:bg-slate-950 px-4 py-3 hover:bg-accent transition-colors"
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Badge
+                        variant={status === "open" ? "default" : "secondary"}
+                        className="shrink-0"
+                      >
+                        {statusLabel}
+                      </Badge>
+                      {pr.draft ? (
+                        <Badge variant="outline" className="shrink-0">
+                          {t("submit.submissionsStatus.draft")}
+                        </Badge>
+                      ) : null}
+                      <div className="font-medium truncate">{pr.title}</div>
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {t("submit.submissionsMeta", {
+                        number: pr.number,
+                        updated: formatShortDate(pr.updatedAt),
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="text-xs text-muted-foreground shrink-0 text-right">
+                    {pr.headRef && pr.baseRef ? (
+                      <div className="tabular-nums">
+                        {pr.headRef} → {pr.baseRef}
+                      </div>
+                    ) : null}
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div className="rounded-xl border bg-slate-50 dark:bg-slate-900 p-5">

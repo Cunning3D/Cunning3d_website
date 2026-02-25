@@ -176,6 +176,19 @@
       "createPr": "创建 PR",
       "back": "返回",
       "signInHint": "为防止匿名刷屏，请先使用 GitHub 登录。",
+      "submissionsTitle": "我的提交",
+      "submissionsDesc": "你通过 Showcase 上传器创建的 PR 列表。",
+      "submissionsSignInHint": "登录后可在这里查看 PR 审核状态。",
+      "submissionsLoading": "加载中\u2026",
+      "submissionsEmpty": "暂无提交记录。",
+      "submissionsFailed": "加载提交失败",
+      "submissionsMeta": "PR #{number} \u00b7 更新于 {updated}",
+      "submissionsStatus": {
+        "open": "进行中",
+        "merged": "已合并",
+        "closed": "已关闭",
+        "draft": "草稿"
+      },
       "manualPrTitle": "手动 PR",
       "manualPrDesc": "如果自动上传不可用，你仍然可以通过提交 PR 的方式贡献：把你的 .cda（以及同名封面图）放到 public/examples/。"
     },

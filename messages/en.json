@@ -176,6 +176,19 @@
       "createPr": "Create PR",
       "back": "Back",
       "signInHint": "Sign in with GitHub first to prevent anonymous spam.",
+      "submissionsTitle": "Your submissions",
+      "submissionsDesc": "PRs you created via the Showcase uploader.",
+      "submissionsSignInHint": "Sign in to view your PR status here.",
+      "submissionsLoading": "Loading\u2026",
+      "submissionsEmpty": "No submissions yet.",
+      "submissionsFailed": "Failed to load submissions",
+      "submissionsMeta": "PR #{number} \u00b7 Updated {updated}",
+      "submissionsStatus": {
+        "open": "Open",
+        "merged": "Merged",
+        "closed": "Closed",
+        "draft": "Draft"
+      },
       "manualPrTitle": "Manual PR",
       "manualPrDesc": "If automatic upload is unavailable, you can still contribute by opening a PR that adds your .cda (and a same-name cover image) into public/examples/."
     },

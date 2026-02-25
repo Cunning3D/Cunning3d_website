@@ -7,6 +7,7 @@ import { Github, Send, ThumbsUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ForumMarkdown } from "@/components/forum/forum-markdown";
 
 type GitHubMe =
   | {
@@ -334,8 +335,8 @@ export function ForumThreadClient({ number }: { number: number }) {
                   ) : null}
                 </div>
                 {thread.body ? (
-                  <div className="mt-5 whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-                    {thread.body}
+                  <div className="mt-5 prose prose-slate dark:prose-invert prose-sm max-w-none">
+                    <ForumMarkdown text={thread.body} />
                   </div>
                 ) : null}
               </div>
@@ -379,8 +380,8 @@ export function ForumThreadClient({ number }: { number: number }) {
                           ) : null}
                         </div>
                         {c.body ? (
-                          <div className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-                            {c.body}
+                          <div className="mt-3 prose prose-slate dark:prose-invert prose-sm max-w-none">
+                            <ForumMarkdown text={c.body} />
                           </div>
                         ) : null}
                       </div>

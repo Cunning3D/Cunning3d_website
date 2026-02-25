@@ -35,6 +35,14 @@ function reactionsPlusOne(reactions: unknown) {
     : 0;
 }
 
+function stripForumMarkers(body: unknown) {
+  const s = typeof body === "string" ? body : "";
+  if (!s) return "";
+  return s
+    .replace(/\n?<!--\s*c3d:forum-(?:thread|comment)\s*-->\s*/gi, "")
+    .trim();
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ number?: string }> }
@@ -81,7 +89,7 @@ export async function GET(
     number,
     title: stripForumPrefix(titleRaw),
     titleRaw,
-    body: typeof issueJson.body === "string" ? issueJson.body : "",
+    body: stripForumMarkers(issueJson.body),
     createdAt: typeof issueJson.created_at === "string" ? issueJson.created_at : "",
     updatedAt: typeof issueJson.updated_at === "string" ? issueJson.updated_at : "",
     comments: typeof issueJson.comments === "number" ? Math.max(0, issueJson.comments) : 0,
@@ -116,7 +124,7 @@ export async function GET(
 
   const comments = (Array.isArray(commentsJson) ? commentsJson : []).map((c) => ({
     id: typeof c.id === "number" ? c.id : null,
-    body: typeof c.body === "string" ? c.body : "",
+    body: stripForumMarkers(c.body),
     createdAt: typeof c.created_at === "string" ? c.created_at : "",
     updatedAt: typeof c.updated_at === "string" ? c.updated_at : "",
     url: typeof c.html_url === "string" ? c.html_url : "",

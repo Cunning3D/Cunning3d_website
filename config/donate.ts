@@ -2,8 +2,8 @@ import donationSnapshot from "@/data/donations.json";
 
 // Cunning3D 捐款配置 - 支付链接和等级定义
 
-function env(key: string) {
-  return String(process.env[key] || "").trim();
+function readPublicEnv(value: string | undefined) {
+  return String(value || "").trim();
 }
 
 // 捐款者数据类型
@@ -53,14 +53,14 @@ const metrics: DonationMetrics = {
 export const donateConfig = {
   // 支付平台链接（建议在 Vercel 通过环境变量配置）
   platforms: {
-    kofi: env("NEXT_PUBLIC_DONATE_KOFI"),
-    payoneer: env("NEXT_PUBLIC_DONATE_PAYONEER"),
-    paypal: env("NEXT_PUBLIC_DONATE_PAYPAL"),
-    github: env("NEXT_PUBLIC_DONATE_GITHUB"),
+    kofi: readPublicEnv(process.env.NEXT_PUBLIC_DONATE_KOFI),
+    payoneer: readPublicEnv(process.env.NEXT_PUBLIC_DONATE_PAYONEER),
+    paypal: readPublicEnv(process.env.NEXT_PUBLIC_DONATE_PAYPAL),
+    github: readPublicEnv(process.env.NEXT_PUBLIC_DONATE_GITHUB),
     crypto: {
-      eth: env("NEXT_PUBLIC_DONATE_CRYPTO_ETH"),
-      btc: env("NEXT_PUBLIC_DONATE_CRYPTO_BTC"),
-      usdt: env("NEXT_PUBLIC_DONATE_CRYPTO_USDT"),
+      eth: readPublicEnv(process.env.NEXT_PUBLIC_DONATE_CRYPTO_ETH),
+      btc: readPublicEnv(process.env.NEXT_PUBLIC_DONATE_CRYPTO_BTC),
+      usdt: readPublicEnv(process.env.NEXT_PUBLIC_DONATE_CRYPTO_USDT),
     },
   },
   // 捐款等级（从低到高）

@@ -2,15 +2,9 @@ import Link from "next/link"
 import { getLocale, getTranslations } from 'next-intl/server'
 import {
   Heart,
-  Crown,
   Lightning,
-  Trophy,
-  Diamond,
   Hexagon,
-  Star,
-  Medal,
   GameController,
-  Tree,
   ChartBar,
 } from '@phosphor-icons/react/dist/ssr'
 
@@ -173,173 +167,28 @@ export default async function IndexPage() {
             <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
               {t('supporters.title')}
             </h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
               {t('supporters.desc')}
             </p>
           </div>
 
-          {/* Featured Sponsors - Corporate Tiers */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {/* Corporate Titanium */}
-            <div className="group relative md:col-span-2 lg:col-span-1">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative h-full p-8 rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-cyan-500/30 backdrop-blur-sm">
-                <div className="flex items-center gap-3 mb-4">
-                  <Crown className="w-6 h-6 text-cyan-400" weight="light" />
-                  <span className="text-sm font-medium text-cyan-400 uppercase tracking-wider">
-                    {t('supporters.tiers.corporateTitanium')}
-                  </span>
-                </div>
-                <div className="text-3xl font-black tracking-tight text-white mb-2">ACME STUDIOS</div>
-                <p className="text-slate-500 text-sm">
-                  {t('supporters.tiers.perMonth', { amount: '$6,000' })}
-                </p>
-              </div>
+          {/* No mock supporter data (privacy-first). */}
+          <div className="mx-auto max-w-3xl">
+            <div className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm p-10 text-center">
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                {t('supporters.emptyTitle')}
+              </h3>
+              <p className="text-slate-400 mb-8">
+                {t('supporters.emptyDesc')}
+              </p>
+              <Link
+                href="/donate"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold hover:from-indigo-600 hover:to-violet-600 transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
+              >
+                <Heart className="w-5 h-5" weight="light" />
+                {t('supporters.become')}
+              </Link>
             </div>
-
-            {/* Corporate Platinum */}
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative h-full p-6 rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-purple-500/30 backdrop-blur-sm">
-                <div className="flex items-center gap-3 mb-4">
-                  <Lightning className="w-5 h-5 text-purple-400" weight="light" />
-                  <span className="text-xs font-medium text-purple-400 uppercase tracking-wider">
-                    {t('supporters.tiers.corporatePlatinum')}
-                  </span>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-xl font-bold text-white">
-                    <GameController className="w-5 h-5 text-purple-400" weight="light" />
-                    <span>GameForge</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xl font-bold text-white">
-                    <Tree className="w-5 h-5 text-green-400" weight="light" />
-                    <span>EverGreen Tech</span>
-                  </div>
-                </div>
-                <p className="text-slate-500 text-sm mt-4">
-                  {t('supporters.tiers.perMonth', { amount: '$4,000' })}
-                </p>
-              </div>
-            </div>
-
-            {/* Corporate Bronze */}
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative h-full p-6 rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-amber-500/30 backdrop-blur-sm">
-                <div className="flex items-center gap-3 mb-4">
-                  <Trophy className="w-5 h-5 text-amber-400" weight="light" />
-                  <span className="text-xs font-medium text-amber-400 uppercase tracking-wider">
-                    {t('supporters.tiers.corporateBronze')}
-                  </span>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-lg font-semibold text-slate-200">
-                    <Diamond className="w-5 h-5 text-blue-400" weight="light" />
-                    <span>BluePixel</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-lg font-semibold text-slate-200">
-                    <Lightning className="w-5 h-5 text-yellow-400" weight="light" />
-                    <span>VoltStudio</span>
-                  </div>
-                </div>
-                <p className="text-slate-500 text-sm mt-4">
-                  {t('supporters.tiers.perMonth', { amount: '$500' })}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Individual Supporters Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Diamond */}
-            <div className="relative">
-              <div className="flex items-center gap-2 mb-4">
-                <Diamond className="w-5 h-5 text-cyan-300" weight="light" />
-                <span className="text-sm font-semibold text-cyan-300">{t('supporters.tiers.diamond')}</span>
-                <span className="text-xs text-slate-500">
-                  {t('supporters.tiers.perMo', { amount: '$250' })}
-                </span>
-              </div>
-              <div className="space-y-2">
-                {['Chris Zhang', 'Alex Renderer', 'RustCraft', 'NodeMaster'].map((name) => (
-                  <div key={name} className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/5 hover:border-cyan-500/30 transition-colors">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white text-sm font-bold">
-                      {name.charAt(0)}
-                    </div>
-                    <span className="text-slate-300 text-sm font-medium">{name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Titanium */}
-            <div className="relative">
-              <div className="flex items-center gap-2 mb-4">
-                <Hexagon className="w-5 h-5 text-slate-300" weight="light" />
-                <span className="text-sm font-semibold text-slate-300">{t('supporters.tiers.titanium')}</span>
-                <span className="text-xs text-slate-500">
-                  {t('supporters.tiers.perMo', { amount: '$100' })}
-                </span>
-              </div>
-              <div className="space-y-2">
-                {['ModelMaker', 'ProceduralPro', 'VoxelVince', 'MeshMaster'].map((name) => (
-                  <div key={name} className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/5 hover:border-slate-400/30 transition-colors">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center text-white text-sm font-bold">
-                      {name.charAt(0)}
-                    </div>
-                    <span className="text-slate-400 text-sm">{name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Platinum */}
-            <div className="relative">
-              <div className="flex items-center gap-2 mb-4">
-                <Star className="w-5 h-5 text-slate-400" weight="light" />
-                <span className="text-sm font-semibold text-slate-400">{t('supporters.tiers.platinum')}</span>
-                <span className="text-xs text-slate-500">
-                  {t('supporters.tiers.perMo', { amount: '$50' })}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['GeometryGuru', 'PolyPete', 'ShaderSam', 'NodeNinja', 'BevelBoss', 'ExtrudeMaster', 'UVUnwrapper', 'TopologyTom', 'HalfEdgeHero', 'AttributeAce'].map((name) => (
-                  <span key={name} className="px-3 py-1.5 rounded-full bg-white/5 text-slate-400 text-xs border border-white/5 hover:border-slate-400/20 transition-colors cursor-default">
-                    {name}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Gold */}
-            <div className="relative">
-              <div className="flex items-center gap-2 mb-4">
-                <Medal className="w-5 h-5 text-amber-600" weight="light" />
-                <span className="text-sm font-semibold text-amber-600">{t('supporters.tiers.gold')}</span>
-                <span className="text-xs text-slate-500">
-                  {t('supporters.tiers.perMo', { amount: '$25' })}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['vertex_lover', 'poly_pusher', 'rust_modeler', 'bevy_fan', 'node_wizard', 'mesh_maker', 'geo_genius', 'curve_crafter', 'surface_sculptor', 'primitive_pro', 'boolean_boss', 'vdb_victor'].map((name) => (
-                  <span key={name} className="px-2.5 py-1 rounded-full bg-white/5 text-slate-500 text-xs border border-white/5 hover:border-amber-500/20 transition-colors cursor-default">
-                    {name}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="mt-16 text-center">
-            <Link
-              href="/donate"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold hover:from-indigo-600 hover:to-violet-600 transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
-            >
-              <Heart className="w-5 h-5" weight="light" />
-              {t('supporters.become')}
-            </Link>
           </div>
         </div>
       </section>

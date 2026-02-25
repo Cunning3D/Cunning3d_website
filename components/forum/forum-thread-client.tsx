@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Github, Send } from "lucide-react";
+import { Github, Send, ThumbsUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,6 +25,7 @@ type ForumThread = {
   createdAt: string;
   updatedAt: string;
   comments: number;
+  likes: number;
   url: string;
   state: string;
   author: { login: string; avatarUrl: string; htmlUrl: string };
@@ -77,6 +78,10 @@ export function ForumThreadClient({ number }: { number: number }) {
   const [me, setMe] = useState<GitHubMe>(null);
   const [checkingMe, setCheckingMe] = useState(true);
 
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [savingLike, setSavingLike] = useState(false);
+
   const [reply, setReply] = useState("");
   const [replying, setReplying] = useState(false);
   const [replyError, setReplyError] = useState<string | null>(null);
@@ -110,6 +115,11 @@ export function ForumThreadClient({ number }: { number: number }) {
       };
       setThread(json?.thread || null);
       setComments(Array.isArray(json?.comments) ? json.comments : []);
+      const initialLikes =
+        typeof json?.thread?.likes === "number" && Number.isFinite(json.thread.likes)
+          ? Math.max(0, Math.floor(json.thread.likes))
+          : 0;
+      setLikeCount(initialLikes);
     } catch {
       setError(t("loadFailed"));
       setThread(null);
@@ -149,6 +159,75 @@ export function ForumThreadClient({ number }: { number: number }) {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!threadNumber) return;
+    let cancelled = false;
+
+    const run = async () => {
+      try {
+        const url = new URL(withBasePath("/api/forum/likes"), window.location.origin);
+        url.searchParams.set("numbers", String(threadNumber));
+        const res = await fetch(url.toString(), { cache: "no-store" });
+        if (!res.ok) return;
+        const json = (await res.json()) as {
+          counts?: Record<string, number>;
+          viewerLiked?: Record<string, boolean> | null;
+        };
+        if (cancelled) return;
+
+        const c = json?.counts?.[String(threadNumber)];
+        if (typeof c === "number" && Number.isFinite(c)) {
+          setLikeCount(Math.max(0, Math.floor(c)));
+        }
+        const l =
+          json?.viewerLiked && typeof json.viewerLiked === "object"
+            ? json.viewerLiked[String(threadNumber)]
+            : undefined;
+        if (typeof l === "boolean") setLiked(l);
+      } catch {
+        // ignore
+      }
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [threadNumber]);
+
+  const toggleLike = async () => {
+    if (!threadNumber) return;
+    if (savingLike) return;
+
+    setSavingLike(true);
+    try {
+      const res = await fetch(withBasePath("/api/forum/likes"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ number: threadNumber, action: "toggle" }),
+      });
+
+      if (res.status === 401) {
+        window.location.href = loginHref;
+        return;
+      }
+
+      const json = (await res.json()) as { count?: number; liked?: boolean };
+      if (res.ok) {
+        if (typeof json.count === "number" && Number.isFinite(json.count)) {
+          setLikeCount(Math.max(0, Math.floor(json.count)));
+        }
+        if (typeof json.liked === "boolean") {
+          setLiked(json.liked);
+        }
+      }
+    } catch {
+      // ignore
+    } finally {
+      setSavingLike(false);
+    }
+  };
 
   const canReply = Boolean(me && reply.trim() && !replying);
 
@@ -233,6 +312,21 @@ export function ForumThreadClient({ number }: { number: number }) {
                   </span>
                   <span>{formatShortDate(thread.createdAt)}</span>
                   <span>{t("replies", { count: thread.comments })}</span>
+                  <button
+                    type="button"
+                    onClick={() => void toggleLike()}
+                    disabled={savingLike}
+                    aria-pressed={liked}
+                    aria-label={liked ? t("like.unlike") : t("like.like")}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 transition-colors ${
+                      liked
+                        ? "bg-blue-600 text-white border-blue-500"
+                        : "bg-transparent hover:bg-accent"
+                    } disabled:opacity-60 disabled:pointer-events-none`}
+                  >
+                    <ThumbsUp className="w-3.5 h-3.5" />
+                    <span className="tabular-nums">{likeCount}</span>
+                  </button>
                   {thread.state === "closed" ? (
                     <span className="text-amber-600 dark:text-amber-400">
                       {t("closed")}
@@ -345,4 +439,3 @@ export function ForumThreadClient({ number }: { number: number }) {
     </section>
   );
 }
-

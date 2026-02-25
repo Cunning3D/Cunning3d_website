@@ -9,6 +9,7 @@ type GitHubIssue = {
   created_at?: unknown;
   updated_at?: unknown;
   comments?: unknown;
+  reactions?: unknown;
   html_url?: unknown;
   state?: unknown;
 };
@@ -25,6 +26,13 @@ type GitHubComment = {
 function parseIssueNumber(raw: unknown) {
   const n = Number.parseInt(String(raw || ""), 10);
   return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+function reactionsPlusOne(reactions: unknown) {
+  const value = (reactions as any)?.["+1"];
+  return typeof value === "number" && Number.isFinite(value) && value >= 0
+    ? Math.floor(value)
+    : 0;
 }
 
 export async function GET(
@@ -77,6 +85,7 @@ export async function GET(
     createdAt: typeof issueJson.created_at === "string" ? issueJson.created_at : "",
     updatedAt: typeof issueJson.updated_at === "string" ? issueJson.updated_at : "",
     comments: typeof issueJson.comments === "number" ? Math.max(0, issueJson.comments) : 0,
+    likes: reactionsPlusOne(issueJson.reactions),
     url: typeof issueJson.html_url === "string" ? issueJson.html_url : "",
     state: typeof issueJson.state === "string" ? issueJson.state : "open",
     author: {

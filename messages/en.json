@@ -205,6 +205,11 @@
     "newPost": "New Post",
     "refresh": "Refresh",
     "searchPlaceholder": "Search title / author…",
+    "sort": {
+      "placeholder": "Sort",
+      "new": "Newest",
+      "popular": "Popular"
+    },
     "loading": "Loading…",
     "empty": "No posts yet.",
     "errorTitle": "Error",
@@ -213,6 +218,11 @@
     "by": "by",
     "replies": "{count} replies",
     "repliesTitle": "Replies ({count})",
+    "like": {
+      "like": "Like",
+      "liked": "Liked",
+      "unlike": "Unlike"
+    },
     "noReplies": "No replies yet.",
     "closed": "Closed",
     "openInGithub": "Open in GitHub",

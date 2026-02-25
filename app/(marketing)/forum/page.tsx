@@ -3,10 +3,17 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { MessageCircle, Plus, RefreshCw } from "lucide-react";
+import { MessageCircle, Plus, RefreshCw, ThumbsUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type ForumThread = {
   number: number;
@@ -14,9 +21,13 @@ type ForumThread = {
   author: string;
   createdAt: string;
   comments: number;
+  likes: number;
   url: string;
   state: string;
 };
+
+type ForumSort = "new" | "popular";
+const DEFAULT_SORT: ForumSort = "new";
 
 function normalizeBasePath(p: unknown) {
   const s = String(p || "").trim();
@@ -47,6 +58,10 @@ export default function ForumPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<ForumSort>(DEFAULT_SORT);
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  const [likedKeys, setLikedKeys] = useState<Set<string>>(() => new Set());
+  const [savingKeys, setSavingKeys] = useState<Set<string>>(() => new Set());
 
   const load = async () => {
     setLoading(true);
@@ -62,7 +77,13 @@ export default function ForumPage() {
         return;
       }
       const json = (await res.json()) as { threads?: ForumThread[] };
-      setThreads(Array.isArray(json?.threads) ? json.threads : []);
+      const list = Array.isArray(json?.threads) ? json.threads : [];
+      setThreads(list);
+      setLikeCounts(
+        Object.fromEntries(
+          list.map((th) => [String(th.number), Math.max(0, th.likes || 0)])
+        )
+      );
     } catch {
       setError(t("loadFailed"));
       setThreads([]);
@@ -84,6 +105,121 @@ export default function ForumPage() {
       return hay.includes(q);
     });
   }, [threads, query]);
+
+  useEffect(() => {
+    const numbers = threads.map((th) => String(th.number)).filter(Boolean);
+    if (numbers.length === 0) return;
+
+    let cancelled = false;
+    const run = async () => {
+      try {
+        const url = new URL(withBasePath("/api/forum/likes"), window.location.origin);
+        url.searchParams.set("numbers", numbers.join(","));
+        const res = await fetch(url.toString(), { cache: "no-store" });
+        if (!res.ok) return;
+        const json = (await res.json()) as {
+          counts?: Record<string, number>;
+          viewerLiked?: Record<string, boolean> | null;
+        };
+        if (cancelled) return;
+
+        if (json?.counts && typeof json.counts === "object") {
+          setLikeCounts((prev) => ({ ...prev, ...json.counts }));
+        }
+        if (json?.viewerLiked && typeof json.viewerLiked === "object") {
+          setLikedKeys(
+            new Set(
+              Object.entries(json.viewerLiked)
+                .filter(([, v]) => v === true)
+                .map(([k]) => k)
+            )
+          );
+        }
+      } catch {
+        // ignore
+      }
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [threads]);
+
+  const sorted = useMemo(() => {
+    const out = [...filtered];
+    if (sort === "popular") {
+      out.sort((a, b) => {
+        const la = likeCounts[String(a.number)] ?? Math.max(0, a.likes || 0);
+        const lb = likeCounts[String(b.number)] ?? Math.max(0, b.likes || 0);
+        const d = lb - la;
+        if (d !== 0) return d;
+        const ta = Date.parse(a.createdAt) || 0;
+        const tb = Date.parse(b.createdAt) || 0;
+        return tb - ta;
+      });
+      return out;
+    }
+
+    // new
+    out.sort((a, b) => {
+      const ta = Date.parse(a.createdAt) || 0;
+      const tb = Date.parse(b.createdAt) || 0;
+      return tb - ta;
+    });
+    return out;
+  }, [filtered, sort, likeCounts]);
+
+  const toggleLike = async (threadNumber: number) => {
+    const key = String(threadNumber);
+    if (!key) return;
+    if (savingKeys.has(key)) return;
+
+    setSavingKeys((prev) => new Set(prev).add(key));
+    try {
+      const res = await fetch(withBasePath("/api/forum/likes"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ number: threadNumber, action: "toggle" }),
+      });
+
+      if (res.status === 401) {
+        const next = `${window.location.pathname}${window.location.search}`;
+        window.location.href = withBasePath(
+          `/api/showcase/github/login?next=${encodeURIComponent(next)}`
+        );
+        return;
+      }
+
+      const json = (await res.json()) as { count?: number; liked?: boolean };
+      if (res.ok) {
+        if (typeof json.count === "number" && Number.isFinite(json.count)) {
+          const nextCount = Math.max(0, Math.floor(json.count));
+          setLikeCounts((prev) => ({
+            ...prev,
+            [key]: nextCount,
+          }));
+        }
+        if (typeof json.liked === "boolean") {
+          const nextLiked = json.liked;
+          setLikedKeys((prev) => {
+            const next = new Set(prev);
+            if (nextLiked) next.add(key);
+            else next.delete(key);
+            return next;
+          });
+        }
+      }
+    } catch {
+      // ignore
+    } finally {
+      setSavingKeys((prev) => {
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+    }
+  };
 
   return (
     <>
@@ -117,12 +253,25 @@ export default function ForumPage() {
           </div>
 
           <div className="mt-6 max-w-xl">
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t("searchPlaceholder")}
-              className="bg-white/10 border-white/10 text-white placeholder:text-slate-400 focus-visible:ring-blue-400/40"
-            />
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={t("searchPlaceholder")}
+                className="bg-white/10 border-white/10 text-white placeholder:text-slate-400 focus-visible:ring-blue-400/40"
+              />
+              <div className="sm:w-44">
+                <Select value={sort} onValueChange={(v) => setSort(v as ForumSort)}>
+                  <SelectTrigger className="bg-white/10 border-white/10 text-white">
+                    <SelectValue placeholder={t("sort.placeholder")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">{t("sort.new")}</SelectItem>
+                    <SelectItem value="popular">{t("sort.popular")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -139,10 +288,15 @@ export default function ForumPage() {
           <div className="mt-6 space-y-3">
             {loading ? (
               <div className="text-sm text-muted-foreground">{t("loading")}</div>
-            ) : filtered.length === 0 ? (
+            ) : sorted.length === 0 ? (
               <div className="text-sm text-muted-foreground">{t("empty")}</div>
             ) : (
-              filtered.map((th) => (
+              sorted.map((th) => {
+                const key = String(th.number);
+                const liked = likedKeys.has(key);
+                const saving = savingKeys.has(key);
+                const likeCount = likeCounts[key] ?? Math.max(0, th.likes || 0);
+                return (
                 <div
                   key={th.number}
                   className="rounded-xl border bg-white dark:bg-slate-900 p-4 hover:shadow-md transition-shadow"
@@ -163,6 +317,21 @@ export default function ForumPage() {
                         <span>
                           {t("replies", { count: th.comments })}
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => void toggleLike(th.number)}
+                          disabled={saving}
+                          aria-pressed={liked}
+                          aria-label={liked ? t("like.unlike") : t("like.like")}
+                          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 transition-colors ${
+                            liked
+                              ? "bg-blue-600 text-white border-blue-500"
+                              : "bg-transparent hover:bg-accent"
+                          } disabled:opacity-60 disabled:pointer-events-none`}
+                        >
+                          <ThumbsUp className="w-3.5 h-3.5" />
+                          <span className="tabular-nums">{likeCount}</span>
+                        </button>
                         {th.state === "closed" ? (
                           <span className="text-amber-600 dark:text-amber-400">
                             {t("closed")}
@@ -182,7 +351,8 @@ export default function ForumPage() {
                     ) : null}
                   </div>
                 </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
@@ -190,4 +360,3 @@ export default function ForumPage() {
     </>
   );
 }
-

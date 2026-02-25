@@ -7,6 +7,7 @@ type GitHubSearchIssueItem = {
   user?: { login?: unknown } | null;
   created_at?: unknown;
   comments?: unknown;
+  reactions?: unknown;
   html_url?: unknown;
   state?: unknown;
 };
@@ -19,6 +20,13 @@ type GitHubSearchResponse = {
 function parsePositiveInt(v: string | null, fallback: number) {
   const n = Number.parseInt(String(v || ""), 10);
   return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+function reactionsPlusOne(reactions: unknown) {
+  const value = (reactions as any)?.["+1"];
+  return typeof value === "number" && Number.isFinite(value) && value >= 0
+    ? Math.floor(value)
+    : 0;
 }
 
 export async function GET(req: NextRequest) {
@@ -76,6 +84,7 @@ export async function GET(req: NextRequest) {
             : "unknown",
         createdAt: typeof it.created_at === "string" ? it.created_at : "",
         comments: typeof it.comments === "number" ? Math.max(0, it.comments) : 0,
+        likes: reactionsPlusOne(it.reactions),
         url: typeof it.html_url === "string" ? it.html_url : "",
         state: typeof it.state === "string" ? it.state : "open",
       };
@@ -87,4 +96,3 @@ export async function GET(req: NextRequest) {
     { status: 200 }
   );
 }
-

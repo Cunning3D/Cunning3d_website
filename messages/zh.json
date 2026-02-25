@@ -205,6 +205,11 @@
     "newPost": "发帖",
     "refresh": "刷新",
     "searchPlaceholder": "搜索标题 / 作者…",
+    "sort": {
+      "placeholder": "排序",
+      "new": "最新",
+      "popular": "热门"
+    },
     "loading": "加载中…",
     "empty": "还没有帖子。",
     "errorTitle": "错误",
@@ -213,6 +218,11 @@
     "by": "作者",
     "replies": "{count} 条回复",
     "repliesTitle": "回复（{count}）",
+    "like": {
+      "like": "点赞",
+      "liked": "已赞",
+      "unlike": "取消点赞"
+    },
     "noReplies": "还没有回复。",
     "closed": "已关闭",
     "openInGithub": "在 GitHub 打开",

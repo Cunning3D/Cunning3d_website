@@ -1,3 +1,35 @@
 {
-  "items": []
+  "items": [
+    {
+      "id": "Simple-Cube",
+      "title": "Simple Cube",
+      "author": "Anonymous",
+      "image": "/examples/Simple Cube.png",
+      "description": "A tiny CDA example for testing the Cunning Player.",
+      "bytes": 11465,
+      "updatedAt": "2026-02-26T09:49:58.656Z",
+      "tags": [
+        "Example",
+        "Basics"
+      ],
+      "featured": false,
+      "cdaUrl": "/examples/Simple Cube.cda"
+    },
+    {
+      "id": "Voxel-Editor",
+      "title": "Voxel Editor",
+      "author": "Anonymous",
+      "image": "/examples/Voxel Editor.png",
+      "description": "Voxel editing workflow example (CDA).",
+      "bytes": 12702,
+      "updatedAt": "2026-02-26T09:49:58.785Z",
+      "tags": [
+        "Voxel",
+        "Editor",
+        "PCG"
+      ],
+      "featured": true,
+      "cdaUrl": "/examples/Voxel Editor.cda"
+    }
+  ]
 }

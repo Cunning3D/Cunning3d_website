@@ -38,12 +38,19 @@ export default function DonatePage() {
   const locale = useLocale()
   const nf = new Intl.NumberFormat(locale)
   const formatNumber = (n: number) => nf.format(Number.isFinite(n) ? n : 0)
+  const formatDate = (iso?: string) => {
+    if (!iso) return null
+    const d = new Date(iso)
+    if (!Number.isFinite(d.getTime())) return null
+    return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(d)
+  }
 
   const [isMonthly, setIsMonthly] = useState(true)
   const [selected, setSelected] = useState(25)
   const [copied, setCopied] = useState<string | null>(null)
   const amounts = donateConfig.tiers.map(t => t.amount)
-  const { platforms, metrics } = donateConfig
+  const { platforms, metrics, updatedAt } = donateConfig
+  const updatedAtLabel = formatDate(updatedAt)
 
   const currentTier = donateConfig.tiers.slice().reverse().find(t => selected >= t.amount) || donateConfig.tiers[0]
   const CurrentTierIcon = tierIconMap[currentTier.icon] || Heart
@@ -316,6 +323,11 @@ export default function DonatePage() {
               </motion.div>
             ))}
           </div>
+          {updatedAtLabel && (
+            <p className="mt-6 text-center text-xs text-slate-500">
+              {t("stats.updated", { date: updatedAtLabel })}
+            </p>
+          )}
         </div>
       </section>
 

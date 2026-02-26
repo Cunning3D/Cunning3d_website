@@ -352,7 +352,8 @@
       "oneTime": "One-time donations",
       "monthlyRecurring": "Monthly recurring",
       "totalSupporters": "Total supporters",
-      "corporateSponsors": "Corporate sponsors"
+      "corporateSponsors": "Corporate sponsors",
+      "updated": "Updated: {date}"
     },
     "wall": {
       "title": "Our Supporters",

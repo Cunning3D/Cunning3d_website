@@ -352,7 +352,8 @@
       "oneTime": "一次性捐赠",
       "monthlyRecurring": "每月持续支持",
       "totalSupporters": "支持者总数",
-      "corporateSponsors": "企业赞助"
+      "corporateSponsors": "企业赞助",
+      "updated": "更新于: {date}"
     },
     "wall": {
       "title": "支持者墙",

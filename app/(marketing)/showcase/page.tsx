@@ -1,22 +1,15 @@
-import fs from "node:fs/promises";
-import path from "node:path";
 import type { Metadata } from "next";
 import { ShowcaseClient, type ShowcaseItem } from "@/components/showcase/showcase-client";
 import { getTranslations } from "next-intl/server";
+import examplesIndex from "@/public/examples/index.json";
 
-async function readExamplesIndex(): Promise<ShowcaseItem[]> {
-  try {
-    const p = path.join(process.cwd(), "public", "examples", "index.json");
-    const txt = await fs.readFile(p, "utf8");
-    const json = JSON.parse(txt) as { items?: ShowcaseItem[] };
-    return Array.isArray(json.items) ? json.items : [];
-  } catch {
-    return [];
-  }
+function readExamplesIndex(): ShowcaseItem[] {
+  const json = examplesIndex as unknown as { items?: ShowcaseItem[] };
+  return Array.isArray(json.items) ? json.items : [];
 }
 
 export default async function ShowcasePage() {
-  const items = await readExamplesIndex();
+  const items = readExamplesIndex();
   return <ShowcaseClient items={items} />;
 }
 

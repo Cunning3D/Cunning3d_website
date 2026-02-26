@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   sync:
-    if: ${{ vars.CUNNING_EXAMPLES_REPO != '' && vars.CUNNING_EXAMPLES_PATH != '' }}
+    if: ${{ vars.CUNNING_EXAMPLES_REPO && vars.CUNNING_EXAMPLES_PATH }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout website

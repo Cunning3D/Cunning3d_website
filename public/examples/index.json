@@ -16,6 +16,22 @@
       "cdaUrl": "/examples/Simple Cube.cda"
     },
     {
+      "id": "SplineShowcase",
+      "title": "SplineShowcase",
+      "author": "Anonymous",
+      "image": "/banner.png",
+      "description": "Spline editing and CDA exposure showcase.",
+      "bytes": 3751,
+      "updatedAt": "2026-02-27T16:18:44.243Z",
+      "tags": [
+        "Spline",
+        "CDA",
+        "Showcase"
+      ],
+      "featured": true,
+      "cdaUrl": "/examples/SplineShowcase.cda"
+    },
+    {
       "id": "Voxel-Editor",
       "title": "Voxel Editor",
       "author": "Anonymous",
